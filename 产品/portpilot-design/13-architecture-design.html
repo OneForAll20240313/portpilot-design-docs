@@ -52,7 +52,7 @@
 <header class="cover">
   <div class="kicker">Chapter 13 · 架构设计层 Technical Architecture</div>
   <h1>PortPilot 架构设计</h1>
-  <p class="sub">本页把系统设计（12 章）落到技术决策：五层 DDD 架构细化、技术选型与理由、组件关系、部署架构（四宿主）、数据架构、非功能设计，以及用于并行协作的架构约束。模块级细节见 14 章。</p>
+  <p class="sub">本页把系统设计（12 章）落到技术决策：五层 DDD 架构细化、技术选型与理由、组件关系、部署架构（双宿主 + 扩展）、数据架构、非功能设计，以及用于并行协作的架构约束。模块级细节见 14 章。</p>
   <div class="meta">
     <span class="chip">权限：全项目必读</span>
     <span class="chip">类型：架构设计</span>
@@ -64,7 +64,7 @@
 
 <section id="s1">
   <h2><span class="secnum">13.1</span>架构总览</h2>
-  <p class="lead">PortPilot 采用 DDD 五层架构：UI / Service / Domain / Core + Plugin，依赖严格单向。这一架构让当前三宿主（GUI/TUI/WebUI）+ 未来 QML 合计四宿主可并行开发，UI 非平台相关，是治理总纲（11.4）的落地。</p>
+  <p class="lead">PortPilot 采用 DDD 五层架构：UI / Service / Domain / Core + Plugin，依赖严格单向。这一架构让当前 GUI/TUI 双宿主可并行开发；WebUI 已收敛为范围外（见需求收敛），QML 为未来扩展。UI 非平台相关，是治理总纲（11.4）的落地。</p>
 
   <h3>1.1 架构风格与理由</h3>
   <p>采用"分层 + 限界上下文 + 插件扩展"的组合风格。分层保证依赖单向、宿主无关；限界上下文保证模块边界清晰、可并行开发；插件提供扩展点。该风格契合"多宿主共享核心、功能完备、可扩展"的系统目标 [Expert judgment]。</p>
@@ -73,8 +73,8 @@
   <div class="stack-band">
     <div class="sb-layer">
       <div class="sl-name">UI · 表现层<em style="font-style:normal;font-size:11px;color:var(--muted)">（DDD 五层之 UI 表现层，非传统三层的表示层）</em></div>
-      <div class="sl-desc">渲染与交互，只依赖 Service 接口，不触碰 Core/Domain 内部。当前三宿主（GUI/TUI/WebUI）+ 未来 QML 合计四宿主可并行开发。</div>
-      <div class="sl-items"><span>GUI (Qt Widgets)</span><span>TUI (FTXUI)</span><span>WebUI (浏览器)</span><span>QML (未来)</span></div>
+      <div class="sl-desc">渲染与交互，只依赖 Service 接口，不触碰 Core/Domain 内部。当前 GUI/TUI 双宿主可并行开发；WebUI 范围外、QML 未来扩展。</div>
+      <div class="sl-items"><span>GUI (Qt Widgets)</span><span>TUI (FTXUI)</span><span>QML (未来)</span></div>
     </div>
     <div class="sb-arrow">▼ 依赖方向：UI→Service→Domain 单向依赖；Core 依赖 Domain 接口（依赖倒置）</div>
     <div class="sb-layer">
@@ -173,7 +173,7 @@
   <table>
     <tr><th>组件</th><th>职责</th><th>说明</th></tr>
     <tr><td>SerialWorker</td><td>串口设备交互</td><td>实现 DevicePort，参数可编程切换（D-53）</td></tr>
-    <tr><td>NetworkTransport</td><td>TCP/IP 网络交互</td><td>实现 DevicePort</td></tr>
+    <tr><td>NetworkTransport</td><td>TCP/IP 网络交互（预留扩展）</td><td>实现 DevicePort；TCP/IP 为非核心范围，见需求收敛</td></tr>
     <tr><td>FileRepository</td><td>配置/协议持久化</td><td>作用域持久化、备份</td></tr>
     <tr><td>EventLoop</td><td>统一事件派发</td><td>跨宿主事件流</td></tr>
     <tr><td>Logger</td><td>分级日志</td><td>DEBUG/INFO/WARN/ERROR</td></tr>
@@ -194,8 +194,8 @@
 </section>
 
 <section id="s4">
-  <h2><span class="secnum">13.4</span>部署架构（四宿主）</h2>
-  <p class="lead">四宿主（GUI/TUI/WebUI/QML，其中 QML 为未来扩展，当前推进前三者）共享同一核心，仅交互层不同。部署拓扑展示各宿主的进程组织与共享关系。并行开发时各宿主可独立实现，通过契约对接核心。</p>
+  <h2><span class="secnum">13.4</span>部署架构（双宿主 + 扩展）</h2>
+  <p class="lead">当前 GUI/TUI 双宿主共享同一核心，仅交互层不同；WebUI 已收敛为范围外（见需求收敛），QML 为未来扩展。部署拓扑展示各宿主的进程组织与共享关系。并行开发时各宿主可独立实现，通过契约对接核心。</p>
 
   <div class="arch-box">
     <div class="ab-head">GUI 宿主部署 <span class="ab-tag">Qt Widgets</span></div>
@@ -212,20 +212,13 @@
     </div>
   </div>
   <div class="arch-box">
-    <div class="ab-head">WebUI 宿主部署 <span class="ab-tag">浏览器</span></div>
-    <div class="ab-body">
-      <p>远程嵌入进程：浏览器 UI 层 → Service 层 → Domain/Core。通过 Web 端口（全局设置）访问。</p>
-      <div class="ab-items"><span>浏览器</span><span>Web 端口</span><span>共享核心</span></div>
-    </div>
-  </div>
-  <div class="arch-box">
     <div class="ab-head">QML 宿主部署 <span class="ab-tag">嵌入式触屏</span></div>
     <div class="ab-body">
       <p>未来接入：Qt QML UI 层 → Service 层 → Domain/Core。触控输入。</p>
       <div class="ab-items"><span>Qt QML</span><span>触控输入</span><span>共享核心</span></div>
     </div>
   </div>
-  <div class="note"><b>宿主隔离</b>：四宿主仅交互层不同，核心共享。宿主切换（ui switch）重启进程，会话状态不保留（D-46）。各宿主实现不得侵入核心。</div>
+  <div class="note"><b>宿主隔离</b>：多宿主仅交互层不同，核心共享（WebUI 范围外）。宿主切换（ui switch）重启进程，会话状态不保留（D-46）。各宿主实现不得侵入核心。</div>
 </section>
 
 <section id="s5">
@@ -275,7 +268,7 @@
     <li>SQLite 用 Qt 内置 <code>QSqlDatabase</code>（SQLite 驱动），零额外依赖，单文件易迁移备份。</li>
     <li>数据库文件位置：Linux <code>~/.config/portpilot/</code>，Windows <code>%APPDATA%/PortPilot/</code>（随 <code>QStandardPaths</code> 解析）。</li>
     <li>二进制流不写 BLOB：高速数据量大会膨胀数据库、拖慢写入，故独立文件 + 元数据索引。</li>
-    <li>Schema 版本化：SQLite 表内建 <code>schema_version</code>，JSON 契约带 <code>version</code> 字段，升级时向前兼容（见 5.5 契约演进）。</li>
+    <li>Schema 版本化：SQLite 表内建 <code>schema_version</code>，JSON 契约带 <code>version</code> 字段，升级时向前兼容（见 13.5.5 契约演进）。</li>
   </ul>
 
   <h3>5.5 契约演进（向前兼容）</h3>
@@ -315,7 +308,7 @@
     <tr><td>分层依赖</td><td>UI→Service→Domain 单向；Core 依赖 Domain 接口（依赖倒置）</td><td>禁止反向依赖与循环依赖；Domain 不依赖 Core</td></tr>
     <tr><td>UI 只连 Service</td><td>UI 不 new Domain、不调 Core 设备方法</td><td>一切经 Service 用例</td></tr>
     <tr><td>Core 实现接口</td><td>Domain 定义 DevicePort 等接口，Core 实现</td><td>依赖倒置：Core→Domain 引用接口类型；测试 mock 替换</td></tr>
-    <tr><td>宿主隔离</td><td>四宿主仅交互层不同，核心共享</td><td>宿主实现不得侵入核心</td></tr>
+    <tr><td>宿主隔离</td><td>多宿主仅交互层不同，核心共享（WebUI 范围外）</td><td>宿主实现不得侵入核心</td></tr>
     <tr><td>契约文件</td><td>按限界上下文放 contracts/</td><td>与实现分离，独立校验</td></tr>
   </table>
   </div>
@@ -349,7 +342,7 @@
   <div class="table-wrap">
   <table>
     <tr><th>架构层</th><th>测试策略</th><th>框架</th><th>隔离</th></tr>
-    <tr><td>UI</td><td>端到端冒烟 + 交互测试</td><td>Qt Test / 脚本驱动</td><td>FakeDevice + 真实 Service</td></tr>
+    <tr><td>UI</td><td>端到端冒烟 + 交互测试</td><td>GoogleTest + 脚本驱动</td><td>FakeDevice + 真实 Service</td></tr>
     <tr><td>Service</td><td>用例单元测试 + 契约测试</td><td>GoogleTest / pytest</td><td>mock Core/Domain 依赖</td></tr>
     <tr><td>Domain</td><td>纯业务单元测试</td><td>GoogleTest</td><td>纯内存，无 I/O</td></tr>
     <tr><td>Core</td><td>组件单测 + 接口契约</td><td>GoogleTest + GMock</td><td>接口抽象 + fake 实现</td></tr>

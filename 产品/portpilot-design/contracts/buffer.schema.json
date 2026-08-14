@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "buffer.schema.json",
   "title": "Buffer",
-  "description": "字节流缓冲契约（05 章）。缓冲随会话隔离，负责接收/发送数据的流转与节流。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "description": "字节流缓冲契约（02 章字节流）。缓冲随会话隔离，负责接收/发送数据的流转与节流。本契约是 SSOT。演进遵循 13.5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -12,7 +12,7 @@
     },
     "sessionId": {
       "type": "string",
-      "description": "所属会话 ID，缓冲随会话隔离"
+      "description": "所属会话 ID，缓冲随会话隔离。会话与连接一一对应，事件负载中以 connectionId 指代同一实体（见 events.md 字节流域）"
     },
     "direction": {
       "type": "string",
@@ -33,6 +33,11 @@
       "type": "string",
       "enum": ["drop-oldest", "stop", "wrap"],
       "description": "溢出策略：drop-oldest=丢弃最旧，stop=停止写入，wrap=环形覆盖"
+    },
+    "strategy": {
+      "type": "string",
+      "enum": ["ring", "append", "double"],
+      "description": "缓冲策略：ring=环形缓冲，append=追加缓冲，double=双缓冲（对齐 service-api.md A-305 与 07 章 7.3.2）"
     },
     "recording": {
       "type": "object",

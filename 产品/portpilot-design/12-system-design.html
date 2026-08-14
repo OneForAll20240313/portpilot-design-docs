@@ -65,14 +65,14 @@
 
 <section id="s1">
   <h2><span class="secnum">12.1</span>系统总览与目标</h2>
-  <p class="lead">PortPilot 是一个跨 GUI / TUI / WebUI / QML 四宿主的桌面串口调试与协议分析工具（QML 为未来扩展，当前推进 GUI/TUI/WebUI 三宿主）。系统级设计目标是：多宿主共享同一核心、可并行开发、功能完备且可扩展。本层给出系统边界、子系统划分与系统级运行视图。</p>
+  <p class="lead">PortPilot 是一个跨 GUI（Qt Widgets）/ TUI（FTXUI）双宿主 + QML 未来扩展的桌面串口调试与协议分析工具（WebUI 已收敛为范围外，见需求收敛）。系统级设计目标是：多宿主共享同一核心、可并行开发、功能完备且可扩展。本层给出系统边界、子系统划分与系统级运行视图。</p>
 
   <h3>1.1 系统范围</h3>
   <div class="table-wrap">
   <table>
     <tr><th>维度</th><th>范围</th></tr>
-    <tr><td>物理载体</td><td>桌面应用（GUI / TUI / WebUI / QML 四宿主），共享同一核心</td></tr>
-    <tr><td>连接能力</td><td>串口（Serial）、TCP/IP 网络（Network），可扩展其它设备</td></tr>
+    <tr><td>物理载体</td><td>桌面应用（GUI / TUI 双宿主 + QML 未来扩展），共享同一核心（WebUI 为范围外）</td></tr>
+    <tr><td>连接能力</td><td>串口（Serial），可扩展其它设备（TCP/IP 网络为非核心范围，见需求收敛）</td></tr>
     <tr><td>功能域</td><td>会话、字节流、协议解析、可视化、终端、命令自动化、设置、交互路由（8 个限界上下文）</td></tr>
     <tr><td>非目标</td><td>不做云端账号、不做多人实时协同编辑、不做移动端原生 App（QML 为嵌入式触屏）</td></tr>
   </table>
@@ -82,7 +82,7 @@
   <div class="table-wrap">
   <table>
     <tr><th>目标</th><th>说明</th><th>证据</th></tr>
-    <tr><td>宿主无关</td><td>核心逻辑（会话/协议/可视化/命令）与宿主解耦，四宿主可并行开发</td><td>[Expert judgment]</td></tr>
+    <tr><td>宿主无关</td><td>核心逻辑（会话/协议/可视化/命令）与宿主解耦，多宿主可并行开发</td><td>[Expert judgment]</td></tr>
     <tr><td>一致性</td><td>所有宿主共享同一业务模型与术语，界面观感对齐</td><td>[Data-backed] 基于 11.3 术语表与 10 章 TUI 对齐目标</td></tr>
     <tr><td>可扩展</td><td>协议、字段池、可视化元素、命令插件均可扩展</td><td>[Expert judgment]</td></tr>
     <tr><td>会话隔离</td><td>会话内数据隔离，协议为全局模板（D-44）</td><td>[Data-backed] 09 章 D-44</td></tr>
@@ -117,7 +117,7 @@
     <tr><th>类别</th><th>约束</th><th>证据</th></tr>
     <tr><td>性能</td><td>字节流高吞吐下 UI 不卡顿；字段池历史 500 条环形缓冲</td><td>[Data-backed] 11.3</td></tr>
     <tr><td>可用性</td><td>断线重连策略（全局设置）；连接状态四态可视化</td><td>[Data-backed] 07、09 D-38</td></tr>
-    <tr><td>可移植性</td><td>三宿主可并行开发，核心不绑平台</td><td>[Expert judgment]</td></tr>
+    <tr><td>可移植性</td><td>多宿主可并行开发，核心不绑平台</td><td>[Expert judgment]</td></tr>
     <tr><td>可观测性</td><td>统一日志分级，事件可追踪</td><td>[Expert judgment]</td></tr>
     <tr><td>安全</td><td>危险命令二次确认白名单（D-20）；文件备份策略</td><td>[Data-backed] 05、07</td></tr>
   </table>
@@ -133,7 +133,7 @@
   <table>
     <tr><th>外部实体</th><th>交互方向</th><th>交互内容</th></tr>
     <tr><td>串口设备 / 网络对端</td><td>双向</td><td>收发字节流，经 Connection / DevicePort</td></tr>
-    <tr><td>用户（四宿主）</td><td>双向</td><td>交互操作，经 UI → Service 用例</td></tr>
+    <tr><td>用户（多宿主）</td><td>双向</td><td>交互操作，经 UI → Service 用例</td></tr>
     <tr><td>操作系统</td><td>单向依赖</td><td>EventLoop、Logger、FileRepository</td></tr>
     <tr><td>外部脚本（Python）
 
@@ -289,16 +289,15 @@ SDK）</td><td>双向</td><td>connect/send/read/get_field 等命令自动化接�
 
 <section id="s6">
   <h2><span class="secnum">12.6</span>运行时视图</h2>
-  <p class="lead">运行时视图描述四宿主如何组织、如何切换、会话状态如何保留。这是并行开发时各宿主可独立实现的依据。</p>
+  <p class="lead">运行时视图描述当前双宿主如何组织、如何切换、会话状态如何保留。这是并行开发时各宿主可独立实现的依据。</p>
 
-  <h3>6.1 四宿主组织</h3>
+  <h3>6.1 宿主组织</h3>
   <div class="table-wrap">
   <table>
     <tr><th>宿主</th><th>技术</th><th>输入方式</th><th>定位</th></tr>
     <tr><td>GUI</td><td>Qt Widgets</td><td>鼠标/键盘</td><td>桌面主界面，QtNodes 可视化</td></tr>
     <tr><td>TUI</td><td>FTXUI</td><td>键盘</td><td>无图形环境全屏控件化</td></tr>
-    <tr><td>WebUI</td><td>浏览器</td><td>鼠标/键盘</td><td>远程嵌入</td></tr>
-    <tr><td>QML</td><td>Qt QML</td><td>触控</td><td>嵌入式触屏（未来）</td></tr>
+    <tr><td>QML</td><td>Qt QML</td><td>触控</td><td>嵌入式触屏（未来扩展）</td></tr>
   </table>
   </div>
 
@@ -369,7 +368,7 @@ SDK）</td><td>双向</td><td>connect/send/read/get_field 等命令自动化接�
     <p><strong>所属限界上下文</strong>：会话管理（Session）</p>
     <p><strong>依赖契约</strong>：session.schema.json（设计已定义，实现落地）；依赖 DevicePort 接口（只读）；依赖 events.md 状态事件（设计已定义，实现落地）</p>
     <p><strong>相关术语</strong>：会话、会话状态、会话模式、连接（见 11.3）</p>
-    <p><strong>验收标准（DoD）</strong>：1. 实现四态状态机（离线/连接中/在线/断开中）；2. 状态迁移可序列化；3. 发状态事件；4. 通过事件校验；5. 三宿主可复用同一状态模型</p>
+    <p><strong>验收标准（DoD）</strong>：1. 实现四态状态机（离线/连接中/在线/断开中）；2. 状态迁移可序列化；3. 发状态事件；4. 通过事件校验；5. 多宿主可复用同一状态模型</p>
     <p><strong>约束</strong>：不得使用"视图模式"旧叫法；不得把渲染逻辑放进 Domain；不得直接依赖设备 I/O</p>
   </div>
   <div class="collab-card">

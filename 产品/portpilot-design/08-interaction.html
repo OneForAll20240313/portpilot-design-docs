@@ -236,7 +236,7 @@
     <tr><th>页签</th><th>类名</th><th>显隐规则</th></tr>
     <tr><td>字节流</td><td>vm-bytes</td><td>字节流模式显示，终端模式隐藏</td></tr>
     <tr><td>终端</td><td>vm-terminal</td><td>终端模式显示，字节流模式隐藏</td></tr>
-    <tr><td>协议</td><td>vm-protocol</td><td>始终显示</td></tr>
+    <tr><td>协议</td><td>vm-protocol</td><td>字节流模式显示，终端模式隐藏</td></tr>
   </table>
   </div>
 
@@ -275,8 +275,8 @@
         </div>
       </div>
       <div style="margin:0 14px 14px;font-size:12px;color:var(--muted);line-height:2">
-        <p><b style="color:var(--ink)">页签显隐</b>：字节流页签（vm-bytes）与终端页签（vm-terminal）按会话模式互斥显示，协议页签（vm-protocol）始终显示；点击页签切换视图并高亮。</p>
-        <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">V1</span> 视图页签：三视图互斥，当前视图 pri 高亮</p>
+        <p><b style="color:var(--ink)">页签显隐</b>：字节流页签（vm-bytes）与终端页签（vm-terminal）按会话模式互斥显示，协议页签（vm-protocol）随会话模式显隐（bytes 模式显示、terminal 模式隐藏）；点击页签切换视图并高亮。</p>
+        <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">V1</span> 视图页签：字节流/终端/协议三视图互斥，当前视图 pri 高亮</p>
         <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">V2</span> 返回视图按钮：打开模块时显示，点击还原 lastView</p>
         <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">V3</span> 内容区：随页签切换显示对应视图</p>
       </div>

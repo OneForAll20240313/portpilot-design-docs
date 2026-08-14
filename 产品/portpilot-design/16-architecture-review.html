@@ -257,7 +257,7 @@
     <tr><td>B3</td><td>命令</td><td>命令组 Update/Delete/List、命令增删改、宏播放/编辑/删除、脚本管理缺；循环开关无 API</td><td>D4</td></tr>
     <tr><td>B4</td><td>状态机</td><td>命令执行 done 态无出口——无 reset API、无 done→pending 路径，play 前置不含 done，完成即死锁</td><td>D5</td></tr>
     <tr><td>B5</td><td>分层</td><td>五层依赖方向定义矛盾（"上层依赖下层"与 DDD 依赖倒置"Core 实现 Domain 接口"相冲突）</td><td>D2</td></tr>
-    <tr><td>B6</td><td>归属</td><td>13.4 归裁定前提错误（与 11.4 事实矛盾）；13 章内部表格不一致；13/11 与 14 章组件集冲突</td><td>D2</td></tr>
+    <tr><td>B6</td><td>归属</td><td>13.3.4 归裁定前提错误（与 11.4 事实矛盾）；13 章内部表格不一致；13/11 与 14 章组件集冲突</td><td>D2</td></tr>
   </table>
   </div>
 
@@ -303,7 +303,7 @@
     <tr><td>B3 命令 CRUD</td><td><span class="badge b-ok">已修复</span></td><td>14.7 补 A-708~A-715（命令组/循环/宏播放删除/脚本管理）；契约同步</td></tr>
     <tr><td>B4 状态机死锁</td><td><span class="badge b-ok">已修复</span></td><td>14.7 补 A-712 reset，提供 done→pending 路径；events.md `cmd.stateChanged` 关联 A-712</td></tr>
     <tr><td>B5 分层矛盾</td><td><span class="badge b-ok">已修复</span></td><td>13.1/13.3/13.4 明确 DDD 依赖倒置：UI→Service→Domain 单向，Core 实现 Domain 接口</td></tr>
-    <tr><td>B6 归属</td><td><span class="badge b-ok">已修复</span></td><td>13.4 归裁定更正前提；13 章内部表格与 11/14 章组件集对齐</td></tr>
+    <tr><td>B6 归属</td><td><span class="badge b-ok">已修复</span></td><td>13.3.4 归裁定更正前提；13 章内部表格与 11/14 章组件集对齐</td></tr>
     <tr><td>M1 会话</td><td><span class="badge b-ok">已修复</span></td><td>14.2 补 A-209~A-213（listSessions/resetStats/exportLog/probePort/persistSessions）</td></tr>
     <tr><td>M2 字节流</td><td><span class="badge b-ok">已修复</span></td><td>14.3 补 A-306~A-309（clearBuffer/manageTag/setLineControl/runSendQuickCommand）</td></tr>
     <tr><td>M3 终端</td><td><span class="badge b-ok">已修复</span></td><td>14.6 补 A-609~A-611（manageQuickCommand/getHistory/runPlaceholder）</td></tr>

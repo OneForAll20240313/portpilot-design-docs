@@ -3,7 +3,7 @@
 <html lang="zh-CN"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PortPilot · 多设备调试与远程终端工作台</title>
+<title>PortPilot · 串口调试与终端工作台</title>
 <style>
 :root{
   --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#2d333b;
@@ -131,16 +131,14 @@ footer .f-text{color:var(--muted);font-size:12.5px;font-family:var(--mono)}
 
 <header class="hero">
   <div class="kicker">PortPilot · Product Overview</div>
-  <h1>多设备调试<br>与<span class="brand-hero">远程终端工作台</span></h1>
-  <p class="subtitle">一个工具，同时完成串口直连终端做远程调试、SSH 远程登录、命令自动化、多设备并行管理、协议解析与数据可视化、Web 远程访问。</p>
+  <h1>串口调试<br>与<span class="brand-hero">终端工作台</span></h1>
+  <p class="subtitle">一个工具，完成串口直连终端、命令自动化、多设备并行管理、协议解析与数据可视化。</p>
   <div class="tags">
     <span class="tag accent">串口终端</span>
-    <span class="tag">SSH 远程</span>
     <span class="tag">命令自动化</span>
     <span class="tag">多设备并行</span>
     <span class="tag">协议解析</span>
     <span class="tag">数据可视化</span>
-    <span class="tag">Web 访问</span>
   </div>
   <div class="actions">
     <a class="btn primary" href="#progress">查看项目进度</a>
@@ -150,12 +148,12 @@ footer .f-text{color:var(--muted);font-size:12.5px;font-family:var(--mono)}
 
 <section class="section" id="overview">
   <h2><span class="secnum">01</span>产品概述</h2>
-  <p class="lead">PortPilot 是一台"多设备调试与远程终端工作台"，把串口直连、SSH 远程、命令自动化、多设备并行、协议解析、Web 远程收进同一个工具。</p>
+  <p class="lead">PortPilot 是一台"串口调试与终端工作台"，把串口直连、命令自动化、多设备并行、协议解析、数据可视化收进同一个工具。</p>
   <div class="pillars">
     <div class="pillar">
       <div class="who">IDENTITY 01</div>
-      <h3>远程终端</h3>
-      <p>通过串口直连 Linux/嵌入式设备的串口控制台，或通过 SSH 登录远程主机，像坐在这台设备面前一样敲命令，完成远程调试。</p>
+      <h3>串口终端</h3>
+      <p>通过串口直连 Linux/嵌入式设备的串口控制台，像坐在这台设备面前一样敲命令，完成调试。</p>
     </div>
     <div class="pillar">
       <div class="who">IDENTITY 02</div>
@@ -172,22 +170,21 @@ footer .f-text{color:var(--muted);font-size:12.5px;font-family:var(--mono)}
 
 <section class="section" id="capabilities">
   <h2><span class="secnum">02</span>核心能力</h2>
-  <p class="lead">覆盖连接、解析、可视化到自动化与远程访问的完整调试链路。</p>
+  <p class="lead">覆盖连接、解析、可视化到自动化的完整调试链路。</p>
   <div class="grid">
-    <div class="card"><span class="pri">P0</span><h4>多连接类型</h4><p>串口、串口终端 Console、SSH、TCP/UDP Socket、Telnet，覆盖串口调试与远程终端场景。</p></div>
+    <div class="card"><span class="pri">P0</span><h4>多连接类型</h4><p>串口、串口终端 Console，覆盖串口调试与终端场景。</p></div>
     <div class="card"><span class="pri">P0</span><h4>协议解析</h4><p>通用与自定义协议、固定/可变长度、字段定义与组帧模板，原始字节转可读字段。</p></div>
     <div class="card"><span class="pri">P0</span><h4>数据可视化</h4><p>波形、3D 姿态等视图类型，与协议联动，自定义元素与主题。</p></div>
     <div class="card"><span class="pri">P0</span><h4>命令自动化</h4><p>命令组、脚本、SDK 接口、录制/播放宏，一键批量并行执行。</p></div>
     <div class="card"><span class="pri">P0</span><h4>会话管理</h4><p>多会话、多标签，模式互斥，状态驱动，缓冲随会话保存与切换。</p></div>
-    <div class="card"><span class="pri">P1</span><h4>Web 远程访问</h4><p>浏览器远程访问、多端会话、免装客户端，异地调试设备。</p></div>
-  </div>
+    </div>
 </section>
 
 <section class="section" id="architecture">
   <h2><span class="secnum">03</span>技术架构</h2>
   <p class="lead">基于领域驱动设计（DDD）的五层架构，核心逻辑可脱离 UI 独立编译与测试。</p>
   <div class="arch-layer">
-    <div class="al-head">UI 适配层 <span class="al-tag">GUI / TUI / WebUI</span></div>
+    <div class="al-head">UI 适配层 <span class="al-tag">GUI / TUI</span></div>
     <div class="al-body">SerialWorker 封装核心到 Qt 信号，多个宿主复用。</div>
   </div>
   <div class="arch-layer">
@@ -292,7 +289,7 @@ footer .f-text{color:var(--muted);font-size:12.5px;font-family:var(--mono)}
 <footer>
   <div class="inner">
     <span class="f-brand">PortPilot</span>
-    <span class="f-text">多设备调试与远程终端工作台 · 全部设计文档开源</span>
+    <span class="f-text">串口调试与终端工作台 · 全部设计文档开源</span>
     <span class="f-text">2026-08-14</span>
   </div>
 </footer>

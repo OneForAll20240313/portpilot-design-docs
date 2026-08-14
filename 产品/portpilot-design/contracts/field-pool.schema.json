@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "field-pool.schema.json",
   "title": "FieldPool",
-  "description": "字段池契约（05 章协议解析）。以「协议名.字段标识」为键的环形缓冲，默认 500 条。写入归协议模块，读取归可视化/命令模块。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "description": "字段池契约（03 章协议解析）。以「协议名.字段标识」为键的环形缓冲，默认 500 条。写入归协议模块，读取归可视化/命令模块。本契约是 SSOT。演进遵循 13.5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {

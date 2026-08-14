@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "terminal.schema.json",
   "title": "Terminal",
-  "description": "终端会话契约（05 章终端）。终端会话配置、换行/回显/编码设置。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "description": "终端会话契约（05 章终端）。终端会话配置、换行/回显/编码设置。本契约是 SSOT。演进遵循 13.5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -17,7 +17,12 @@
     "lineMode": {
       "type": "boolean",
       "default": true,
-      "description": "行模式：true=逐行回车发送，false=原始透传"
+      "description": "发送行模式：true=逐行回车发送，false=原始透传"
+    },
+    "autoWrap": {
+      "type": "boolean",
+      "default": true,
+      "description": "输出超宽时自动换行（对齐 05 章会话设置·自动换行）"
     },
     "echo": {
       "type": "boolean",

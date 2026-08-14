@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "route-state.schema.json",
   "title": "RouteState",
-  "description": "交互路由状态契约（08 章）。统一视图/模块互斥切换、lastView 返回档位、会话选择规则。本契约是 SSOT，其余文档仅引用。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "description": "交互路由状态契约（08 章）。统一视图/模块互斥切换、lastView 返回档位、会话选择规则。本契约是 SSOT，其余文档仅引用。演进遵循 13.5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {

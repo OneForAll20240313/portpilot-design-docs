@@ -45,7 +45,7 @@
 | A-308 | `void setLineControl(ConnectionId connId, LineControl control)` | `BUF_CONN_INVALID / BUF_CTRL_INVALID` | `buffer.lineControlChanged` |
 | A-309 | `void runSendQuickCommand(ConnectionId connId, QuickCommand cmd)` | `BUF_CONN_INVALID / BUF_SEND_FAILED` | `buffer.sent` |
 
-策略枚举：`ring|append|double`；溢出：`stop|dropOldest`。
+策略枚举：`ring|append|double`；溢出：`stop|drop-oldest|wrap`（对齐 buffer.schema.json `overflowPolicy`）。
 
 ## 3. ProtocolService（协议模块 / 03）
 
@@ -149,7 +149,7 @@ Python SDK（D-28/D-30），经 CommandService 转发，SDK 层不含设备 I/O�
 | A-805 | `void resetToDefault(string key)` | `CFG_KEY_NOT_FOUND` | `cfg.reset` |
 | A-806 | `void setTheme(ThemeId themeId)` | `CFG_THEME_INVALID` | `cfg.themeChanged` |
 
-Scope 属 Domain 层纯业务模型（13.4 裁定 SSOT，g/s/t 三级），持久化在 Core FileRepository。
+Scope 属 Domain 层纯业务模型（13.3.4 裁定 SSOT，g/s/t 三级），持久化在 Core FileRepository。
 
 ## 8. RouteService（交互路由模块 / 08）
 

@@ -42,3 +42,4 @@ PortPilot 串口调试工具的产品设计、架构设计与研发文档库，�
 ## 说明
 - 本仓库为纯文档仓库，不存放代码工程、构建产物与发行包。
 - 涉及代码工程（如 qtSerial）请访问对应源码仓库。
+- 品牌线说明：当前产品为 **PortPilot**（根版 `product-definition.html`，v2）。`product-definition-v3/v4/v5` 为前代 **SuperConnect** 命名线的历史归档版本，非 PortPilot 的演进版本，仅作过程留档，不作为当前需求依据。

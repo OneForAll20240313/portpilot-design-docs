@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "protocol.schema.json",
   "title": "Protocol",
-  "description": "协议定义契约（03 章）。协议是全局模板，不随会话隔离（D-44）。支持通用/自定义、固定/可变长度、字段定义。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "description": "协议定义契约（03 章）。协议是全局模板，不随会话隔离（D-44）。支持通用/自定义、固定/可变长度、字段定义。本契约是 SSOT。演进遵循 13.5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -74,8 +74,8 @@
           },
           "type": {
             "type": "string",
-            "enum": ["uint8", "uint16", "uint32", "int8", "int16", "int32", "float32", "double", "bytes", "ascii", "hex", "bitfield"],
-            "description": "字段类型"
+            "enum": ["uint8", "uint16", "uint32", "int8", "int16", "int32", "float32", "double", "bytes", "ascii", "hex", "bitfield", "bool"],
+            "description": "字段类型。bool 用于开关类显示（对齐 04 章类型映射：布尔→开关）"
           },
           "length": {
             "type": "integer",

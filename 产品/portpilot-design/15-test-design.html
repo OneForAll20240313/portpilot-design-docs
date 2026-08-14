@@ -96,7 +96,7 @@
   <div class="test-layer">
     <div class="tl-name">T3 · 端到端测试（E2E）</div>
     <div class="tl-desc">验证真实用户路径在宿主上完整跑通：新建会话→连接（fake 设备）→收发→协议解析→可视化→命令。用 FakeDevice 代替真实串口。</div>
-    <div class="tl-meta">对象：GUI/TUI/WebUI 宿主 + 核心全链路 · 工具：Qt Test（GUI）/ 脚本驱动（TUI）/ 浏览器自动化（WebUI）</div>
+    <div class="tl-meta">对象：GUI/TUI 宿主 + 核心全链路 · 工具：脚本驱动（GUI/TUI）</div>
   </div>
 
   <h3>2.1 测试分层与五层架构映射</h3>
@@ -121,7 +121,7 @@
     <tr><td>C++ 单元/契约</td><td>GoogleTest + GMock</td><td>单元测试、mock 依赖、参数化测试、断言</td><td>[Expert judgment] 选型确认</td></tr>
     <tr><td>Python SDK</td><td>pytest + pytest-mock</td><td>命令自动化 SDK 测试、get_field 联动、mock 返回</td><td>[Data-backed] 06 D-28/30</td></tr>
     <tr><td>Schema 校验</td><td>JSON Schema 校验器（jsonschema / 自研）</td><td>校验 session/protocol/visual/route-state 契约</td><td>[Data-backed] 12.8.1</td></tr>
-    <tr><td>GUI 宿主</td><td>Qt Test</td><td>UI 自动化、信号槽事件、渲染冒烟</td><td>[Expert judgment]</td></tr>
+    <tr><td>GUI 宿主</td><td>GoogleTest + 脚本驱动</td><td>UI 自动化、信号槽事件、渲染冒烟</td><td>[Expert judgment]</td></tr>
     <tr><td>TUI 宿主</td><td>FTXUI 脚本驱动 + 断言</td><td>全屏控件交互、四视图页签切换</td><td>[Data-backed] 10 章 D-47</td></tr>
     <tr><td>E2E 设备</td><td>FakeDevice（串口回环 mock）</td><td>模拟串口/网络收发，确定性数据注入</td><td>[Data-backed] 13.6 可移植性</td></tr>
     <tr><td>E2E 串口</td><td>虚拟串口对（Linux socat / Windows com0com）</td><td>测试程序与 B 端建立真实串口收发闭环，做端到端验证</td><td>[User decision] 13.2 持久化/13.6</td></tr>

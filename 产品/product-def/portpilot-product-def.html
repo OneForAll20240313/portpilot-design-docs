@@ -194,7 +194,7 @@
   <p class="lead">软件占满整个页面，采用固定高度组件 + 弹性工作区，整体最小尺寸约束，滚动条统一风格。</p>
 
   <h3>2.1 全屏布局</h3>
-  <p>软件<b>不再使用独立属性面板</b>，而是占满整个 Web 页面，无右侧大块留白。整体采用弹性（Flex）纵向结构：顶部栏 + 主体区 + 状态栏。</p>
+  <p>软件<b>不再使用独立属性面板</b>，而是占满整个应用窗口，无右侧大块留白。整体采用弹性（Flex）纵向结构：顶部栏 + 主体区 + 状态栏。</p>
   <table>
     <tr><th>区域</th><th>内容</th><th>高度/宽度</th></tr>
     <tr><td><strong>顶部栏</strong></td><td>Logo、版本标签、全局状态、手册/主题/新建入口</td><td>固定高 46px</td></tr>
@@ -283,8 +283,8 @@ graph TD
   <table>
     <tr><th>字段</th><th>选项</th><th>说明</th></tr>
     <tr><td>视图模式</td><td>字节流 / 终端</td><td>决定开放视图，必选，默认字节流。</td></tr>
-    <tr><td>连接类型</td><td>串口 / TCP / 蓝牙</td><td>连接方式。</td></tr>
-    <tr><td>端口 / 地址</td><td>COM3/COM4/COM5 等</td><td>串口或网络地址。</td></tr>
+    <tr><td>连接类型</td><td>串口</td><td>连接方式。</td></tr>
+    <tr><td>端口 / 地址</td><td>COM3/COM4/COM5 等</td><td>串口设备。</td></tr>
     <tr><td>波特率</td><td>115200 / 9600 / 57600 / 19200</td><td>默认 115200。</td></tr>
     <tr><td>会话名称</td><td>文本</td><td>默认如"新设备 · COM3"。</td></tr>
     <tr><td colspan="2">▸ 高级选项（折叠，默认展开后才显示）</td><td></td></tr>
@@ -355,7 +355,7 @@ graph TD
     <tr><td>校验位</td><td>None/Even/Odd</td><td>✘ 置灰</td></tr>
     <tr><td>缓冲策略</td><td>环形/追加/双缓冲</td><td>✔</td></tr>
     <tr><td>缓冲大小</td><td>16MB/1MB/4MB/64MB</td><td>✔</td></tr>
-    <tr><td>溢出策略</td><td>停止接收/丢弃最旧</td><td>✔</td></tr></table>
+    <tr><td>溢出策略</td><td>停止接收 / 丢弃最旧 / 环形覆盖</td><td>✔</td></tr></table>
   <div class="warn">在线会话：连接参数（端口/波特率/数据位/停止位/校验）不可修改，需先断开。离线会话：全部参数可修改。</div>
 
   <h3>4.3 通讯测试</h3>
@@ -599,7 +599,7 @@ graph TD
     <tr><td>主题外观</td><td>主题预设、自定义主色、背景图与蒙版。</td></tr>
     <tr><td>协议</td><td>默认 schema（全局）。</td></tr>
     <tr><td>命令自动化</td><td>默认循环间隔（全局）。</td></tr>
-    <tr><td>网络</td><td>Web 端口、断线重连（全局）。</td></tr>
+    <tr><td>网络</td><td>断线重连（全局）。</td></tr>
     <tr><td>系统</td><td>快捷键方案、日志级别、自动备份（全局）。</td></tr></table>
 
   <h3>12.2 作用域</h3>

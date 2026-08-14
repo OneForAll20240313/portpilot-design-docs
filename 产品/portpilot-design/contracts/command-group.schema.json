@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "command-group.schema.json",
   "title": "CommandGroup",
-  "description": "命令组契约（06 章命令自动化）。命令序列、循环、条件、延迟，随会话隔离。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "description": "命令组契约（06 章命令自动化）。命令序列、循环、条件、延迟，随会话隔离。本契约是 SSOT。演进遵循 13.5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -69,6 +69,11 @@
       "type": "boolean",
       "default": true,
       "description": "命令组是否启用"
+    },
+    "state": {
+      "type": "string",
+      "enum": ["pending", "running", "paused", "done", "error"],
+      "description": "命令组执行状态五态（对齐 events.md cmd.stateChanged 与 D-25）：pending=未执行，running=执行中，paused=暂停，done=完成，error=错误"
     },
     "createdAt": {
       "type": "integer",

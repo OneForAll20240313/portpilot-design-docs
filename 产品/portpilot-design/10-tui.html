@@ -679,14 +679,13 @@
 
 <section id="s13">
   <h2><span class="secnum">10.13</span>与其它宿主的关系</h2>
-  <p class="lead">TUI 与 Qt Widgets / Web / QML 共享同一核心，仅交互层不同。三者通过 <code>ui switch</code> 切换（重启进程）。</p>
+  <p class="lead">TUI 与 Qt Widgets 共享同一核心，仅交互层不同；Web 为范围外。宿主通过 <code>ui switch</code> 切换（重启进程）。</p>
   <div class="table-wrap">
   <table>
     <tr><th>宿主</th><th>交互</th><th>图形</th><th>场景</th><th>与 TUI 关系</th></tr>
     <tr><td>TUI</td><td>键盘 + 控件界面（FTXUI）</td><td>无（文本渲染）</td><td>无图形环境、脚本</td><td>本宿主</td></tr>
     <tr><td>Qt Widgets</td><td>鼠标/键盘</td><td>有</td><td>桌面</td><td>可切换</td></tr>
-    <tr><td>Web</td><td>浏览器</td><td>有</td><td>远程、嵌入</td><td>可切换</td></tr>
-    <tr><td>QML</td><td>触控/键盘</td><td>有</td><td>嵌入式触屏</td><td>可切换</td></tr></table>
+    <tr><td>QML</td><td>触控/键盘</td><td>有</td><td>嵌入式触屏（未来扩展）</td><td>未来可切换</td></tr></table>
   </div>
   <div class="note">切换宿主会重启进程（<code>ui switch</code>），当前会话状态不保留（见 09 D-46）。</div>
 </section>
@@ -717,15 +716,15 @@
   <div class="table-wrap">
   <table>
     <tr><th>编号</th><th>事项</th><th>问题 / 影响</th><th>建议方案</th><th>优先级</th></tr>
-    <tr><td>D-45</td><td>TUI 会话模型</td><td>TUI 单会话无模式，与 01 章会话体系不一致；v2 页签是否承载模式互斥</td><td>引入会话对象与模式，或作为无会话精简单机</td><td><span class="badge b-yellow">中</span></td></tr>
-    <tr><td>D-46</td><td>宿主切换状态保留</td><td><code>ui switch</code> 重启进程，当前会话状态不保留</td><td>切换时序列化会话配置以便恢复</td><td><span class="badge b-muted">低</span></td></tr>
+    <tr><td>D-45</td><td>TUI 会话模型</td><td>TUI 单会话无模式，与 01 章会话体系不一致；v2 页签是否承载模式互斥</td><td>引入会话对象与模式，或作为无会话精简单机</td><td><span class="badge b-yellow">中</span><span class="badge b-on">已采纳</span></td></tr>
+    <tr><td>D-46</td><td>宿主切换状态保留</td><td><code>ui switch</code> 重启进程，当前会话状态不保留</td><td>切换时序列化会话配置以便恢复</td><td><span class="badge b-muted">低</span><span class="badge b-on">已采纳</span></td></tr>
     <tr><td>D-47</td><td>TUI 输入事件驱动</td><td>v1 为 50ms 轮询 stdin；v2 需原始模式逐键读取</td><td>采用 FTXUI <code>ScreenInteractive</code> 事件循环（<code>Fullscreen()</code>+<code>Loop()</code>），跨平台封装事件读取，无需自写轮询或 QSocketNotifier</td><td><span class="badge b-accent">高</span><span class="badge b-on">已采纳</span></td></tr>
-    <tr><td>D-48</td><td>TUI 命令与自动化脚本关系</td><td>TUI 命令集与 06 章脚本语法重叠</td><td>确认两者语法是否统一</td><td><span class="badge b-yellow">中</span></td></tr>
-    <tr><td>D-50</td><td>终端 ANSI 回显渲染</td><td>设备返回含 ANSI 彩色/控制序列时，TUI 需解析并渲染或剥离</td><td>解析常见 ANSI（颜色/光标），其余剥离</td><td><span class="badge b-accent">高</span></td></tr>
-    <tr><td>D-51</td><td>渲染库选型（FTXUI）</td><td>渲染层采用 FTXUI 后需确认版本、许可证（MIT）、引入方式（单头文件内嵌 vs 包管理）</td><td>采纳 FTXUI，用 CMake FetchContent 或单头文件内嵌，锁定版本</td><td><span class="badge b-accent">高</span></td></tr>
-    <tr><td>D-52</td><td>可视化范围收敛</td><td>TUI 可视化仅接入官方支持（graph 波形 / gauge 柱状）；饼图、3D 需自绘或模拟属"造轮子"</td><td>v2.0 仅接波形 + 柱状；饼图/3D 暂缓，后续评估</td><td><span class="badge b-yellow">中</span></td></tr>
-    <tr><td>D-53</td><td>串口参数自动探测</td><td>未知设备参数需人工试配；PC 端无法直接测边沿，只能参数遍历 + 合理性判据</td><td>辅助功能，离线可检测；预留 <code>probe</code> 命令与 SerialWorker 参数可编程切换接口，算法已调研</td><td><span class="badge b-muted">低</span></td></tr>
-    <tr><td>D-54</td><td>可视化聚焦 / 测量范围</td><td>多面板并列关注单面板需放大测量；聚焦态需 Canvas 自绘游标，测量分级（单/双游标）与缩放粒度待定</td><td>总览→聚焦→测量三段式；v1 单游标读数，双游标（ΔT/频率）与时间窗缩放为增强项，接口预留</td><td><span class="badge b-yellow">中</span></td></tr></table>
+    <tr><td>D-48</td><td>TUI 命令与自动化脚本关系</td><td>TUI 命令集与 06 章脚本语法重叠</td><td>确认两者语法是否统一</td><td><span class="badge b-yellow">中</span><span class="badge b-on">已采纳</span></td></tr>
+    <tr><td>D-50</td><td>终端 ANSI 回显渲染</td><td>设备返回含 ANSI 彩色/控制序列时，TUI 需解析并渲染或剥离</td><td>解析常见 ANSI（颜色/光标），其余剥离</td><td><span class="badge b-accent">高</span><span class="badge b-on">已采纳</span></td></tr>
+    <tr><td>D-51</td><td>渲染库选型（FTXUI）</td><td>渲染层采用 FTXUI 后需确认版本、许可证（MIT）、引入方式（单头文件内嵌 vs 包管理）</td><td>采纳 FTXUI，用 CMake FetchContent 或单头文件内嵌，锁定版本</td><td><span class="badge b-accent">高</span><span class="badge b-on">已采纳</span></td></tr>
+    <tr><td>D-52</td><td>可视化范围收敛</td><td>TUI 可视化仅接入官方支持（graph 波形 / gauge 柱状）；饼图、3D 需自绘或模拟属"造轮子"</td><td>v2.0 仅接波形 + 柱状；饼图/3D 暂缓，后续评估</td><td><span class="badge b-yellow">中</span><span class="badge b-on">已采纳</span></td></tr>
+    <tr><td>D-53</td><td>串口参数自动探测</td><td>未知设备参数需人工试配；PC 端无法直接测边沿，只能参数遍历 + 合理性判据</td><td>辅助功能，离线可检测；预留 <code>probe</code> 命令与 SerialWorker 参数可编程切换接口，算法已调研</td><td><span class="badge b-muted">低</span><span class="badge b-on">已采纳</span></td></tr>
+    <tr><td>D-54</td><td>可视化聚焦 / 测量范围</td><td>多面板并列关注单面板需放大测量；聚焦态需 Canvas 自绘游标，测量分级（单/双游标）与缩放粒度待定</td><td>总览→聚焦→测量三段式；v1 单游标读数，双游标（ΔT/频率）与时间窗缩放为增强项，接口预留</td><td><span class="badge b-yellow">中</span><span class="badge b-on">已采纳</span></td></tr></table>
   </div>
 </section>
 

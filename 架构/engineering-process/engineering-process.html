@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SuperConnect 工程流程与审核机制</title>
+<title>PortPilot 工程流程与审核机制</title>
 <style>
 @font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Regular.ttf') format('truetype');font-weight:400;}
 @font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Bold.ttf') format('truetype');font-weight:700;}
@@ -122,7 +122,7 @@ sup a:hover{text-decoration:underline;}
 <header class="cover">
   <div class="wrap">
     <div class="kicker">Engineering Process · 工程流程与审核机制</div>
-    <h1>SuperConnect<br>研发流程与质量门禁</h1>
+    <h1>PortPilot<br>研发流程与质量门禁</h1>
     <p class="subtitle">把"需求—设计—开发—测试—发布—运营"的完整链路固化为可执行流程，为每个关键节点设置审核门禁，所有结论以可观测证据为准。</p>
     <div class="meta">
       <span>文档版本 <b>v1.0</b></span>
@@ -148,7 +148,7 @@ sup a:hover{text-decoration:underline;}
 <section id="s1">
   <div class="container">
     <h2><span class="secnum">01</span>流程总览</h2>
-    <p class="lead">SuperConnect 采用阶段门禁式的研发流程：每个阶段有明确的入口条件、产出物和出口标准，只有通过审核门禁才能进入下一阶段，避免缺陷向下游漂移。</p>
+    <p class="lead">PortPilot 采用阶段门禁式的研发流程：每个阶段有明确的入口条件、产出物和出口标准，只有通过审核门禁才能进入下一阶段，避免缺陷向下游漂移。</p>
 
     <div class="pipeline">
       <div class="pipe"><span class="step">01</span><h4>需求定义</h4><p>产品定义 / PRD，明确做什么</p><span class="arrow">→</span></div>
@@ -201,7 +201,7 @@ sup a:hover{text-decoration:underline;}
       </table>
     </div>
     <div class="callout">
-      <p><strong>技术选型锚点</strong>：本项目的技术栈已锁定（SSOT，与架构 13.2 同步）——GUI 用 Qt Widgets（Qt 6.8 LTS），TUI 用 FTXUI v7.0.3，构建用 CMake ≥ 3.28，C++17；Linux 编译器 GCC 13、Windows MSVC 2022；C++ 测试用 GoogleTest + GMock，Python SDK 测试用 pytest（Python 3.13.15）；持久化用 SQLite + 独立数据文件；端到端设备模拟用 FakeDevice + 虚拟串口（Linux socat / Windows com0com）。WebSocket 服务用 QWebSocketServer、前端图表用 ECharts/Three.js、前端框架 Vue3 作为 WebUI 宿主（范围收敛后为非核心项）。<sup><a href="#cite-1">[1]</a></sup></p>
+      <p><strong>技术选型锚点</strong>：本项目的技术栈已锁定（SSOT，与架构 13.2 同步）——GUI 用 Qt Widgets（Qt 6.8 LTS），TUI 用 FTXUI v7.0.3，构建用 CMake ≥ 3.28，C++17；Linux 编译器 GCC 13、Windows MSVC 2022；C++ 测试用 GoogleTest + GMock，Python SDK 测试用 pytest（Python 3.13.15）；持久化用 SQLite + 独立数据文件；端到端设备模拟用 FakeDevice + 虚拟串口（Linux socat / Windows com0com）。WebUI 及其配套技术栈（QWebSocketServer、ECharts/Three.js、Vue3）已随产品收敛为范围外，不进入当前研发范围。<sup><a href="#cite-1">[1]</a></sup></p>
     </div>
 
     <h3>2.3 迭代开发</h3>
@@ -220,7 +220,7 @@ sup a:hover{text-decoration:underline;}
       <table>
         <thead><tr><th>维度</th><th>内容</th></tr></thead>
         <tr><td>入口条件</td><td>迭代切片完成开发</td></tr>
-          <tr><td>关键活动</td><td>单元测试（核心层 GoogleTest + GMock）、集成测试、UI 验证（QML/Widgets/Web/TUI）、静态检查</td></tr>
+          <tr><td>关键活动</td><td>单元测试（核心层 GoogleTest + GMock）、集成测试、UI 验证（Widgets/TUI）、静态检查</td></tr>
           <tr><td>产出物</td><td>测试报告、质量门禁核验结果</td></tr>
           <tr><td>出口标准</td><td>测试全绿；静态检查无新增告警；运行无过滤输出无错误</td></tr>
       </table>
@@ -307,8 +307,7 @@ flowchart TD
     <div class="table-wrap">
       <table>
         <thead><tr><th>检查项</th><th>工具/手段</th><th>目标</th></tr></thead>
-        <tr><td>编译检查</td><td>CMake/qmake 构建</td><td>无 error，无 warning</td></tr>
-          <tr><td>QML 语法</td><td>qmllint（Qt6 自带）</td><td>无 error，warning 逐条说明</td></tr>
+        <tr><td>编译检查</td><td>CMake 构建</td><td>无 error，无 warning</td></tr>
           <tr><td>静态分析</td><td>clang-tidy / clang-format</td><td>无新增告警；代码风格统一</td></tr>
           <tr><td>编码规范</td><td>AGENTS.md / .clang-format</td><td>命名、缩进、注释符合规范</td></tr>
       </table>
@@ -319,8 +318,8 @@ flowchart TD
       <table>
         <thead><tr><th>测试层</th><th>范围</th><th>工具</th></tr></thead>
         <tr><td>单元测试</td><td>核心层（协议、缓冲、事件总线）</td><td>GoogleTest + GMock（15.3 SSOT）</td></tr>
-          <tr><td>集成测试</td><td>跨模块数据通路</td><td>QtTest</td></tr>
-          <tr><td>UI 验证</td><td>QML / Widgets / Web / TUI</td><td>截图、运行验证、浏览器测试</td></tr>
+          <tr><td>集成测试</td><td>跨模块数据通路</td><td>GoogleTest + GMock（15.3 SSOT）</td></tr>
+          <tr><td>UI 验证</td><td>Widgets / TUI</td><td>截图、运行验证、脚本驱动</td></tr>
           <tr><td>运行验证</td><td>--ui=各模式，不过滤输出</td><td>无 error 即可交付</td></tr>
       </table>
     </div>
@@ -411,12 +410,12 @@ flowchart TD
       <h2>Sources</h2>
       <ol>
         <li id="cite-1">
-          <span class="src-title">SuperConnect 项目仓库 &amp; 产品定义文档（项目内资产）。</span>
-          <span class="src-url">/workspace/product-definition/product-definition.html</span>
+          <span class="src-title">PortPilot 产品定义文档（项目内资产）。</span>
+          <span class="src-url">../../需求/product-definition/product-definition.html</span>
         </li>
       </ol>
     </div>
-    <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">SuperConnect 工程流程与审核机制 · v1.0 · 内部规范</p>
+    <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">PortPilot 工程流程与审核机制 · v1.0 · 内部规范</p>
   </div>
 </footer>
 

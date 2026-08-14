@@ -131,7 +131,7 @@
   </div>
 
   <h3>5.2.3 命令发送</h3>
-  <p>Enter 提交的命令通过当前会话连接发送到设备，设备返回内容追加到终端区。原型为模拟回显（内置命令表），真实实现对接串口/TCP 收发。</p>
+  <p>Enter 提交的命令通过当前会话连接发送到设备，设备返回内容追加到终端区。原型为模拟回显（内置命令表），真实实现对接串口收发（产品聚焦串口；TCP 为非核心范围，见需求收敛）。</p>
 </section>
 
 <section id="s3">
@@ -142,7 +142,7 @@
   <div class="table-wrap">
   <table>
     <tr><th>功能</th><th>入口</th><th>行为</th></tr>
-    <tr><td>编码选择</td><td>命令面板编码下拉</td><td>UTF-8 / ASCII / HEX，决定收发字节的编解码方式</td></tr>
+    <tr><td>编码选择</td><td>命令面板编码下拉</td><td>UTF-8 / GBK / ASCII / GB2312 / UTF-16，决定收发字节的编解码方式</td></tr>
     <tr><td>回显</td><td>命令面板"回显"按钮</td><td>切换本地回显：开启时输入内容回显到终端，关闭时隐藏（设计扩展，见 09）</td></tr>
     <tr><td>清屏</td><td>命令面板"清屏"按钮</td><td>清空终端区输出内容，保留提示符与输入行</td></tr>
     <tr><td>重置</td><td>命令面板"重置"按钮</td><td>重置终端状态：清空输出与输入缓冲，恢复初始提示符</td></tr>
@@ -296,10 +296,10 @@
     <tr><th>设置项</th><th>作用域</th><th>对终端的影响</th></tr>
     <tr><td>视图模式</td><td>会话</td><td>决定终端视图是否显示（bytes/terminal）</td></tr>
     <tr><td>自动换行</td><td>会话</td><td>终端输出超宽时是否自动换行</td></tr>
-    <tr><td>编码</td><td>会话/临时</td><td>终端收发字节的编解码（UTF-8/ASCII/HEX）</td></tr>
+    <tr><td>编码</td><td>会话/临时</td><td>终端收发字节的编解码（UTF-8/GBK/ASCII/GB2312/UTF-16）</td></tr>
     <tr><td>主题配色</td><td>全局</td><td>终端背景/文字/提示符颜色跟随主题（原型终端背景固定深色 #0a0e14）</td></tr>
     <tr><td>字体</td><td>全局</td><td>终端等宽字体与字号（原型 12px 等宽）</td></tr>
-    <tr><td>连接参数</td><td>会话</td><td>串口/TCP 连接参数决定终端收发通道</td></tr>
+    <tr><td>连接参数</td><td>会话</td><td>串口连接参数决定终端收发通道（TCP 为非核心范围，见需求收敛）</td></tr>
     <tr><td>回显</td><td>会话/临时</td><td>本地回显开关（设计扩展，见 09）</td></tr>
   </table>
   </div>
@@ -323,7 +323,7 @@
     <tr><td>终端页签入口</td><td>vm-terminal 页签按钮，随模式显隐</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>终端区（直接键入 + 回显）</td><td>term-area，termKey 处理按键</td><td class="st-have">已有</td><td>已实现（模拟回显）</td></tr>
     <tr><td>命令面板（快捷命令）</td><td>term-cmd-panel + tcp-grid 9 个命令</td><td class="st-have">已有</td><td>已实现</td></tr>
-    <tr><td>编码选择</td><td>命令面板编码下拉（UTF-8/ASCII/HEX）</td><td class="st-have">已有</td><td>已实现</td></tr>
+    <tr><td>编码选择</td><td>命令面板编码下拉（UTF-8/GBK/ASCII/GB2312/UTF-16）</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>清屏 / 重置</td><td>命令面板按钮</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>回显开关</td><td>命令面板"回显"按钮</td><td class="st-part">部分</td><td>按钮存在但无切换逻辑，需完善（见 09）</td></tr>
     <tr><td>自动换行</td><td>会话设置"自动换行"开关</td><td class="st-part">部分</td><td>设置项存在但无切换逻辑（与回显按钮同，见 09）</td></tr>

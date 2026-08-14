@@ -36,7 +36,7 @@
 | `buffer.sent` | `{ connectionId, bytes }` | 字节发送成功 | A-302/A-309 |
 | `buffer.searchDone` | `{ keyword, matches }` | 搜索完成 | A-304 |
 | `buffer.strategyChanged` | `{ strategy, size, overflow }` | 缓冲策略变更 | A-305 |
-| `buffer.overflow` | `{ connectionId, strategy, dropped }` | 缓冲溢出（环形丢弃最旧，overflow=dropOldest 时） | — |
+| `buffer.overflow` | `{ connectionId, strategy, dropped }` | 缓冲溢出（环形丢弃最旧，overflow=drop-oldest 时） | — |
 | `buffer.cleared` | `{ connectionId }` | 接收缓冲清空 | A-306 |
 | `buffer.tagChanged` | `{ tagId, def }` | 标签/调色板/高亮开关变更 | A-307 |
 | `buffer.lineControlChanged` | `{ connectionId, rts, dtr }` | RTS/DTR 电平控制变更 | A-308 |

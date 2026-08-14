@@ -92,7 +92,7 @@ code.k{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:12.5px;
 
 <section id="s1">
   <h2><span class="secnum">11.1</span>总纲与适用范围</h2>
-  <p class="lead">PortPilot 是一个功能完备的大型桌面串口调试工具，横跨 GUI / TUI / WebUI 三种宿主，包含会话、协议、可视化、命令自动化、终端、设置六大功能域。仅靠单一智能体难以在可接受周期内高质量落地，必须由多个智能体与人类并行共创。</p>
+  <p class="lead">PortPilot 是一个功能完备的大型桌面串口调试工具，横跨 GUI / TUI 双宿主（WebUI 已收敛为范围外，QML 为未来扩展），包含会话、协议、可视化、命令自动化、终端、设置六大功能域。仅靠单一智能体难以在可接受周期内高质量落地，必须由多个智能体与人类并行共创。</p>
 
   <h3>1.1 为什么需要治理</h3>
   <p>并行共创的收益是速度，代价是风险。不同智能体与不同人的理解能力、创作水平、上下文范围各不相同，若不加以约束，会出现四类典型问题：</p>
@@ -137,7 +137,7 @@ code.k{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:12.5px;
   <p>术语表、架构定义、接口契约、决策记录（09 章）是<b>唯一事实来源</b>。其他任何文档、代码注释、任务描述只能<b>引用</b>这些来源，不得<b>复制</b>其内容。复制会导致"改一处漏一处"的漂移。引用方式：链接到对应章节，或用稳定的术语名（以术语表为准）。</p>
 
   <h3>2.3 原则三：边界清晰，依赖单向</h3>
-  <p>基于限界上下文，每个模块有明确的所有者与边界。跨模块依赖必须单向且通过契约，禁止反向依赖与循环依赖。UI 只依赖 Service 接口，不直接触碰 Core 与 Domain 内部，这是三宿主可并行开发的根基。</p>
+  <p>基于限界上下文，每个模块有明确的所有者与边界。跨模块依赖必须单向且通过契约，禁止反向依赖与循环依赖。UI 只依赖 Service 接口，不直接触碰 Core 与 Domain 内部，这是多宿主可并行开发的根基。</p>
 
   <h3>2.4 原则四：先定完成，再谈合入</h3>
   <p>任何改动在合入前，必须满足该模块的<b>完成定义（DoD）</b>并通过<b>独立评审</b>。未通过门禁的改动不得进入主版本。评审由不参与该改动的独立智能体执行，用可观测手段核验，防止"自说自话"。</p>
@@ -175,7 +175,7 @@ code.k{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:12.5px;
     <tr><td><code class="k">宏 Macro</code></td><td>自动生成的命令组：录制操作序列（含命令与时间间隔）自动转为命令组，可编辑/播放/循环/删除。</td><td>—</td><td><span class="term-tag tt-ok">一致</span></td></tr>
     <tr><td><code class="k">命令集 CommandSet</code></td><td>TUI 的底层脚本接口命令，与 06 章命令自动化脚本存在重叠，降级为脚本接口与直通模式的等价表达。</td><td>命令模式</td><td><span class="term-tag tt-warn">消解</span></td></tr>
     <tr><td><code class="k">作用域 Scope</code></td><td>设置项生效范围：全局（g，跨会话持久化）、会话（s，随会话保存）、临时（t，不持久化）。</td><td>设置分组</td><td><span class="term-tag tt-ok">一致</span></td></tr>
-    <tr><td><code class="k">宿主 Host</code></td><td>交互层的实现载体，四种：TUI（FTXUI）、GUI（Qt Widgets）、Web（浏览器）、QML（嵌入式触屏）。共享同一核心。</td><td>交互层</td><td><span class="term-tag tt-ok">一致</span></td></tr>
+    <tr><td><code class="k">宿主 Host</code></td><td>交互层的实现载体，当前双宿主：TUI（FTXUI）、GUI（Qt Widgets），QML 为未来扩展（WebUI 范围外）。共享同一核心。</td><td>交互层</td><td><span class="term-tag tt-ok">一致</span></td></tr>
     <tr><td><code class="k">核心 Core</code></td><td>非交互层业务逻辑的统称，含 SerialWorker / ProtocolEngine；Session 为领域层聚合根（归属见 11.4）。所有宿主共用。</td><td>core/service</td><td><span class="term-tag tt-warn">消解</span></td></tr>
     <tr><td><code class="k">视图互斥 / 模块互斥</code></td><td>会话视图内字节流/终端/协议三视图互斥；模块页可视化/命令/设置互斥。</td><td>视图模式</td><td><span class="term-tag tt-ok">一致</span></td></tr>
   </table>
@@ -210,14 +210,14 @@ code.k{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:12.5px;
 
 <section id="s4">
   <h2><span class="secnum">11.4</span>分层与限界上下文</h2>
-  <p class="lead">项目采用 DDD 五层架构：UI / Service / Domain / Core + Plugin。依赖严格单向：UI → Service → Domain → Core；Core 实现 Domain 定义的接口；Plugin 挂载到 Service。这一分层是"<strong>当前三宿主（GUI/TUI/WebUI）+ QML 未来扩展，合计四宿主</strong>可并行开发"和"UI 非平台相关"的根基。</p>
+  <p class="lead">项目采用 DDD 五层架构：UI / Service / Domain / Core + Plugin。依赖严格单向：UI → Service → Domain → Core；Core 实现 Domain 定义的接口；Plugin 挂载到 Service。这一分层是"<strong>当前 GUI/TUI 双宿主 + QML 未来扩展</strong>可并行开发（WebUI 范围外）"和"UI 非平台相关"的根基。</p>
 
   <h3>4.1 五层定义</h3>
   <div class="layer-box">
     <div class="l-head">UI · 表现层（DDD 五层之 UI 表现层，非传统三层的表示层；非平台相关）</div>
     <div class="l-body">
-      <p>渲染与交互，只依赖 Service 接口，不直接触碰 Core 与 Domain 内部。<strong>当前三宿主</strong>（GUI/TUI/WebUI）可并行开发，QML 未来接入不影响，合计四宿主。</p>
-      <div class="l-items"><span>GUI (Qt Widgets)</span><span>TUI (FTXUI)</span><span>WebUI (浏览器)</span><span>QML (未来)</span></div>
+      <p>渲染与交互，只依赖 Service 接口，不直接触碰 Core 与 Domain 内部。<strong>当前双宿主</strong>（GUI/TUI）可并行开发，QML 未来接入不影响，WebUI 范围外。</p>
+      <div class="l-items"><span>GUI (Qt Widgets)</span><span>TUI (FTXUI)</span><span>QML (未来)</span></div>
     </div>
   </div>
   <div class="layer-box">
@@ -351,7 +351,7 @@ code.k{background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:12.5px;
     <div class="t-field"><div class="t-label">所属限界上下文</div><div class="t-val">可视化（VisualScene）</div></div>
     <div class="t-field"><div class="t-label">依存的契约</div><div class="t-val">visual-scene.schema.json（新增）；依赖 protocol.schema.json（只读）；依赖字段池服务接口（示例接口，实际签名以 service-api.md 契约为准）</div></div>
     <div class="t-field"><div class="t-label">相关术语</div><div class="t-val">数据源、字段池、波形图、VisualScene、节点连线（见 11.3 术语表）</div></div>
-    <div class="t-field"><div class="t-label">验收标准（DoD）</div><div class="t-val">1. 能创建 VisualScene 并添加场景元素；2. 能通过 Service 用例把字段绑定到元素；3. 绑定关系可序列化为 JSON 并反序列化还原；4. 通过 schema 校验；5. 三宿主（GUI/TUI/WebUI）复用同一场景模型</div></div>
+    <div class="t-field"><div class="t-label">验收标准（DoD）</div><div class="t-val">1. 能创建 VisualScene 并添加场景元素；2. 能通过 Service 用例把字段绑定到元素；3. 绑定关系可序列化为 JSON 并反序列化还原；4. 通过 schema 校验；5. 多宿主（GUI/TUI）复用同一场景模型</div></div>
     <div class="t-field"><div class="t-label">约束与禁项</div><div class="t-val">不得使用"折线图"旧叫法（统一为波形图）；不得把渲染逻辑放进 Domain；不得直接依赖 Core 设备接口</div></div>
     <div class="t-field"><div class="t-label">参考文件</div><div class="t-val">04-visualization.html (4.2.5)；09-decisions-fixed.html (D-07)；11-governance.html (11.3/11.4/11.5)</div></div>
   </div>

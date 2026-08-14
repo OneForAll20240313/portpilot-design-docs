@@ -64,7 +64,7 @@
     <tr><td>D-40</td><td>会话统计重置</td><td>01</td><td>RX/TX 计数与连接时长无清零入口</td><td>会话详情或右键菜单增加"重置统计"</td><td><span class="badge b-muted">低</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-41</td><td>复制/重命名交互方式</td><td>01</td><td>复制会话时：现有的 duplicateSession 只复制连接参数和缓冲参数（如波特率、数据位等），不复制显示设置（如主题、颜色），但用户可能期望连显示设置一起复制？重命名会话时：现在是用弹窗（prompt）输入新名称，但设计稿希望改成内联编辑（直接在名称上修改），哪种更符合直觉？</td><td>复制：只复制连接参数和缓冲参数，显示/主题等视觉配置不复制，跟随全局设置（这样复制的会话更像“新会话”，避免视觉混乱）；重命名：采用内联编辑，点击名称后直接编辑，回车确认（更流畅，符合现代软件习惯）</td><td><span class="badge b-accent">高</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-42</td><td>会话详情编辑入口</td><td>01</td><td>详情模态框仅只读，无编辑入口；VID:PID 仅串口有意义</td><td>按连接类型条件显示字段，可选增加编辑入口</td><td><span class="badge b-muted">低</span></td><td><span class="badge b-on">采纳</span></td></tr>
-    <tr><td>D-43</td><td>连接类型字段补入设置</td><td>01</td><td>新建会话有连接类型，会话设置弹窗/设置页无此字段，TCP/蓝牙无法改类型</td><td>连接类型字段补入会话设置</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>
+    <tr><td>D-43</td><td>连接类型字段补入设置</td><td>01</td><td>新建会话有连接类型，会话设置弹窗/设置页无此字段</td><td>连接类型字段补入会话设置；产品聚焦串口，连接类型固定为串口（TCP/蓝牙为非核心范围）</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-44</td><td>会话级数据隔离范围</td><td>01</td><td>协议 schema、可视化视图、命令组、宏是否随会话保存未明确</td><td>会话内所有数据隔离；协议是全局模板（自带全局特征），不随会话隔离，可导出到全局生效或仅当前会话使用</td><td><span class="badge b-accent">高</span></td><td><span class="badge b-on">采纳</span></td></tr></table>
   </div>
 </section>

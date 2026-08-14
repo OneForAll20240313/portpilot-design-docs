@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "visual-scene.schema.json",
   "title": "VisualScene",
-  "description": "可视化场景模型契约（04 章，D-07）。场景可序列化为 JSON。GUI 用 QtNodes 节点编辑器（D-35），TUI 收敛为波形图+柱状图（D-52），三宿主复用同一场景模型。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "description": "可视化场景模型契约（04 章，D-07）。场景可序列化为 JSON。GUI 用 QtNodes 节点编辑器（D-35），TUI 收敛为波形图+柱状图（D-52），多宿主复用同一场景模型（WebUI 范围外）。本契约是 SSOT。演进遵循 13.5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -23,8 +23,8 @@
           "id": { "type": "string", "description": "元素唯一标识" },
           "type": {
             "type": "string",
-            "enum": ["waveform", "bar"],
-            "description": "waveform=波形图，bar=柱状图（D-52 收敛范围）"
+            "enum": ["number", "gauge", "line", "bar", "switch", "attitude", "text", "waveform"],
+            "description": "元素类型：number=数值显示，gauge=仪表盘，line=折线图，bar=柱状图，switch=开关，attitude=3D姿态，text=文本显示，waveform=波形图（对齐 04 章 4.4.1 组件库；TUI 收敛为 waveform/bar，见 D-52）"
           },
           "dataSources": {
             "type": "array",

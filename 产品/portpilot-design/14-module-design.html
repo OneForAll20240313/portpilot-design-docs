@@ -695,7 +695,7 @@ fieldRef = "协议名.字段标识"</div>
         <li>字段绑定到元素，绑定可序列化/反序列化</li>
         <li>元素属性（刷新频率/量程/颜色/阈值）可配置</li>
         <li>通过 visual-scene.schema.json 校验</li>
-        <li>三宿主复用同一场景模型</li>
+        <li>多宿主复用同一场景模型</li>
       </ul>
       <p><span class="task-chip tc-new">L3-701 场景模型</span><span class="task-chip tc-w">L3-702 字段绑定</span><span class="task-chip tc-w">L3-703 渲染数据</span><span class="task-chip tc-w">L3-704 场景视图管理</span></p>
     </div>
@@ -1153,7 +1153,7 @@ Macro = 录制操作序列自动转命令组</div>
       <div class="note"><b>可测试性</b>：A-801/A-802/A-805/A-806 为三级作用域纯逻辑（Domain，Scope 对象），T1 单测覆盖 全局→会话覆盖→临时 解析与在线锁定；A-803/A-804 用内存/临时 FileRepository mock 断言持久化与恢复（15.5 mock 点）。</div>
       <h4>关键数据模型</h4>
       <div class="iface-block">SettingItem { name, options, scope: g|s|t, editableOnline }
-Scope { 全局 g / 会话 s / 临时 t }   // 属 Domain 层（13.4 裁定 SSOT）
+Scope { 全局 g / 会话 s / 临时 t }   // 属 Domain 层（13.3.4 裁定 SSOT）
 作用域规则: 全局默认->会话覆盖->临时不持久化
 Theme: 13 预设 + 自定义主色/背景图/蒙版 30-90%</div>
       <h4>关键时序：配置读取</h4>

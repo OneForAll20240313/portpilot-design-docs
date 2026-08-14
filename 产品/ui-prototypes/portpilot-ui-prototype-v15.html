@@ -727,7 +727,7 @@ code{font-family:var(--mono);background:var(--bg3);padding:1px 5px;border-radius
 </div>
 <div class="sf-item"><span class="sf-label">会话名称</span><div class="sf-control"><input type="text" id="smNameInput" value="设备 A · COM3"></div><span class="sf-scope s">会话</span></div>
 <div class="sf-item"><span class="sf-label">视图模式</span><div class="sf-control"><select id="smModeInput" onchange="applySessionModeChange()"><option value="bytes">字节流（字节流 + 协议）</option><option value="terminal">终端</option></select></div><span class="sf-scope s">会话</span></div>
-<div class="sf-item"><span class="sf-label">端口 / 地址</span><div class="sf-control"><select id="smPort" disabled=""><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option><option>COM5 · Bluetooth Serial</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">端口 / 地址</span><div class="sf-control"><select id="smPort" disabled=""><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option></select></div><span class="sf-scope s">会话</span></div>
 <div class="sf-item"><span class="sf-label">波特率</span><div class="sf-control"><select id="smBaud" disabled=""><option>115200</option><option>9600</option><option>57600</option><option>19200</option></select></div><span class="sf-scope s">会话</span></div>
 <div class="sf-item"><span class="sf-label">数据位</span><div class="sf-control"><select id="smDataBits" disabled=""><option>8</option><option>7</option><option>6</option><option>5</option></select></div><span class="sf-scope s">会话</span></div>
 <div class="sf-item"><span class="sf-label">停止位</span><div class="sf-control"><select id="smStopBits" disabled=""><option>1</option><option>1.5</option><option>2</option></select></div><span class="sf-scope s">会话</span></div>
@@ -784,7 +784,6 @@ code{font-family:var(--mono);background:var(--bg3);padding:1px 5px;border-radius
 </div>
 <div class="sf-group" id="sf-net" style="display:none">
 <div class="sf-title">网络</div>
-<div class="sf-item"><span class="sf-label">Web 端口</span><div class="sf-control"><input type="text" value="8080"></div><span class="sf-scope g">全局</span></div>
 <div class="sf-item"><span class="sf-label">断线重连</span><div class="sf-control"><div class="toggle on"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
 </div>
 <div class="sf-actions">
@@ -853,8 +852,8 @@ code{font-family:var(--mono);background:var(--bg3);padding:1px 5px;border-radius
 <div class="modal-header"><h3>新建会话</h3><button class="modal-close" type="button" onclick="closeNewSession()">×</button></div>
 <div class="modal-body">
 <div class="form-row"><label>视图模式</label><select id="nsMode"><option value="bytes">字节流（字节流 + 协议）</option><option value="terminal">终端</option></select></div>
-<div class="form-row"><label>连接类型</label><select id="nsType"><option>串口</option><option>TCP</option><option>蓝牙</option></select></div>
-<div class="form-row"><label>端口 / 地址</label><select id="nsPort"><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option><option>COM5 · Bluetooth Serial</option></select></div>
+<div class="form-row"><label>连接类型</label><select id="nsType"><option>串口</option></select></div>
+<div class="form-row"><label>端口 / 地址</label><select id="nsPort"><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option></select></div>
 <div class="form-row"><label>波特率</label><select id="nsBaud"><option>115200</option><option>9600</option><option>57600</option><option>19200</option></select></div>
 <div class="form-row"><label>会话名称</label><input type="text" id="nsName" value="新设备 · COM3"></div>
 <div class="adv-toggle" onclick="toggleAdv(this)"><span class="adv-arrow">▸</span> 高级选项</div>
@@ -905,7 +904,7 @@ code{font-family:var(--mono);background:var(--bg3);padding:1px 5px;border-radius
 </div>
 <div class="sf-item"><span class="sf-label">会话名称</span><div class="sf-control"><input type="text" id="ssNameInput"></div></div>
 <div class="sf-item"><span class="sf-label">视图模式</span><div class="sf-control"><select id="ssModeInput"><option value="bytes">字节流（字节流 + 协议）</option><option value="terminal">终端</option></select></div></div>
-<div class="sf-item"><span class="sf-label">端口 / 地址</span><div class="sf-control"><select id="ssPort"><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option><option>COM5 · Bluetooth Serial</option></select></div></div>
+<div class="sf-item"><span class="sf-label">端口 / 地址</span><div class="sf-control"><select id="ssPort"><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option></select></div></div>
 <div class="sf-item"><span class="sf-label">波特率</span><div class="sf-control"><select id="ssBaud"><option>115200</option><option>9600</option><option>57600</option><option>19200</option></select></div></div>
 <div class="sf-item"><span class="sf-label">数据位</span><div class="sf-control"><select id="ssDataBits"><option>8</option><option>7</option><option>6</option><option>5</option></select></div></div>
 <div class="sf-item"><span class="sf-label">停止位</span><div class="sf-control"><select id="ssStopBits"><option>1</option><option>1.5</option><option>2</option></select></div></div>
@@ -1248,7 +1247,7 @@ function communicationTest(){
  var port=document.getElementById('ssPort').value;
  var res=document.getElementById('ssTestResult');
  if(!res) return;
- var known=['COM3 · USB-SER (FTDI)','COM4 · USB Serial (CH340)','COM5 · Bluetooth Serial'];
+ var known=['COM3 · USB-SER (FTDI)','COM4 · USB Serial (CH340)'];
  if(known.indexOf(port)>-1){
   res.innerHTML='<span style="color:var(--accent2)">✓ 通讯正常，端口可打开</span>';
  } else {

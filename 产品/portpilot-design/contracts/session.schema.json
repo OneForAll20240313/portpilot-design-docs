@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "session.schema.json",
   "title": "Session",
-  "description": "会话聚合根契约。会话是 PortPilot 的最小工作单元，所有功能挂载其上。状态机四态见 D-38；连接参数在线不可改约束见各模块 DoD。本契约是 SSOT，其余文档仅引用。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "description": "会话聚合根契约。会话是 PortPilot 的最小工作单元，所有功能挂载其上。状态机四态见 D-38；连接参数在线不可改约束见各模块 DoD。本契约是 SSOT，其余文档仅引用。演进遵循 13.5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -27,11 +27,12 @@
     },
     "connectTarget": {
       "type": "object",
-      "description": "连接目标。串口或网络二选一，由 type 决定",
+      "description": "连接目标。产品聚焦串口（type=serial）；network 为预留扩展（TCP/IP 为非核心范围，见需求收敛）",
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["serial", "network"]
+          "enum": ["serial", "network"],
+          "description": "serial=串口（当前）；network=网络（预留扩展，非核心范围）"
         },
         "port": {
           "type": "string",
@@ -46,8 +47,9 @@
           "enum": [5, 6, 7, 8]
         },
         "stopBits": {
-          "type": "integer",
-          "enum": [1, 2]
+          "type": "number",
+          "enum": [1, 1.5, 2],
+          "description": "停止位（1 / 1.5 / 2，与 01/07/10 章枚举一致）。1.5 为合法串口停止位"
         },
         "parity": {
           "type": "string",
