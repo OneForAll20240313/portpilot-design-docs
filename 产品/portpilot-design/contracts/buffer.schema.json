@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "buffer.schema.json",
+  "title": "Buffer",
+  "description": "字节流缓冲契约（05 章）。缓冲随会话隔离，负责接收/发送数据的流转与节流。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "缓冲唯一标识（UUID）"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "所属会话 ID，缓冲随会话隔离"
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["rx", "tx"],
+      "description": "缓冲方向：rx=接收，tx=发送"
+    },
+    "capacity": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "缓冲容量（字节），默认 1MB"
+    },
+    "usedBytes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "当前已用字节数"
+    },
+    "overflowPolicy": {
+      "type": "string",
+      "enum": ["drop-oldest", "stop", "wrap"],
+      "description": "溢出策略：drop-oldest=丢弃最旧，stop=停止写入，wrap=环形覆盖"
+    },
+    "recording": {
+      "type": "object",
+      "description": "录制状态（可选，默认关闭）",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false, "description": "是否开启录制" },
+        "filePath": { "type": "string", "default": "", "description": "录制文件路径（recordings/<session>/<timestamp>.bin）" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["id", "sessionId", "direction", "capacity", "usedBytes", "overflowPolicy"],
+  "additionalProperties": true
+}

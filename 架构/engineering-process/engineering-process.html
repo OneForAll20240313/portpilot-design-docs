@@ -201,7 +201,7 @@ sup a:hover{text-decoration:underline;}
       </table>
     </div>
     <div class="callout">
-      <p><strong>技术选型锚点</strong>：本项目的既定选型方向已定——WebSocket 服务用 QWebSocketServer 替代手写 RFC6455，前端图表用 ECharts/Three.js，测试用 Catch2，前端框架 Vue3。<sup><a href="#cite-1">[1]</a></sup></p>
+      <p><strong>技术选型锚点</strong>：本项目的技术栈已锁定（SSOT，与架构 13.2 同步）——GUI 用 Qt Widgets（Qt 6.8 LTS），TUI 用 FTXUI v7.0.3，构建用 CMake ≥ 3.28，C++17；Linux 编译器 GCC 13、Windows MSVC 2022；C++ 测试用 GoogleTest + GMock，Python SDK 测试用 pytest（Python 3.13.15）；持久化用 SQLite + 独立数据文件；端到端设备模拟用 FakeDevice + 虚拟串口（Linux socat / Windows com0com）。WebSocket 服务用 QWebSocketServer、前端图表用 ECharts/Three.js、前端框架 Vue3 作为 WebUI 宿主（范围收敛后为非核心项）。<sup><a href="#cite-1">[1]</a></sup></p>
     </div>
 
     <h3>2.3 迭代开发</h3>
@@ -220,7 +220,7 @@ sup a:hover{text-decoration:underline;}
       <table>
         <thead><tr><th>维度</th><th>内容</th></tr></thead>
         <tr><td>入口条件</td><td>迭代切片完成开发</td></tr>
-          <tr><td>关键活动</td><td>单元测试（核心层 Catch2）、集成测试、UI 验证（QML/Widgets/Web/TUI）、静态检查</td></tr>
+          <tr><td>关键活动</td><td>单元测试（核心层 GoogleTest + GMock）、集成测试、UI 验证（QML/Widgets/Web/TUI）、静态检查</td></tr>
           <tr><td>产出物</td><td>测试报告、质量门禁核验结果</td></tr>
           <tr><td>出口标准</td><td>测试全绿；静态检查无新增告警；运行无过滤输出无错误</td></tr>
       </table>
@@ -318,7 +318,7 @@ flowchart TD
     <div class="table-wrap">
       <table>
         <thead><tr><th>测试层</th><th>范围</th><th>工具</th></tr></thead>
-        <tr><td>单元测试</td><td>核心层（协议、缓冲、事件总线）</td><td>Catch2（迁移自自研断言）</td></tr>
+        <tr><td>单元测试</td><td>核心层（协议、缓冲、事件总线）</td><td>GoogleTest + GMock（15.3 SSOT）</td></tr>
           <tr><td>集成测试</td><td>跨模块数据通路</td><td>QtTest</td></tr>
           <tr><td>UI 验证</td><td>QML / Widgets / Web / TUI</td><td>截图、运行验证、浏览器测试</td></tr>
           <tr><td>运行验证</td><td>--ui=各模式，不过滤输出</td><td>无 error 即可交付</td></tr>
@@ -385,7 +385,7 @@ flowchart TD
         <tr><td>固化文档</td><td>将本流程写入项目根 AGENTS.md，随代码库版本化</td><td>AGENTS.md 更新</td></tr>
           <tr><td>配置工具</td><td>落地 .clang-format、.clang-tidy、qmllint 检查脚本</td><td>静态检查配置</td></tr>
           <tr><td>接入 CI</td><td>CI 增加质量门禁：构建 + 单测 + 静态检查统一跑</td><td>CI 流水线</td></tr>
-          <tr><td>测试迁移</td><td>核心层断言从自研迁到 Catch2</td><td>测试框架统一</td></tr>
+          <tr><td>测试迁移</td><td>核心层断言统一到 GoogleTest + GMock（自研断言与历史断言迁移）</td><td>测试框架统一</td></tr>
           <tr><td>建立习惯</td><td>每个迭代结束跑一次门禁清单，形成肌肉记忆</td><td>流程常态化</td></tr>
       </table>
     </div>
@@ -395,7 +395,7 @@ flowchart TD
     <ol>
       <li><strong>固化 AGENTS.md</strong>——把评审机制、编码规范、门禁清单明文写入，这是零成本、即刻生效的一步。</li>
       <li><strong>CI 加门禁</strong>——把构建、单测、静态检查集中在 CI 里跑，让机器先于人工发现回归。</li>
-      <li><strong>测试迁移 Catch2</strong>——统一测试框架，为后续新功能的测试打底。</li>
+      <li><strong>测试迁移 GoogleTest</strong>——统一测试框架，为后续新功能的测试打底。</li>
       <li><strong>首个 P0 功能</strong>——用"命令组/循环批量"作为第一个跑通完整门禁的竖切，验证整个流程。</li>
     </ol>
 

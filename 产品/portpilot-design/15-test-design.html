@@ -124,11 +124,12 @@
     <tr><td>GUI 宿主</td><td>Qt Test</td><td>UI 自动化、信号槽事件、渲染冒烟</td><td>[Expert judgment]</td></tr>
     <tr><td>TUI 宿主</td><td>FTXUI 脚本驱动 + 断言</td><td>全屏控件交互、四视图页签切换</td><td>[Data-backed] 10 章 D-47</td></tr>
     <tr><td>E2E 设备</td><td>FakeDevice（串口回环 mock）</td><td>模拟串口/网络收发，确定性数据注入</td><td>[Data-backed] 13.6 可移植性</td></tr>
+    <tr><td>E2E 串口</td><td>虚拟串口对（Linux socat / Windows com0com）</td><td>测试程序与 B 端建立真实串口收发闭环，做端到端验证</td><td>[User decision] 13.2 持久化/13.6</td></tr>
     <tr><td>测试框架集成</td><td>CTest（CMake 内建）</td><td>注册测试用例、统一执行、CI 挂钩</td><td>[Data-backed] 13.2 构建 CMake</td></tr>
     <tr><td>覆盖率</td><td>gcov / lcov（C++）、coverage.py（Python）</td><td>行/分支覆盖率统计，DoD 量化</td><td>[Expert judgment]</td></tr></table>
   </div>
 
-  <div class="note"><b>工具链一致性</b>：测试工具在 15.3 为 SSOT。各模块不得自行引入其它测试框架，避免工具碎片化。具体版本随技术选型（13.2）锁定，未锁版本标 [To be confirmed]。</div>
+  <div class="note"><b>工具链一致性</b>：测试工具在 15.3 为 SSOT。各模块不得自行引入其它测试框架，避免工具碎片化。具体版本已随技术选型（13.2）锁定：Qt 6.8 LTS、FTXUI v7.0.3、CMake ≥ 3.28、GCC 13 / MSVC 2022、Python 3.13.15。</div>
 </section>
 
 <section id="s4">
@@ -240,6 +241,23 @@ fakeClock.advance(5s);             // 断线重连超时</div>
     <li><strong>工厂函数</strong>：提供 SessionFactory / ProtocolFactory 等，构造合法最小对象。</li>
     <li><strong>契约夹具</strong>：用符合 schema 的 JSON 夹具驱动解析测试，非法夹具驱动错误路径。</li>
     <li><strong>确定性字节流</strong>：FakeDevice 注入固定字节序列，断言解析结果。</li>
+  </ul>
+
+  <h3>6.5 虚拟串口（端到端串口闭环）</h3>
+  <p>串口收发是 T3 端到端测试的硬依赖：没有真实串口，无法自动化验证"应用通过真实 Qt SerialPort 收发数据"。FakeDevice 在接口层模拟，但验证不了 Qt SerialPort 驱动与真实串口协议栈。方案是引入<strong>虚拟串口对</strong>，建立"测试程序 ↔ 被测应用"的真实串口收发闭环：</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>平台</th><th>方案</th><th>用法</th></tr>
+    <tr><td>Linux</td><td>socat</td><td><code>socat -d -d pty,raw,echo=0 pty,raw,echo=0</code> 创建一对虚拟串口 <code>/dev/pts/N</code> 与 <code>/dev/pts/M</code>；被测应用连一端，测试程序连另一端，互相收发做闭环断言</td></tr>
+    <tr><td>Windows</td><td>com0com</td><td>安装后创建 <code>CNCA0 ↔ CNCB0</code> 虚拟串口对；被测应用连 <code>CNCA0</code>，测试连 <code>CNCB0</code></td></tr>
+    <tr><td>CI</td><td>系统内置</td><td>Linux CI 用 socat 预创建串口对；Windows CI 用 com0com 预装</td></tr>
+  </table>
+  </div>
+  <p><strong>分层策略</strong>：</p>
+  <ul>
+    <li><strong>单元/契约（T1/T2）</strong>：MockDevicePort / FakeDevice 注入确定性字节流，不触碰串口，快且稳定。</li>
+    <li><strong>端到端（T3）</strong>：虚拟串口对跑真实收发闭环，验证 Qt SerialPort 驱动、波特率/数据位/校验位配置、断线检测。</li>
+    <li><strong>职责划分</strong>：FakeDevice 负责"逻辑正确性"，虚拟串口负责"驱动与协议栈正确性"，两者互补，前者为默认，后者在 CI 冒烟阶段执行。</li>
   </ul>
 </section>
 

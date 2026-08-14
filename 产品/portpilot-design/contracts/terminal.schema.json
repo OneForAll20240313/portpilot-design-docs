@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "terminal.schema.json",
+  "title": "Terminal",
+  "description": "终端会话契约（05 章终端）。终端会话配置、换行/回显/编码设置。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "终端唯一标识（UUID）"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "所属会话 ID"
+    },
+    "lineMode": {
+      "type": "boolean",
+      "default": true,
+      "description": "行模式：true=逐行回车发送，false=原始透传"
+    },
+    "echo": {
+      "type": "boolean",
+      "default": true,
+      "description": "本地回显"
+    },
+    "encoding": {
+      "type": "string",
+      "enum": ["UTF-8", "GBK", "ASCII", "GB2312", "UTF-16"],
+      "default": "UTF-8",
+      "description": "字符编码"
+    },
+    "lineEnding": {
+      "type": "string",
+      "enum": ["CRLF", "LF", "CR", "none"],
+      "default": "CRLF",
+      "description": "发送行尾符"
+    },
+    "fontSize": {
+      "type": "integer",
+      "minimum": 8,
+      "maximum": 32,
+      "default": 13,
+      "description": "终端字号（可选）"
+    },
+    "scrollback": {
+      "type": "integer",
+      "minimum": 100,
+      "default": 5000,
+      "description": "回滚缓冲区行数"
+    }
+  },
+  "required": ["id", "sessionId"],
+  "additionalProperties": true
+}

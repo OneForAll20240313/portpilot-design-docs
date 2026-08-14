@@ -3,7 +3,7 @@
 <html lang="zh-CN"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SuperConnect 产品定义 v2</title>
+<title>PortPilot 产品定义 v2</title>
 <style>
 @font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Regular.ttf') format('truetype');font-weight:400;}
 @font-face{font-family:'InstrumentSans';src:url('./_shared/fonts/InstrumentSans-Bold.ttf') format('truetype');font-weight:700;}
@@ -122,10 +122,10 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
 <header class="cover">
   <div class="wrap">
     <div class="kicker">Product Definition v2 · 产品定义</div>
-    <h1>SuperConnect<br>多设备调试与远程终端工作台</h1>
-    <p class="subtitle">一个工具，同时完成"串口直连终端做远程调试、SSH 远程登录、命令自动化、多设备并行管理、协议解析与数据可视化、Web 远程访问"。</p>
+    <h1>PortPilot<br>串口调试与远程终端工作台</h1>
+    <p class="subtitle">一个工具，同时完成"串口直连终端做远程调试、命令自动化、多设备并行管理、协议解析与数据可视化"。</p>
     <div class="meta">
-      <span>版本 <b>v2.0</b></span><span>状态 <b>Draft</b></span><span>日期 <b>2026-08-13</b></span><span>定位 <b>产品身份与完整功能定义</b></span>
+      <span>版本 <b>v2.1</b></span><span>状态 <b>Draft</b></span><span>日期 <b>2026-08-14</b></span><span>定位 <b>产品身份与完整功能定义</b></span>
     </div>
   </div>
 </header>
@@ -148,17 +148,17 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
 <section id="s1">
   <div class="container">
     <h2><span class="secnum">01</span>产品定义</h2>
-    <p class="lead">明确我们到底是什么。SuperConnect 是一台"多设备调试与远程终端工作台"——把串口直连、SSH 远程、命令自动化、多设备并行、协议解析、Web 远程收进同一个工具。</p>
+    <p class="lead">明确我们到底是什么。PortPilot 是一台"串口调试与远程终端工作台"——把串口直连、命令自动化、多设备并行、协议解析与可视化收进同一个工具。产品已收敛聚焦串口功能，SSH 远程、Web 远程访问等不再作为核心范围。</p>
 
     <h3>1.1 一句话定位</h3>
-    <p>SuperConnect = <mark class="key">串口终端直连（如 MobaXterm 的串口终端）</mark> + <mark class="key">SSH 远程登录</mark> + <mark class="key">命令自动化</mark> + <mark class="key">多设备并行管理（如 SuperConnectX）</mark> + <mark class="key">串口协议解析与可视化</mark> + <mark class="key">Web 远程访问</mark>。</p>
+    <p>PortPilot = <mark class="key">串口终端直连（如 MobaXterm 的串口终端）</mark> + <mark class="key">命令自动化</mark> + <mark class="key">多设备并行管理</mark> + <mark class="key">串口协议解析与可视化</mark>。</p>
 
     <h3>1.2 三大身份支柱</h3>
     <div class="pillars">
       <div class="pillar">
         <div class="who">IDENTITY 01</div>
-        <h4>远程终端</h4>
-        <p>通过串口直连 Linux/嵌入式设备的串口控制台，或通过 SSH 登录远程主机，像坐在这台设备面前一样敲命令，完成远程调试。</p>
+        <h4>串口终端</h4>
+        <p>通过串口直连 Linux/嵌入式设备的串口控制台，像坐在这台设备面前一样敲命令，完成远程调试。</p>
       </div>
       <div class="pillar">
         <div class="who">IDENTITY 02</div>
@@ -174,10 +174,10 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
 
     <h3>1.3 目标用户与核心场景</h3>
     <div class="grid">
-      <div class="card"><h4>嵌入式 / Linux 开发者</h4><p>通过<b>串口直连设备终端</b>（console），或 SSH 登录开发板/服务器，远程敲命令、查日志、改配置。</p></div>
+      <div class="card"><h4>嵌入式 / Linux 开发者</h4><p>通过<b>串口直连设备终端</b>（console）远程敲命令、查日志、改配置。</p></div>
       <div class="card"><h4>硬件 / 测试工程师</h4><p>串口收发 + 协议解析 + 波形可视化验证传感器数据；命令自动化批量跑测试用例。</p></div>
       <div class="card"><h4>多设备运维团队</h4><p>同时连接多台设备，多标签 / 分屏 / 分组并行管理，一键向多台设备下发命令。</p></div>
-      <div class="card"><h4>远程调试团队</h4><p>设备在实验室、人在异地，用<b>浏览器远程</b>访问串口，多端会话、免装客户端。</p></div>
+      <div class="card"><h4>串口调试团队</h4><p>多设备、多协议同时调试，用统一的协议解析与可视化工具验证设备数据。</p></div>
     </div>
 
     <h3>1.4 核心使用流程</h3>
@@ -187,7 +187,7 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
     </div>
 
     <div class="callout ok">
-      <p><strong>差异化结论</strong>：MobaXterm 强在连接广度与终端集成，SuperConnectX 强在命令自动化与多标签，两者都缺"串口协议解析 + 数据可视化 + Web 远程"的组合。我们用这三者建立纵深，同时补齐竞品已有的连接与自动化能力。</p>
+      <p><strong>差异化结论</strong>：MobaXterm 强在连接广度与终端集成，SuperConnectX 强在命令自动化与多标签，两者都缺"串口协议解析 + 数据可视化"的深度组合。PortPilot 聚焦串口调试本业，用协议解析、数据可视化与命令自动化建立纵深。</p>
     </div>
   </div>
 </section>
@@ -204,7 +204,7 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
         <thead><tr><th>连接类型</th><th>场景</th><th>优先级</th><th>状态</th></tr></thead>
         <tr><td>串口调试</td><td>串口收发 + 协议解析 + 可视化</td><td><span class="tag p0">P0</span></td><td><span class="tag yes">已有</span></td></tr>
           <tr><td>串口终端（Console）</td><td>串口直连 Linux/嵌入式设备终端，远程调试</td><td><span class="tag p0">P0</span></td><td><span class="tag new">新增</span></td></tr>
-          <tr><td>SSH</td><td>SSH 远程登录主机，命令行操作</td><td><span class="tag p0">P0</span></td><td><span class="tag new">新增</span></td></tr>
+          <tr><td>SSH</td><td>SSH 远程登录主机，命令行操作（非核心范围，见收敛说明）</td><td><span class="tag p2">非核心</span></td><td><span class="tag new">新增</span></td></tr>
           <tr><td>TCP / UDP Socket</td><td>网络透传调试网络设备</td><td><span class="tag p1">P1</span></td><td><span class="tag new">新增</span></td></tr>
           <tr><td>Telnet</td><td>Telnet 连接网络设备</td><td><span class="tag p1">P1</span></td><td><span class="tag new">新增</span></td></tr>
       </table>
@@ -238,7 +238,8 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
       </table>
     </div>
 
-    <h3>2.4 SSH 连接</h3>
+    <h3>2.4 SSH 连接（非核心范围）</h3>
+    <div class="callout warn"><p><strong>范围收敛说明</strong>：按产品决策聚焦串口，SSH 远程登录<b>不在核心范围内</b>。本节保留作历史参考，不作为排期依据。</p></div>
     <div class="table-wrap">
       <table>
         <thead><tr><th>配置项</th><th>定义</th><th>默认</th></tr></thead>
@@ -268,13 +269,13 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
 <section id="s3">
   <div class="container">
     <h2><span class="secnum">03</span>终端与调试</h2>
-    <p class="lead">终端是日常接触最多的界面。串口终端与 SSH 终端共享同一套终端组件，串口调试拥有独立的收发与显示能力。</p>
+    <p class="lead">终端是日常接触最多的界面。串口终端（Console）与串口调试共享同一套收发与显示能力，聚焦串口调试场景。</p>
 
     <h3>3.1 终端显示</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>功能点</th><th>定义</th><th>优先级</th></tr></thead>
-        <tr><td>交互式终端</td><td>SSH / 串口终端支持方向键、Tab、Ctrl 组合键等交互</td><td><span class="tag p0">P0</span></td></tr>
+        <tr><td>交互式终端</td><td>串口终端支持方向键、Tab、Ctrl 组合键等交互</td><td><span class="tag p0">P0</span></td></tr>
           <tr><td>语法高亮</td><td>终端内容按规则着色，可自定义规则</td><td><span class="tag p1">P1</span></td></tr>
           <tr><td>编码切换</td><td>ASCII / UTF-8 / GB2312 / GBK / UTF-16</td><td><span class="tag p1">P1</span></td></tr>
           <tr><td>字体 / 字号</td><td>可配置字体、字号、行距</td><td><span class="tag p1">P1</span></td></tr>
@@ -421,20 +422,21 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
 <section id="s7">
   <div class="container">
     <h2><span class="secnum">07</span>Web 远程访问</h2>
-    <p class="lead">这是 <mark class="key">我们区别于所有竞品的最大差异化优势</mark>。竞品（MobaXterm / SuperConnectX）都是纯桌面应用，无法远程使用。我们要把它打磨到产品级。</p>
+    <div class="callout warn"><p><strong>范围收敛说明</strong>：按产品决策，本项目聚焦串口功能，Web 远程访问已<b>不在核心范围内</b>。本章保留作历史参考，不作为排期依据。</p></div>
+    <p class="lead">历史设计：Web 远程访问曾作为差异化设想（竞品均为纯桌面应用）。经范围收敛，本章所有功能点均<b>降级为非核心、不排期</b>，仅作未来扩展参考。</p>
 
-    <h3>7.1 核心能力</h3>
+    <h3>7.1 核心能力（历史，非核心范围）</h3>
     <div class="table-wrap">
       <table>
         <thead><tr><th>功能点</th><th>定义</th><th>优先级</th><th>状态</th></tr></thead>
-        <tr><td>浏览器远程连接</td><td>浏览器访问串口/终端，收发数据、看协议字段、看可视化</td><td><span class="tag p0">P0</span></td><td><span class="tag yes">已有</span></td></tr>
-          <tr><td>会话管理</td><td>显示浏览器连接数；无会话自动退出防资源泄漏</td><td><span class="tag p0">P0</span></td><td><span class="tag yes">已有</span></td></tr>
-          <tr><td>功能对齐桌面</td><td>Web 端补齐命令组、多标签、协议编辑、数据导出</td><td><span class="tag p0">P0</span></td><td><span class="tag new">增强</span></td></tr>
-          <tr><td>现代前端框架</td><td>Vue3 组件化，替代原生 JS 单文件</td><td><span class="tag p0">P0</span></td><td><span class="tag new">重构</span></td></tr>
-          <tr><td>成熟图表库</td><td>ECharts 替代手写 SVG，Three.js 替代伪 3D</td><td><span class="tag p0">P0</span></td><td><span class="tag new">重构</span></td></tr>
-          <tr><td>连接鉴权</td><td>token 鉴权，避免任意设备可开关串口</td><td><span class="tag p0">P0</span></td><td><span class="tag new">新增</span></td></tr>
-          <tr><td>断线重连 + 心跳</td><td>WebSocket 断线自动重连，网络抖动不掉数据</td><td><span class="tag p1">P1</span></td><td><span class="tag new">新增</span></td></tr>
-          <tr><td>移动端适配</td><td>手机/平板远程查看串口，响应式</td><td><span class="tag p2">P2</span></td><td><span class="tag new">新增</span></td></tr>
+        <tr><td>浏览器远程连接</td><td>浏览器访问串口/终端，收发数据、看协议字段、看可视化</td><td><span class="tag p2">非核心</span></td><td><span class="tag yes">已有</span></td></tr>
+          <tr><td>会话管理</td><td>显示浏览器连接数；无会话自动退出防资源泄漏</td><td><span class="tag p2">非核心</span></td><td><span class="tag yes">已有</span></td></tr>
+          <tr><td>功能对齐桌面</td><td>Web 端补齐命令组、多标签、协议编辑、数据导出</td><td><span class="tag p2">非核心</span></td><td><span class="tag new">增强</span></td></tr>
+          <tr><td>现代前端框架</td><td>Vue3 组件化，替代原生 JS 单文件</td><td><span class="tag p2">非核心</span></td><td><span class="tag new">重构</span></td></tr>
+          <tr><td>成熟图表库</td><td>ECharts 替代手写 SVG，Three.js 替代伪 3D</td><td><span class="tag p2">非核心</span></td><td><span class="tag new">重构</span></td></tr>
+          <tr><td>连接鉴权</td><td>token 鉴权，避免任意设备可开关串口</td><td><span class="tag p2">非核心</span></td><td><span class="tag new">新增</span></td></tr>
+          <tr><td>断线重连 + 心跳</td><td>WebSocket 断线自动重连，网络抖动不掉数据</td><td><span class="tag p2">非核心</span></td><td><span class="tag new">新增</span></td></tr>
+          <tr><td>移动端适配</td><td>手机/平板远程查看串口，响应式</td><td><span class="tag p2">非核心</span></td><td><span class="tag new">新增</span></td></tr>
       </table>
     </div>
   </div>
@@ -460,6 +462,7 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
     </div>
 
     <h3>8.2 连接设置</h3>
+    <p class="lead">串口连接设置为核心范围；下列 SSH 设置项为非核心（范围收敛），保留作历史参考。</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>设置项</th><th>定义</th><th>默认</th></tr></thead>
@@ -527,7 +530,7 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
       <table>
         <thead><tr><th>类别</th><th>设置项</th><th>定义</th><th>默认</th></tr></thead>
         <tr><td>网络</td><td>Web 端口</td><td>Web 服务监听端口</td><td>自动</td></tr>
-          <tr><td>网络</td><td>代理设置</td><td>SSH 等走系统代理开关</td><td>跟随系统</td></tr>
+          <tr><td>网络</td><td>代理设置</td><td>网络连接走系统代理开关（非核心范围）</td><td>跟随系统</td></tr>
           <tr><td>快捷键</td><td>快捷键映射</td><td>可自定义各动作的快捷键</td><td>内置默认</td></tr>
           <tr><td>更新</td><td>自动更新</td><td>应用内自动检测并安装更新</td><td>开启</td></tr>
           <tr><td>更新</td><td>更新通道</td><td>稳定版 / 测试版</td><td>稳定版</td></tr>
@@ -550,7 +553,7 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
     <div class="table-wrap">
       <table>
         <thead><tr><th>优先级</th><th>范围</th><th>功能清单</th></tr></thead>
-        <tr><td><span class="tag p0">P0</span></td><td>首版必须</td><td>全部现有功能 + 串口终端 + SSH + 命令组/循环批量 + Web 前端重构（框架/图表/鉴权）+ Web 功能对齐桌面</td></tr>
+        <tr><td><span class="tag p0">P0</span></td><td>首版必须</td><td>全部现有串口功能 + 串口终端 + 命令组/循环批量 + 协议解析与可视化</td></tr>
           <tr><td><span class="tag p1">P1</span></td><td>近期</td><td>多标签会话 + 分屏 + TCP/UDP/Telnet + CRC + 语法高亮 + 编码切换 + 配置导入导出 + 日志归档 + 多语言 + 断线重连</td></tr>
           <tr><td><span class="tag p2">P2</span></td><td>远期</td><td>宏录制 + 系统托盘 + 快捷键系统 + 自动更新 + 虚拟串口 + 移动端 + 分组管理 + TCP 服务端</td></tr>
       </table>
@@ -560,16 +563,31 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
     <div class="table-wrap">
       <table>
         <thead><tr><th>阶段</th><th>目标</th><th>关键交付</th></tr></thead>
-        <tr><td><strong>迭代 0</strong></td><td>固地基</td><td>AGENTS.md 固化流程；CI 加门禁；测试迁 Catch2；编码规范落地</td></tr>
-          <tr><td><strong>迭代 1</strong></td><td>补两入核心新能力</td><td>命令组/循环批量；Web 后端换 QWebSocketServer + 前端图表换 ECharts</td></tr>
-          <tr><td><strong>迭代 2</strong></td><td>串口终端 + SSH</td><td>串口直连 Linux 终端；SSH 远程登录；Web 加鉴权</td></tr>
+        <tr><td><strong>迭代 0</strong></td><td>固地基</td><td>AGENTS.md 固化流程；CI 加门禁；测试框架统一 GoogleTest + GMock + pytest；编码规范落地</td></tr>
+          <tr><td><strong>迭代 1</strong></td><td>补两入核心新能力</td><td>命令组/循环批量；协议解析与可视化进阶</td></tr>
+          <tr><td><strong>迭代 2</strong></td><td>串口终端深化</td><td>串口直连 Linux 终端；终端交互、编码与回显配置</td></tr>
           <tr><td><strong>迭代 3</strong></td><td>多设备 + 数据管理</td><td>多标签会话；分屏；CRC；配置导入导出；日志归档；断线重连</td></tr>
           <tr><td><strong>迭代 4</strong></td><td>系统集成</td><td>语法高亮；编码切换；快捷键；系统托盘；自动更新；多语言</td></tr>
       </table>
     </div>
 
     <div class="callout ok">
-      <p><strong>落地建议</strong>：迭代 1 的「命令组/循环批量」是投入产出比最高的功能补充；迭代 2 的「串口终端 + SSH」直接命中用户明确要的远程调试场景。建议优先排这两块。</p>
+      <p><strong>落地建议</strong>：迭代 1 的「命令组/循环批量」是投入产出比最高的功能补充；迭代 2 的「串口终端深化」直接命中用户明确要的串口调试场景。建议优先排这两块。</p>
+    </div>
+
+    <h3>9.3 验收标准（DoD）</h3>
+    <p class="lead">需求可测试性：每个 P0 功能必须有一条可验证的验收标准，作为"做完没有"的判定依据。验收标准直接驱动测试用例编写（见 15 章测试设计）。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>功能</th><th>验收标准（Given-When-Then）</th></tr></thead>
+        <tr><td>串口连接</td><td>给定一个可用串口设备，当用户选择串口与波特率并连接时，应建立连接并显示 online 状态；断开后回到 offline。</td></tr>
+        <tr><td>串口收发</td><td>给定已连接串口，当对端发送字节流时，应实时显示接收数据且不丢字节（高速 115200+ 波特率下同样成立）。</td></tr>
+        <tr><td>协议解析</td><td>给定一个已配置的二进制协议模板，当收到匹配帧时，应正确切分帧并提取字段到字段池，字段名与值符合模板定义。</td></tr>
+        <tr><td>数据可视化</td><td>给定字段池中的数值字段，当新建可视化场景并绑定该字段时，应实时绘制波形/柱状图，刷新率符合场景配置。</td></tr>
+        <tr><td>命令组/循环</td><td>给定一个含循环与延时的命令组，当执行时，应按序发送命令、按配置延时与循环，耗时与配置一致。</td></tr>
+        <tr><td>多设备并行</td><td>给定多台已连接设备，当向多台设备下发同一命令时，应并行执行且互不阻塞。</td></tr>
+        <tr><td>配置持久化</td><td>给定已保存的会话配置与协议模板，当重启应用后，应能正确从 SQLite 恢复，且升级到新版本 schema 后旧数据仍可读取（向前兼容）。</td></tr>
+      </table>
     </div>
   </div>
 </section>
@@ -581,10 +599,10 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
       <ol>
         <li id="cite-1"><span class="src-title">MobaXterm, Official Features.</span><a class="src-url" href="https://mobaxterm.mobatek.net/features.html" target="_blank" rel="noopener">https://mobaxterm.mobatek.net/features.html</a></li>
         <li id="cite-2"><span class="src-title">SuperStudio, SuperConnectX README &amp; version.md.</span><a class="src-url" href="https://github.com/SuperStudio/SuperConnectX" target="_blank" rel="noopener">https://github.com/SuperStudio/SuperConnectX</a></li>
-        <li id="cite-3"><span class="src-title">SuperConnect 项目仓库（技术栈与现有功能扫描）。</span><span class="src-url">/workspace/qtSerial</span></li>
+        <li id="cite-3"><span class="src-title">PortPilot 项目仓库（技术栈与现有功能扫描）。</span><span class="src-url">/workspace/qtSerial</span></li>
       </ol>
     </div>
-    <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">SuperConnect 产品定义 v2.0 · 内部文档</p>
+    <p style="margin-top:24px;color:var(--muted);font-size:.82rem;">PortPilot 产品定义 v2.1 · 内部文档</p>
   </div>
 </footer>
 

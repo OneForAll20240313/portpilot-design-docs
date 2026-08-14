@@ -105,25 +105,28 @@
 
 <section id="s2">
   <h2><span class="secnum">13.2</span>技术选型与理由</h2>
-  <p class="lead">每个技术选型都对应一个非功能约束。下表列出主要技术决策及其理由，未锁定的版本标 [To be confirmed]。</p>
+  <p class="lead">每个技术选型都对应一个非功能约束。下表列出主要技术决策及锁定的版本，作为研发构建环境的统一依据（SSOT，随工程流程文档同步）。</p>
 
   <div class="table-wrap">
   <table>
-    <tr><th>关注点</th><th>选型</th><th>理由（对应的非功能约束）</th><th>证据</th></tr>
-    <tr><td>GUI 宿主</td><td>Qt Widgets</td><td>成熟桌面框架，生态完善，支持 QtNodes 节点编辑器（D-35，关联 D-07）</td><td>[Data-backed] 09 D-35/D-07</td></tr>
-    <tr><td>TUI 宿主</td><td>FTXUI</td><td>纯 C++ 全屏控件库，事件驱动（D-47），MIT 许可（D-51）</td><td>[Data-backed] 09 D-47/D-51</td></tr>
-    <tr><td>WebUI 宿主</td><td>浏览器（远程嵌入）</td><td>远程访问能力，复用同一核心</td><td>[Expert judgment]</td></tr>
-    <tr><td>QML 宿主</td><td>Qt QML</td><td>嵌入式触屏，未来接入</td><td>[Hypothesis] 未来</td></tr>
-    <tr><td>可视化编辑器</td><td>QtNodes 节点编辑器</td><td>数据流范式、动态端口、多输入连接、JSON 场景保存（D-35，关联 D-07）</td><td>[Data-backed] 09 D-35/D-07</td></tr>
-    <tr><td>可视化渲染（TUI）</td><td>graph() + gauge</td><td>TUI 收敛为波形图+柱状图（D-52）</td><td>[Data-backed] 09 D-52</td></tr>
-    <tr><td>脚本引擎</td><td>Python SDK</td><td>命令自动化扩展（D-28/D-30），get_field 与字段池联动</td><td>[Data-backed] 09 D-28/D-30</td></tr>
-    <tr><td>事件循环</td><td>Core EventLoop</td><td>统一事件派发，TUI 用 ScreenInteractive（D-47）</td><td>[Data-backed] 09 D-47</td></tr>
-    <tr><td>构建</td><td>CMake</td><td>多宿主统一构建，FTXUI 用 FetchContent 或单头文件（D-51）</td><td>[Data-backed] 09 D-51</td></tr>
-    <tr><td>C++ 标准</td><td>C++17</td><td>成熟稳定、跨编译器一致，Qt/FTXUI 均原生支持；不引入过新特性以降低编译风险（D-51 可移植性）</td><td>[Expert judgment]</td></tr>
-    <tr><td>C++ 测试框架</td><td>GoogleTest + GMock</td><td>单元/契约测试、mock 依赖、覆盖断言（15.3 SSOT）</td><td>[Expert judgment] 15 章</td></tr>
-    <tr><td>Python 测试</td><td>pytest + pytest-mock</td><td>命令自动化 SDK 测试、get_field 联动（06 D-28/30）</td><td>[Data-backed] 06 D-28/30</td></tr>
-    <tr><td>测试集成</td><td>CTest（CMake 内建）</td><td>统一测试执行、CI 挂钩、覆盖率（15.3）</td><td>[Expert judgment] 15 章</td></tr>
-    <tr><td>E2E 设备</td><td>FakeDevice 串口回环 mock</td><td>模拟串口/网络收发，确定性数据注入（15.3）</td><td>[Data-backed] 13.6 可移植性</td></tr>
+    <tr><th>关注点</th><th>选型</th><th>版本（已锁定）</th><th>理由（对应的非功能约束）</th><th>证据</th></tr>
+    <tr><td>GUI 宿主</td><td>Qt Widgets</td><td>Qt 6.8 LTS</td><td>成熟桌面框架，LTS 五年支持，生态完善，支持 QtNodes 节点编辑器（D-35，关联 D-07）</td><td>[Data-backed] 09 D-35/D-07</td></tr>
+    <tr><td>TUI 宿主</td><td>FTXUI</td><td>v7.0.3</td><td>纯 C++ 全屏控件库，事件驱动（D-47），MIT 许可（D-51）</td><td>[Data-backed] 09 D-47/D-51</td></tr>
+    <tr><td>WebUI 宿主</td><td>浏览器（远程嵌入）</td><td>—（范围外，见需求收敛）</td><td>远程访问能力，复用同一核心</td><td>[Expert judgment]</td></tr>
+    <tr><td>QML 宿主</td><td>Qt QML</td><td>—（未来接入）</td><td>嵌入式触屏，未来接入</td><td>[Hypothesis] 未来</td></tr>
+    <tr><td>可视化编辑器</td><td>QtNodes 节点编辑器</td><td>随 Qt 6.8 生态</td><td>数据流范式、动态端口、多输入连接、JSON 场景保存（D-35，关联 D-07）</td><td>[Data-backed] 09 D-35/D-07</td></tr>
+    <tr><td>可视化渲染（TUI）</td><td>graph() + gauge</td><td>随 FTXUI v7.0.3</td><td>TUI 收敛为波形图+柱状图（D-52）</td><td>[Data-backed] 09 D-52</td></tr>
+    <tr><td>脚本引擎</td><td>Python SDK</td><td>Python 3.13.15</td><td>命令自动化扩展（D-28/D-30），get_field 与字段池联动</td><td>[Data-backed] 09 D-28/D-30</td></tr>
+    <tr><td>事件循环</td><td>Core EventLoop</td><td>—（自研，见 13.3）</td><td>统一事件派发，TUI 用 ScreenInteractive（D-47）</td><td>[Data-backed] 09 D-47</td></tr>
+    <tr><td>构建</td><td>CMake</td><td>≥ 3.28</td><td>多宿主统一构建，FTXUI 用 FetchContent 或单头文件（D-51）</td><td>[Data-backed] 09 D-51</td></tr>
+    <tr><td>Linux 编译器</td><td>GCC</td><td>GCC 13</td><td>Linux 编译工具链（Ubuntu 24.04 默认），与 C++17 兼容</td><td>[User decision]</td></tr>
+    <tr><td>Windows 编译器</td><td>MSVC</td><td>MSVC 2022（x64）</td><td>Qt for Windows 官方 Tier 1 参考工具链，与 Qt 官方二进制一致</td><td>[User decision]</td></tr>
+    <tr><td>C++ 标准</td><td>C++17</td><td>—</td><td>成熟稳定、跨编译器一致，Qt/FTXUI 均原生支持；不引入过新特性以降低编译风险（D-51 可移植性）</td><td>[Expert judgment]</td></tr>
+    <tr><td>C++ 测试框架</td><td>GoogleTest + GMock</td><td>随依赖拉取（FetchContent）</td><td>单元/契约测试、mock 依赖、覆盖断言（15.3 SSOT）</td><td>[User decision] 15 章</td></tr>
+    <tr><td>Python 测试</td><td>pytest + pytest-mock</td><td>随 Python 3.13.15</td><td>命令自动化 SDK 测试、get_field 联动（06 D-28/30）</td><td>[Data-backed] 06 D-28/30</td></tr>
+    <tr><td>测试集成</td><td>CTest（CMake 内建）</td><td>随 CMake ≥ 3.28</td><td>统一测试执行、CI 挂钩、覆盖率（15.3）</td><td>[User decision] 15 章</td></tr>
+    <tr><td>E2E 设备</td><td>FakeDevice + 虚拟串口</td><td>Linux socat / Windows com0com</td><td>模拟串口/网络收发，确定性数据注入（15.3）；虚拟串口对做端到端闭环</td><td>[User decision] 13.6 可移植性</td></tr>
+    <tr><td>持久化</td><td>SQLite + 数据文件</td><td>Qt 内置 QSqlDatabase</td><td>配置/用户数据落盘，零额外依赖；二进制流独立文件保存（13.5）</td><td>[User decision] 13.5</td></tr>
   </table>
   </div>
 </section>
@@ -238,6 +241,10 @@
     <tr><td>可视化场景</td><td>visual-scene.schema.json</td><td>可视化</td><td>场景元素、节点连线、绑定关系</td></tr>
     <tr><td>路由状态</td><td>route-state.schema.json</td><td>交互路由</td><td>currentView/currentModule/lastView</td></tr>
     <tr><td>字段池</td><td>FieldPool</td><td>协议（写入）/可视化·命令（读取）</td><td>"协议名.字段标识"，环形缓冲 500 条。写入归协议模块，读取归可视化/命令模块，数据结构由协议模块拥有</td></tr>
+    <tr><td>缓冲</td><td>Buffer</td><td>字节流</td><td>接收/发送缓冲，数据流转节流（05 章），随会话隔离</td></tr>
+    <tr><td>命令组</td><td>CommandGroup</td><td>命令自动化</td><td>命令序列、循环、条件、延迟，随会话隔离（06 章）</td></tr>
+    <tr><td>宏</td><td>Macro</td><td>命令自动化</td><td>录制/回放脚本，可绑定快捷键（06 章）</td></tr>
+    <tr><td>终端</td><td>Terminal</td><td>终端</td><td>终端会话配置、换行/回显/编码设置（05 章）</td></tr>
     <tr><td>设置项</td><td>Scope</td><td>设置</td><td>全局/会话/临时三级</td></tr>
   </table>
   </div>
@@ -251,6 +258,33 @@
     <li>会话内数据隔离；协议为全局模板。</li>
     <li>设置三级作用域：全局默认 → 会话覆盖 → 临时不持久化。</li>
     <li>所有 Schema 契约化，机器可校验。</li>
+  </ul>
+
+  <h3>5.4 存储设计（持久化）</h3>
+  <p>持久化采用<strong>SQLite + 独立数据文件</strong>双机制：结构化配置与用户数据存 SQLite，原始二进制数据流存独立文件。由 Core <code>FileRepository</code> 统一封装，可 mock（InMemory）做测试。</p>
+  <div class="table-wrap">
+  <table>
+    <tr><th>数据类别</th><th>存储载体</th><th>说明</th></tr>
+    <tr><td>应用配置</td><td>SQLite 表</td><td>会话连接参数、应用设置、UI 偏好、协议模板、可视化场景、命令组、宏</td></tr>
+    <tr><td>原始二进制流</td><td>独立 .bin 文件</td><td>高速串口收发大流量字节流不写入数据库，按会话落盘：<code>recordings/&lt;session&gt;/&lt;timestamp&gt;.bin</code>；SQLite 仅存文件路径 + 元数据（会话、时间戳、字节数）</td></tr>
+    <tr><td>录制/回放</td><td>独立 .bin + SQLite 索引</td><td>录制数据流文件化，回放按索引定位；避免数据库膨胀、拖慢高速写入</td></tr>
+  </table>
+  </div>
+  <p><strong>持久化要点</strong>：</p>
+  <ul>
+    <li>SQLite 用 Qt 内置 <code>QSqlDatabase</code>（SQLite 驱动），零额外依赖，单文件易迁移备份。</li>
+    <li>数据库文件位置：Linux <code>~/.config/portpilot/</code>，Windows <code>%APPDATA%/PortPilot/</code>（随 <code>QStandardPaths</code> 解析）。</li>
+    <li>二进制流不写 BLOB：高速数据量大会膨胀数据库、拖慢写入，故独立文件 + 元数据索引。</li>
+    <li>Schema 版本化：SQLite 表内建 <code>schema_version</code>，JSON 契约带 <code>version</code> 字段，升级时向前兼容（见 5.5 契约演进）。</li>
+  </ul>
+
+  <h3>5.5 契约演进（向前兼容）</h3>
+  <p>所有 JSON Schema 必须支持向前兼容的演进，保证升级不破坏已存数据与旧客户端。</p>
+  <ul>
+    <li><strong>只增不删</strong>：新增字段用 <code>optional</code>；禁止删除或重命名已发布字段。</li>
+    <li><strong>默认值</strong>：新增字段必须提供默认值，读旧数据时缺省可解析。</li>
+    <li><strong>version 语义</strong>：<code>version</code> 字段语义化版本；主版本变更走迁移，次版本只增可选字段。</li>
+    <li><strong>additionalProperties</strong>：解析方忽略未知字段，向前兼容；仅校验已知字段。</li>
   </ul>
 </section>
 

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "command-group.schema.json",
+  "title": "CommandGroup",
+  "description": "命令组契约（06 章命令自动化）。命令序列、循环、条件、延迟，随会话隔离。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "命令组唯一标识（UUID）"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "所属会话 ID，命令组随会话隔离"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "命令组显示名称"
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "description": "命令组说明（可选）"
+    },
+    "commands": {
+      "type": "array",
+      "description": "命令序列，按序执行",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "命令唯一标识" },
+          "type": {
+            "type": "string",
+            "enum": ["send", "wait", "loop", "condition", "sleep", "read"],
+            "description": "命令类型：send=发送，wait=等待，loop=循环，condition=条件，sleep=延时，read=读取"
+          },
+          "data": {
+            "type": "string",
+            "default": "",
+            "description": "send/read 的载荷（协议字段名或原始字节十六进制）"
+          },
+          "delayMs": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "description": "命令执行前延时（毫秒）"
+          },
+          "loopCount": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1,
+            "description": "loop 类型的循环次数"
+          },
+          "children": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/command" },
+            "default": [],
+            "description": "子命令（loop/condition 嵌套）"
+          }
+        },
+        "required": ["id", "type"],
+        "additionalProperties": true
+      }
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "命令组是否启用"
+    },
+    "createdAt": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "创建时间戳（毫秒）"
+    }
+  },
+  "required": ["id", "sessionId", "name", "commands", "createdAt"],
+  "additionalProperties": true,
+  "$defs": {
+    "command": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["send", "wait", "loop", "condition", "sleep", "read"]
+        },
+        "data": { "type": "string", "default": "" },
+        "delayMs": { "type": "integer", "minimum": 0, "default": 0 },
+        "loopCount": { "type": "integer", "minimum": 1, "default": 1 },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/command" },
+          "default": []
+        }
+      },
+      "required": ["id", "type"],
+      "additionalProperties": true
+    }
+  }
+}

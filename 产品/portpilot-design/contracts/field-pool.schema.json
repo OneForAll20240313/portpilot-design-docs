@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "field-pool.schema.json",
+  "title": "FieldPool",
+  "description": "字段池契约（05 章协议解析）。以「协议名.字段标识」为键的环形缓冲，默认 500 条。写入归协议模块，读取归可视化/命令模块。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "字段池唯一标识（UUID）"
+    },
+    "protocolName": {
+      "type": "string",
+      "description": "协议名，字段键前缀"
+    },
+    "capacity": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 500,
+      "description": "环形缓冲容量（字段条数）"
+    },
+    "fields": {
+      "type": "array",
+      "description": "当前缓冲的字段快照（用于序列化/回放）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "字段键，格式「协议名.字段标识」"
+          },
+          "value": {
+            "description": "字段值（数值/字符串/布尔）"
+          },
+          "timestamp": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "写入时间戳（毫秒）"
+          }
+        },
+        "required": ["key", "value", "timestamp"],
+        "additionalProperties": true
+      }
+    },
+    "stats": {
+      "type": "object",
+      "description": "字段池统计（可选）",
+      "properties": {
+        "totalWrites": { "type": "integer", "minimum": 0, "default": 0, "description": "累计写入次数" },
+        "dropped": { "type": "integer", "minimum": 0, "default": 0, "description": "溢出丢弃条数" },
+        "lastUpdated": { "type": "integer", "minimum": 0, "default": 0, "description": "最近更新时间戳（毫秒）" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["id", "protocolName", "capacity", "fields"],
+  "additionalProperties": true
+}

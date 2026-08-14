@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "visual-scene.schema.json",
   "title": "VisualScene",
-  "description": "可视化场景模型契约（04 章，D-07）。场景可序列化为 JSON。GUI 用 QtNodes 节点编辑器（D-35），TUI 收敛为波形图+柱状图（D-52），三宿主复用同一场景模型。本契约是 SSOT。",
+  "description": "可视化场景模型契约（04 章，D-07）。场景可序列化为 JSON。GUI 用 QtNodes 节点编辑器（D-35），TUI 收敛为波形图+柱状图（D-52），三宿主复用同一场景模型。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
   "version": "1.0.0",
   "type": "object",
   "properties": {
@@ -60,7 +60,7 @@
           }
         },
         "required": ["id", "type", "dataSources"],
-        "additionalProperties": false
+        "additionalProperties": true
       }
     },
     "connections": {
@@ -75,10 +75,10 @@
           "toPort": { "type": "string", "description": "目标端口" }
         },
         "required": ["fromNode", "toNode"],
-        "additionalProperties": false
+        "additionalProperties": true
       }
     }
   },
   "required": ["id", "name", "elements", "connections"],
-  "additionalProperties": false
+  "additionalProperties": true
 }

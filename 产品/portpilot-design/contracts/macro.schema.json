@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "macro.schema.json",
+  "title": "Macro",
+  "description": "宏契约（06 章命令自动化）。录制/回放脚本，可绑定快捷键。本契约是 SSOT。演进遵循 5.5 契约演进规范：只增不删、解析方忽略未知字段，向前兼容。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "宏唯一标识（UUID）"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "所属会话 ID，宏随会话隔离"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "宏显示名称"
+    },
+    "script": {
+      "type": "string",
+      "description": "宏脚本内容（命令自动化脚本语法，见 06 章）"
+    },
+    "shortcut": {
+      "type": "string",
+      "default": "",
+      "description": "绑定快捷键（可选），如 Ctrl+Shift+M"
+    },
+    "createdAt": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "创建时间戳（毫秒）"
+    }
+  },
+  "required": ["id", "name", "script", "createdAt"],
+  "additionalProperties": true
+}
