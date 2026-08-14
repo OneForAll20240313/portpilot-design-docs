@@ -68,7 +68,7 @@
               <div class="wf-tree">
                 <div class="trow"><span class="caret">▣</span> 数值显示</div>
                 <div class="trow"><span class="caret">◉</span> 仪表盘</div>
-                <div class="trow"><span class="caret">📈</span> 折线图</div>
+                <div class="trow"><span class="caret">📈</span> 波形图</div>
                 <div class="trow"><span class="caret">📊</span> 柱状图</div>
                 <div class="trow"><span class="caret">◐</span> 开关</div>
                 <div class="trow"><span class="caret">🔷</span> 3D 姿态</div>
@@ -143,7 +143,7 @@
     <tr><td>类型</td><td>uint8 / float32 / bool 等，决定可视化组件适配</td></tr>
     <tr><td>单位</td><td>°C / V / % 等（来自协议字段定义）</td></tr>
     <tr><td>当前值</td><td>最近一次解析值</td></tr>
-    <tr><td>历史值</td><td>环形缓冲，保留最近 N 条（默认 500，供折线图）</td></tr>
+    <tr><td>历史值</td><td>环形缓冲，保留最近 N 条（默认 500，供波形图）</td></tr>
     <tr><td>时间戳</td><td>每次更新记录时间，供时序展示</td></tr>
     <tr><td>更新计数</td><td>累计更新次数，供统计</td></tr>
   </table>
@@ -201,7 +201,7 @@
   </table>
   </div>
   <div class="note"><b>技术选型（D-07 / D-35 决策回填）</b>：节点式可视化采用 <b>QtNodes</b>（Qt 官方推荐的节点编辑器，菱形/数据流范式、支持动态端口、多输入连接、JSON 场景序列化），实现字段-元素连线与画布编排，避免自研连线交互以降低工作量。文本数据源（D-02 透传数据流 / 字符串字段）以 text 元素展示。</div>
-  <div class="note"><b>历史数据存储（D-08 决策回填）</b>：在协议解析处按协议保存历史数据，存储为<b>原始二进制</b>（尽量小、可回放），配合<b>环形缓冲</b>（字段池历史值默认 500 条）供折线图与回溯使用。历史数据随会话隔离保存（见 01 章 D-44）。</div>
+  <div class="note"><b>历史数据存储（D-08 决策回填）</b>：在协议解析处按协议保存历史数据，存储为<b>原始二进制</b>（尽量小、可回放），配合<b>环形缓冲</b>（字段池历史值默认 500 条）供波形图与回溯使用。历史数据随会话隔离保存（见 01 章 D-44）。</div>
 
   <h3>4.2.6 节点式可视化线框</h3>
   <div class="wf-wrap">
@@ -253,11 +253,11 @@
         </div>
       </div>
       <div style="margin:0 14px 14px;font-size:12px;color:var(--muted);line-height:2">
-        <p><b style="color:var(--ink)">节点式交互</b>：顶部"+ 添加数据源"弹出协议选择器，选定协议后展开全部字段；每个字段为出端口节点（右侧圆点）；拖动字段出端口 → 可视化元素输入端口建立连线；折线图多输入端口（连几条显示几条波形）；右键元素弹出配置菜单（数据源/量程/刷新频率/颜色）。</p>
+        <p><b style="color:var(--ink)">节点式交互</b>：顶部"+ 添加数据源"弹出协议选择器，选定协议后展开全部字段；每个字段为出端口节点（右侧圆点）；拖动字段出端口 → 可视化元素输入端口建立连线；波形图多输入端口（连几条显示几条波形）；右键元素弹出配置菜单（数据源/量程/刷新频率/颜色）。</p>
         <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">N1</span> 添加数据源：弹出协议选择器，选定后展开字段</p>
         <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">N2</span> 字段节点：每个字段一个出端口（圆点），可连线</p>
         <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">N3</span> 连线绑定：字段出端口 → 元素输入端口，可删除/重连</p>
-        <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">N4</span> 多输入点：折线图绑定多字段，连几条显示几条波形</p>
+        <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">N4</span> 多输入点：波形图绑定多字段，连几条显示几条波形</p>
         <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">N5</span> 右键菜单：数据源 / 量程 / 刷新频率 / 颜色</p>
         <p><span class="wf-anno" style="position:static;display:inline-block;margin:2px 0">N6</span> 端口坐标（画布 640×360，viewBox 同）：数据源节点左 20 宽 200（右缘 x220），头部 line-height 20px + padding 6px、字段行 line-height 20px + padding 4px → 字段区自 y56 起，每行高 28px；temperature 出端口 (220,70)、humidity (220,98)；温度元素右 24 宽 150（左缘 x466）输入端口 (466,70)；曲线元素右 24 宽 170（左缘 x446）输入端口 (446,180)。连线终点精确落于输入端口圆点
       </div>
@@ -414,12 +414,11 @@
     <tr><th>组件</th><th>图标</th><th>用途</th><th>适配数据源</th></tr>
     <tr><td>数值显示</td><td>▣</td><td>大号数值 + 单位</td><td>数值 / 字符串</td></tr>
     <tr><td>仪表盘</td><td>◉</td><td>半圆仪表，带量程</td><td>数值（需量程）</td></tr>
-    <tr><td>折线图</td><td>📈</td><td>历史值时序曲线</td><td>数值（需历史）</td></tr>
+    <tr><td>波形图</td><td>📈</td><td>历史时序曲线（字段池历史值，实时刷新）</td><td>数值（需历史）</td></tr>
     <tr><td>柱状图</td><td>📊</td><td>多字段对比</td><td>数值数组</td></tr>
     <tr><td>开关</td><td>◐</td><td>布尔状态显示</td><td>布尔</td></tr>
     <tr><td>3D 姿态</td><td>🔷</td><td>设备姿态立方体</td><td>欧拉角 / 四元数</td></tr>
     <tr><td>文本显示</td><td>🅣</td><td>字符串/字符数据显示</td><td>字符串</td></tr>
-    <tr><td>波形图</td><td>〰</td><td>实时波形数据（TUI 收敛为波形图+柱状图，见 D-52）</td><td>数值（需历史）</td></tr>
   </table>
   </div>
 
@@ -476,7 +475,7 @@
             <div style="margin-bottom:6px"><span style="color:var(--muted)">量程（仪表盘）</span><br><span style="display:flex;gap:4px;margin-top:3px"><span class="wf-input" style="flex:1">min: 0</span><span class="wf-input" style="flex:1">max: 100</span></span></div>
             <div style="margin-bottom:6px"><span style="color:var(--muted)">单位</span><br><span class="wf-input" style="width:100%;margin-top:3px">°C</span></div>
             <div style="margin-bottom:6px"><span style="color:var(--muted)">小数位数</span><br><span class="wf-select" style="width:100%;margin-top:3px">1 ▾</span></div>
-            <div style="margin-bottom:6px"><span style="color:var(--muted)">历史点（折线图）</span><br><span class="wf-input" style="width:100%;margin-top:3px">500</span></div>
+            <div style="margin-bottom:6px"><span style="color:var(--muted)">历史点（波形图）</span><br><span class="wf-input" style="width:100%;margin-top:3px">500</span></div>
           </div>
         </div>
       </div>
@@ -648,7 +647,7 @@
     <tr><td>保存画布 / 应用</td><td>画布工具栏按钮</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>刷新频率</td><td>属性面板下拉（1s/500ms）</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>文本提取 / 原始字节 / 计算字段数据源</td><td>无</td><td class="st-part">扩展</td><td>三类数据源本身为设计扩展项（见 4.2.1/09 D-07）；节点式连线机制线框已补（见 4.2.6），文本数据源以 text 元素展示</td></tr>
-    <tr><td>字段池历史值（折线图数据）</td><td>无</td><td class="st-have">已有</td><td>协议处按协议保存二进制历史 + 环形缓冲（默认 500 条），见 09 D-08；属性面板历史点配置见 4.4.4</td></tr>
+    <tr><td>字段池历史值（波形图数据）</td><td>无</td><td class="st-have">已有</td><td>协议处按协议保存二进制历史 + 环形缓冲（默认 500 条），见 09 D-08；属性面板历史点配置见 4.4.4</td></tr>
     <tr><td>全屏 / 画布缩放 / 大画布</td><td>无</td><td class="st-miss">缺失</td><td>已采纳（见 09 D-09）：全屏 + 50%–200% 缩放 + 可滚动大画布</td></tr>
     <tr><td>聚焦 / 测量（游标读数）</td><td>无</td><td class="st-have">已有</td><td>线框已补（见 4.3.5）：总览 → 聚焦 → 测量三段式（见 09 D-54）</td></tr>
     <tr><td>自定义元素（模板/JS）</td><td>无</td><td class="st-have">已有</td><td>线框已补（见 4.6.4）：导入/导出/注册 + JS 安全确认（见 09 D-10/D-14）</td></tr>

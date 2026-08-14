@@ -89,7 +89,7 @@
   <table>
     <tr><th>编号</th><th>事项</th><th>来源</th><th>问题 / 影响</th><th>建议方案</th><th>优先级</th><th>决策</th></tr>
     <tr><td>D-07</td><td>文本提取 / 原始字节 / 计算字段数据源</td><td>04</td><td>仅字段池一种数据源，文本协议无法可视化</td><td>数据源基于协议结构：视图加"添加数据源"按钮选协议，字段与可视化元素连线绑定；元素支持多输入点接收多字段，波形图绑定字段无上限（几条显示几条）；文本协议出 text 显示</td><td><span class="badge b-accent">高</span></td><td><span class="badge b-on">采纳</span></td></tr>
-    <tr><td>D-08</td><td>字段池历史值（折线图数据）</td><td>04</td><td>折线图无历史数据来源</td><td>按协议保存历史数据（二进制 + 环形缓冲），字段池维护环形缓冲（默认 500 条）</td><td><span class="badge b-accent">高</span></td><td><span class="badge b-on">采纳</span></td></tr>
+    <tr><td>D-08</td><td>字段池历史值（波形图数据）</td><td>04</td><td>波形图无历史数据来源</td><td>按协议保存历史数据（二进制 + 环形缓冲），字段池维护环形缓冲（默认 500 条）</td><td><span class="badge b-accent">高</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-09</td><td>全屏 / 画布缩放 / 大画布</td><td>04</td><td>详细视图能力缺失</td><td>全屏模式 + 50%–200% 缩放 + 可滚动大画布</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-10</td><td>自定义可视化元素</td><td>04</td><td>组件库固定 6 类，无法扩展</td><td>组合元素 / HTML 模板 / JS 脚本组件</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-11</td><td>阈值告警</td><td>04</td><td>数值超阈值无视觉提示</td><td>组件配置阈值，超限变色</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>
@@ -107,7 +107,7 @@
     <tr><th>编号</th><th>事项</th><th>来源</th><th>问题 / 影响</th><th>建议方案</th><th>优先级</th><th>决策</th></tr>
     <tr><td>D-16</td><td>回显开关切换逻辑</td><td>05</td><td>"回显"按钮无切换逻辑</td><td>实现本地回显开关</td><td><span class="badge b-accent">高</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-17</td><td>自动换行切换逻辑</td><td>05</td><td>"自动换行"设置项无切换逻辑</td><td>实现换行开关</td><td><span class="badge b-accent">高</span></td><td><span class="badge b-on">采纳</span></td></tr>
-    <tr><td>D-18</td><td>自定义快捷命令</td><td>05</td><td>命令面板固定 9 个命令</td><td>支持增删改快捷命令</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>
+    <tr><td>D-18</td><td>自定义快捷命令</td><td>05</td><td>快捷命令固定 9 个命令</td><td>支持增删改快捷命令</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-19</td><td>参数占位符交互</td><td>05</td><td>ping {ip} 为静态展示</td><td>点击占位符弹出参数输入</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-20</td><td>危险命令确认</td><td>05</td><td>reboot 直接发送无确认</td><td>命令白名单机制：危险命令列入 dangercmdlist，默认二次确认；用户可将命令加入白名单豁免确认</td><td><span class="badge b-accent">高</span></td><td><span class="badge b-on">采纳</span></td></tr>
     <tr><td>D-21</td><td>终端历史 / 上下键</td><td>05</td><td>无法回溯历史命令</td><td>命令历史 + ↑/↓ 键回溯</td><td><span class="badge b-yellow">中</span></td><td><span class="badge b-on">采纳</span></td></tr>

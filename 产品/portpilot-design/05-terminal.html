@@ -34,7 +34,7 @@
 <header class="cover">
   <div class="kicker">Chapter 05 · 终端</div>
   <h1>终端界面</h1>
-  <p class="sub">终端界面提供类 Shell 的直接键入与回显能力，面向设备命令行交互。本章理清终端操作方式、功能定义、命令面板与全局设置影响。</p>
+  <p class="sub">终端界面提供类 Shell 的直接键入与回显能力，面向设备命令行交互。本章理清终端操作方式、功能定义、快捷命令与全局设置影响。</p>
   <div class="meta">
     <span class="chip">重点：操作方式与全局影响</span>
     <span class="chip">参考原型 v15</span>
@@ -43,7 +43,7 @@
 
 <section id="s1">
   <h2><span class="secnum">05.1</span>终端模块总览</h2>
-  <p class="lead">终端是会话的第二种视图模式（<code>terminal</code>），与字节流模式互斥。会话模式切换后，终端视图自动显示。</p>
+  <p class="lead">终端是会话的两种模式之一（<code>terminal</code>），与字节流模式互斥。会话模式切换到 terminal 后，终端视图自动显示。</p>
 
   <h3>5.1.1 入口与开放条件</h3>
   <div class="table-wrap">
@@ -51,7 +51,7 @@
     <tr><th>项</th><th>定义</th></tr>
     <tr><td>入口</td><td>会话视图页签"终端"（位于字节流/协议页签旁，随模式显隐）</td></tr>
     <tr><td>开放条件</td><td>会话模式为 <code>terminal</code> 时显示；<code>bytes</code> 模式隐藏</td></tr>
-    <tr><td>模式切换</td><td>会话设置"视图模式"下拉切换 bytes / terminal，切换后视图立即生效</td></tr>
+    <tr><td>模式切换</td><td>会话设置"会话模式"下拉切换 bytes / terminal，切换后视图立即生效</td></tr>
     <tr><td>模式互斥</td><td>字节流 / 终端 / 协议三视图互斥，同一时刻仅显示一个</td></tr>
     <tr><td>可视化入口</td><td>终端模式下"可视化"按钮隐藏（可视化仅字节流模式开放）</td></tr>
   </table>
@@ -59,7 +59,7 @@
 
   <h3>5.1.2 界面线框原型（纵向布局）</h3>
   <div class="wf-wrap">
-    <div class="wf-title"><b>终端视图线框</b><span class="wf-dim">终端区 + 命令面板</span></div>
+    <div class="wf-title"><b>终端视图线框</b><span class="wf-dim">终端区 + 快捷命令</span></div>
     <div class="wf-canvas" style="min-height:420px">
       <div class="wf-app" style="min-width:820px">
         <div class="wf-body" style="min-height:380px;flex-direction:column">
@@ -72,7 +72,7 @@
             </div>
           </div>
           <div class="wf-zone" style="margin:0">
-            <span class="z-label">B2 命令面板</span>
+            <span class="z-label">B2 快捷命令</span>
             <div style="font-size:11px;color:var(--muted);margin-bottom:6px">⚡ 自动化命令 · 点击快捷发送</div>
             <div class="wf-btnrow" style="margin-bottom:6px">
               <span class="wf-btn sm">ifconfig eth0</span><span class="wf-btn sm">cat /proc/cpuinfo</span>
@@ -98,7 +98,7 @@
   <table>
     <tr><th>区域</th><th>布局</th><th>层级</th><th>说明</th></tr>
     <tr><td>B1 终端区</td><td>flex:1 自适应，纵向占满</td><td>z3</td><td>滚动输出区，可点击聚焦，键盘输入。纵向布局无重叠，z3 为逻辑层级（依赖 DOM 顺序）</td></tr>
-    <tr><td>B2 命令面板</td><td>flex-shrink:0，位于终端区下方</td><td>z4</td><td>快捷命令 + 编码/回显/清屏/重置。z4 为逻辑层级（依赖 DOM 顺序）</td></tr>
+    <tr><td>B2 快捷命令</td><td>flex-shrink:0，位于终端区下方</td><td>z4</td><td>快捷命令 + 编码/回显/清屏/重置。z4 为逻辑层级（依赖 DOM 顺序）</td></tr>
   </table>
   </div>
 </section>
@@ -136,17 +136,17 @@
 
 <section id="s3">
   <h2><span class="secnum">05.3</span>终端功能</h2>
-  <p class="lead">终端功能集中在命令面板（B2），提供编码、回显、清屏、重置与快捷命令。</p>
+  <p class="lead">终端功能集中在下方快捷命令区（B2），提供编码、回显、清屏、重置与快捷命令。</p>
 
   <h3>5.3.1 功能定义</h3>
   <div class="table-wrap">
   <table>
     <tr><th>功能</th><th>入口</th><th>行为</th></tr>
-    <tr><td>编码选择</td><td>命令面板编码下拉</td><td>UTF-8 / GBK / ASCII / GB2312 / UTF-16，决定收发字节的编解码方式</td></tr>
-    <tr><td>回显</td><td>命令面板"回显"按钮</td><td>切换本地回显：开启时输入内容回显到终端，关闭时隐藏（设计扩展，见 09）</td></tr>
-    <tr><td>清屏</td><td>命令面板"清屏"按钮</td><td>清空终端区输出内容，保留提示符与输入行</td></tr>
-    <tr><td>重置</td><td>命令面板"重置"按钮</td><td>重置终端状态：清空输出与输入缓冲，恢复初始提示符</td></tr>
-    <tr><td>快捷命令</td><td>命令面板命令网格</td><td>点击即发送预置命令，支持参数占位符（如 <code>{ip}</code>）</td></tr>
+    <tr><td>编码选择</td><td>快捷命令编码下拉</td><td>UTF-8 / GBK / ASCII / GB2312 / UTF-16，决定收发字节的编解码方式</td></tr>
+    <tr><td>回显</td><td>快捷命令"回显"按钮</td><td>切换本地回显：开启时输入内容回显到终端，关闭时隐藏（设计扩展，见 09）</td></tr>
+    <tr><td>清屏</td><td>快捷命令"清屏"按钮</td><td>清空终端区输出内容，保留提示符与输入行</td></tr>
+    <tr><td>重置</td><td>快捷命令"重置"按钮</td><td>重置终端状态：清空输出与输入缓冲，恢复初始提示符</td></tr>
+    <tr><td>快捷命令</td><td>快捷命令网格</td><td>点击即发送预置命令，支持参数占位符（如 <code>{ip}</code>）</td></tr>
   </table>
   </div>
 
@@ -167,11 +167,11 @@
   </div>
   <div class="warn">快捷命令"reboot"为危险操作，二次确认 + 白名单豁免机制已采纳（见 09 D-20），线框见 5.3.5。</div>
 
-  <h3>5.3.3 命令面板管理</h3>
+  <h3>5.3.3 快捷命令管理</h3>
   <ul>
-    <li><strong>自定义快捷命令</strong>：用户可增删改命令面板中的快捷命令（已采纳，见 09 D-18）。</li>
+    <li><strong>自定义快捷命令</strong>：用户可增删改快捷命令（已采纳，见 09 D-18）。</li>
     <li><strong>参数占位符</strong>：命令中的 <code>{ip}</code> 等占位符，点击时弹出参数输入框，填入后发送。</li>
-    <li><strong>与命令自动化联动</strong>：命令面板命令可被命令自动化模块复用，作为命令组的命令源之一（见 5.3.4 / 06 命令组的命令来源）。</li>
+    <li><strong>与命令自动化联动</strong>：快捷命令可被命令自动化模块复用，作为命令组的命令源之一（见 5.3.4 / 06 命令组的命令来源）。</li>
   </ul>
 
   <h3>5.3.4 快捷命令管理线框</h3>
@@ -294,7 +294,7 @@
   <div class="table-wrap">
   <table>
     <tr><th>设置项</th><th>作用域</th><th>对终端的影响</th></tr>
-    <tr><td>视图模式</td><td>会话</td><td>决定终端视图是否显示（bytes/terminal）</td></tr>
+    <tr><td>会话模式</td><td>会话</td><td>决定终端视图是否显示（bytes/terminal）</td></tr>
     <tr><td>自动换行</td><td>会话</td><td>终端输出超宽时是否自动换行</td></tr>
     <tr><td>编码</td><td>会话/临时</td><td>终端收发字节的编解码（UTF-8/GBK/ASCII/GB2312/UTF-16）</td></tr>
     <tr><td>主题配色</td><td>全局</td><td>终端背景/文字/提示符颜色跟随主题（原型终端背景固定深色 #0a0e14）</td></tr>
@@ -322,10 +322,10 @@
     <tr><th>设计项</th><th>v15 原型</th><th>状态</th><th>说明</th></tr>
     <tr><td>终端页签入口</td><td>vm-terminal 页签按钮，随模式显隐</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>终端区（直接键入 + 回显）</td><td>term-area，termKey 处理按键</td><td class="st-have">已有</td><td>已实现（模拟回显）</td></tr>
-    <tr><td>命令面板（快捷命令）</td><td>term-cmd-panel + tcp-grid 9 个命令</td><td class="st-have">已有</td><td>已实现</td></tr>
-    <tr><td>编码选择</td><td>命令面板编码下拉（UTF-8/GBK/ASCII/GB2312/UTF-16）</td><td class="st-have">已有</td><td>已实现</td></tr>
-    <tr><td>清屏 / 重置</td><td>命令面板按钮</td><td class="st-have">已有</td><td>已实现</td></tr>
-    <tr><td>回显开关</td><td>命令面板"回显"按钮</td><td class="st-part">部分</td><td>按钮存在但无切换逻辑，需完善（见 09）</td></tr>
+    <tr><td>快捷命令</td><td>term-cmd-panel + tcp-grid 9 个命令</td><td class="st-have">已有</td><td>已实现</td></tr>
+    <tr><td>编码选择</td><td>快捷命令编码下拉（UTF-8/GBK/ASCII/GB2312/UTF-16）</td><td class="st-have">已有</td><td>已实现</td></tr>
+    <tr><td>清屏 / 重置</td><td>快捷命令按钮</td><td class="st-have">已有</td><td>已实现</td></tr>
+    <tr><td>回显开关</td><td>快捷命令"回显"按钮</td><td class="st-part">部分</td><td>按钮存在但无切换逻辑，需完善（见 09）</td></tr>
     <tr><td>自动换行</td><td>会话设置"自动换行"开关</td><td class="st-part">部分</td><td>设置项存在但无切换逻辑（与回显按钮同，见 09）</td></tr>
     <tr><td>自定义快捷命令</td><td>无</td><td class="st-have">已有</td><td>线框已补（见 5.3.4 T1）：命令列表增删改（见 09 D-18）</td></tr>
     <tr><td>参数占位符交互</td><td>ping {ip} 静态展示</td><td class="st-have">已有</td><td>线框已补（见 5.3.4 T2）：点击占位符弹参数输入框（见 09 D-19）</td></tr>

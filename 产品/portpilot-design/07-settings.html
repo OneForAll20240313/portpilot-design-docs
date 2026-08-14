@@ -83,7 +83,7 @@
             <div class="wf-zone" style="margin:0"><span class="z-label">D3 设置表单</span>
               <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px">会话管理</div>
               <div class="wf-row"><span style="flex:1">会话名称</span><span class="wf-input" style="width:160px">设备 A · COM3</span><span class="wf-tag">会话</span></div>
-              <div class="wf-row"><span style="flex:1">视图模式</span><span class="wf-select" style="width:160px">字节流（字节流 + 协议）▾</span><span class="wf-tag">会话</span></div>
+              <div class="wf-row"><span style="flex:1">会话模式</span><span class="wf-select" style="width:160px">字节流（字节流 + 协议）▾</span><span class="wf-tag">会话</span></div>
               <div class="wf-row"><span style="flex:1">端口 / 地址</span><span class="wf-select" style="width:160px">COM3 · USB-SER (FTDI) ▾</span><span class="wf-tag">会话</span></div>
               <div class="wf-row"><span style="flex:1">波特率</span><span class="wf-select" style="width:160px">115200 ▾</span><span class="wf-tag">会话</span></div>
             </div>
@@ -113,7 +113,7 @@
   <table>
     <tr><th>作用域</th><th>标记</th><th>生效范围</th><th>生命周期</th><th>示例</th></tr>
     <tr><td><span class="badge b-purple">全局</span></td><td><code>g</code></td><td>所有会话</td><td>持久化保存</td><td>主题、默认 schema、断线重连</td></tr>
-    <tr><td><span class="badge b-accent">会话</span></td><td><code>s</code></td><td>当前会话</td><td>随会话保存</td><td>波特率、缓冲策略、视图模式</td></tr>
+    <tr><td><span class="badge b-accent">会话</span></td><td><code>s</code></td><td>当前会话</td><td>随会话保存</td><td>波特率、缓冲策略、会话模式</td></tr>
     <tr><td><span class="badge b-yellow">临时</span></td><td><code>t</code></td><td>当前操作/当前视图</td><td>不持久化</td><td>暂停、高亮开关、编码临时切换</td></tr>
   </table>
   </div>
@@ -150,7 +150,7 @@
   <table>
     <tr><th>设置项</th><th>选项</th><th>在线可改</th><th>说明</th></tr>
     <tr><td>会话名称</td><td>文本</td><td>✔</td><td>会话显示名</td></tr>
-    <tr><td>视图模式</td><td>字节流 / 终端</td><td>✔</td><td>切换即时生效</td></tr>
+    <tr><td>会话模式</td><td>字节流 / 终端</td><td>✔</td><td>切换即时生效</td></tr>
     <tr><td>连接类型</td><td>串口</td><td>—</td><td>产品聚焦串口；TCP/蓝牙为非核心范围，见需求收敛</td></tr>
     <tr><td>端口 / 地址</td><td>COM3 / COM4 / COM5 等</td><td>✘</td><td>需先断开才能修改</td></tr>
     <tr><td>波特率</td><td>115200 / 9600 / 57600 / 19200</td><td>✘</td><td>需先断开才能修改</td></tr>
@@ -192,7 +192,7 @@
           </div>
           <div style="padding:8px 10px;font-size:11px">
             <div class="wf-row"><span style="flex:1">会话名称</span><span class="wf-input" style="width:150px">设备 A · COM3</span><span class="wf-tag" style="font-size:9px">会话</span><span class="wf-tag" style="font-size:9px;background:var(--accent-dim);color:var(--accent)">在线可改</span></div>
-            <div class="wf-row"><span style="flex:1">视图模式</span><span class="wf-select" style="width:150px">字节流 ▾</span><span class="wf-tag" style="font-size:9px">会话</span><span class="wf-tag" style="font-size:9px;background:var(--accent-dim);color:var(--accent)">在线可改</span></div>
+            <div class="wf-row"><span style="flex:1">会话模式</span><span class="wf-select" style="width:150px">字节流 ▾</span><span class="wf-tag" style="font-size:9px">会话</span><span class="wf-tag" style="font-size:9px;background:var(--accent-dim);color:var(--accent)">在线可改</span></div>
             <div class="wf-row"><span style="flex:1">连接类型</span><span class="wf-select" style="width:150px">串口 ▾</span><span class="wf-tag" style="font-size:9px">会话</span><span class="wf-tag" style="font-size:9px;background:var(--bg4);color:var(--muted)">固定串口</span></div>
             <div class="wf-row"><span style="flex:1">端口 / 地址</span><span class="wf-select" style="width:150px">COM3 · USB-SER ▾</span><span class="wf-tag" style="font-size:9px">会话</span><span class="wf-tag" style="font-size:9px;background:var(--bg4);color:var(--muted)">需断开</span></div>
             <div class="wf-row"><span style="flex:1">波特率</span><span class="wf-select" style="width:150px">115200 ▾</span><span class="wf-tag" style="font-size:9px">会话</span><span class="wf-tag" style="font-size:9px;background:var(--bg4);color:var(--muted)">需断开</span></div>

@@ -23,8 +23,8 @@
           "id": { "type": "string", "description": "元素唯一标识" },
           "type": {
             "type": "string",
-            "enum": ["number", "gauge", "line", "bar", "switch", "attitude", "text", "waveform"],
-            "description": "元素类型：number=数值显示，gauge=仪表盘，line=折线图，bar=柱状图，switch=开关，attitude=3D姿态，text=文本显示，waveform=波形图（对齐 04 章 4.4.1 组件库；TUI 收敛为 waveform/bar，见 D-52）"
+            "enum": ["number", "gauge", "waveform", "bar", "switch", "attitude", "text"],
+            "description": "元素类型：number=数值显示，gauge=仪表盘，waveform=波形图（历史时序曲线，字段池历史值），bar=柱状图，switch=开关，attitude=3D姿态，text=文本显示（对齐 04 章 4.4.1 组件库；TUI 收敛为 waveform/bar，见 D-52）"
           },
           "dataSources": {
             "type": "array",
