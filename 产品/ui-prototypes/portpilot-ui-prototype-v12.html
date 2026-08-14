@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PortPilot 使用手册</title>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;--bg5:#3d444d;
+  --ink:#e6edf3;--ink2:#c9d1d9;--muted:#8b949e;
+  --rule:#30363d;--rule2:#444c56;
+  --primary:#0fc6b7;--primary-dim:rgba(15,198,183,0.12);
+  --accent2:#3fb950;--accent3:#e3a53c;--danger:#f85149;--purple:#a371f7;
+  --grad:linear-gradient(135deg,#0fc6b7,#58a6ff);
+  --font:'InstrumentSans','Noto Sans CJK SC','WenQuanYi Micro Hei',sans-serif;
+  --mono:'GeistMono','JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-track{background:var(--bg2)}
+*::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:5px;border:2px solid var(--bg2)}
+*::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+*{scrollbar-width:thin;scrollbar-color:var(--bg4) var(--bg2)}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.8}
+.wrap{max-width:880px;margin:0 auto;padding:36px 30px 60px}
+.hero{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.hero .logo{width:44px;height:44px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:#04211e;box-shadow:0 4px 16px var(--primary-dim)}
+.hero h1{font-size:26px}
+.sub{color:var(--muted);font-size:13px;margin-bottom:30px}
+h2{font-size:19px;color:var(--primary);margin:34px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+h3{font-size:15px;margin:20px 0 8px}
+p{margin-bottom:10px;color:var(--ink2)}
+ul,ol{margin:0 0 12px 22px}
+li{margin:5px 0}
+code{font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--primary)}
+kbd{font-family:var(--mono);background:var(--bg3);border:1px solid var(--rule2);border-bottom-width:2px;padding:1px 7px;border-radius:5px;font-size:11px;color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule)}
+th{color:var(--muted);font-weight:600;background:var(--bg3);font-size:12px}
+.card{background:var(--bg2);border:1px solid var(--rule);border-radius:10px;padding:16px;margin:12px 0}
+.card.hl{border-left:3px solid var(--primary)}
+.warn{background:rgba(227,165,60,.08);border:1px solid var(--accent3);border-radius:8px;padding:12px 14px;margin:12px 0;font-size:13px}
+.ok{background:rgba(63,185,80,.08);border:1px solid var(--accent2);border-radius:8px;padding:12px 14px;margin:12px 0;font-size:13px}
+.tag{display:inline-block;font-size:10px;padding:1px 8px;border-radius:10px;font-weight:600;margin-right:4px}
+.tag.p0{background:var(--danger);color:#fff}
+.tag.p1{background:rgba(227,165,60,.2);color:var(--accent3)}
+.flow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.flow .step{background:var(--bg3);border:1px solid var(--rule);border-radius:8px;padding:8px 12px;font-size:12px;text-align:center;min-width:110px}
+.flow .step b{display:block;font-size:13px;color:var(--primary)}
+.flow .arrow{color:var(--muted)}
+.tree{font-family:var(--mono);background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:14px;font-size:12.5px;line-height:1.9;overflow-x:auto}
+.tree .t{color:var(--primary)}
+.tree .k{color:var(--accent3)}
+.swatches{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.sw{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.sw .dot{width:34px;height:34px;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--rule);color:var(--muted);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+.back-btn{background:var(--primary);border:none;color:#04211e;font-weight:600;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:12px}
+.back-btn:hover{filter:brightness(1.1)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    </div></div></body></html>
