@@ -176,3 +176,11 @@ footer{border-top:1px solid var(--rule);padding-top:18px;color:var(--muted);font
   h2{font-size:19px}
   .wf-side{width:150px;flex-basis:150px}
 }
+
+/* ===== 统一滚动条（与 UI 原型一致） ===== */
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-track{background:#161b22}
+*::-webkit-scrollbar-thumb{background:#30363d;border-radius:5px;border:2px solid #161b22}
+*::-webkit-scrollbar-thumb:hover{background:#0fc6b7;border-color:#161b22}
+*::-webkit-scrollbar-corner{background:#161b22}
+*{scrollbar-width:thin;scrollbar-color:#30363d #161b22}

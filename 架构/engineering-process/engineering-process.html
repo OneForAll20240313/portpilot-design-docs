@@ -107,6 +107,15 @@ sup a:hover{text-decoration:underline;}
 @media(max-width:720px){.wrap,.container{padding:0 16px;}section{padding:38px 0;}h2{font-size:23px;}.cover{padding:60px 16px 40px;}}
 @media print{.cover{page-break-after:always;}section{page-break-before:always;}body{font-size:12px;}}
 </style>
+<style>
+/* ===== 统一滚动条（与 UI 原型一致） ===== */
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-track{background:#161b22}
+*::-webkit-scrollbar-thumb{background:#30363d;border-radius:5px;border:2px solid #161b22}
+*::-webkit-scrollbar-thumb:hover{background:#0fc6b7;border-color:#161b22}
+*::-webkit-scrollbar-corner{background:#161b22}
+*{scrollbar-width:thin;scrollbar-color:#30363d #161b22}
+</style>
 </head>
 <body>
 
