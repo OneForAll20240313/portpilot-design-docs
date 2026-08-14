@@ -74,7 +74,7 @@
                 <div class="trow">主题外观</div>
                 <div class="trow">协议</div>
                 <div class="trow">命令自动化</div>
-                <div class="trow">网络</div>
+                <div class="trow">连接</div>
                 <div class="trow">系统</div>
               </div>
             </div>
@@ -326,8 +326,8 @@
 </section>
 
 <section id="s8">
-  <h2><span class="secnum">07.8</span>网络设置组</h2>
-  <p class="lead">网络组配置软件网络服务参数，为全局作用域。Web 服务相关项已随 WebUI 收敛为范围外（见需求收敛），仅保留通用连接行为（断线重连）。</p>
+  <h2><span class="secnum">07.8</span>连接设置组</h2>
+  <p class="lead">连接组配置串口连接行为，为全局作用域。Web 服务相关项已随 WebUI 收敛为范围外（见需求收敛），仅保留通用连接行为（断线重连）。</p>
   <div class="table-wrap">
   <table>
     <tr><th>设置项</th><th>选项</th><th>作用域</th><th>说明</th></tr>
@@ -399,11 +399,11 @@
   <table class="proto-map">
     <tr><th>设计项</th><th>v15 原型</th><th>状态</th><th>说明</th></tr>
     <tr><td>设置模块入口 + 搜索</td><td>顶部工具栏按钮 + 搜索框</td><td class="st-have">已有</td><td>已实现</td></tr>
-    <tr><td>左侧导航 7 分组</td><td>会话/显示/主题/协议/命令/网络/系统</td><td class="st-have">已有</td><td>已实现</td></tr>
+    <tr><td>左侧导航 7 分组</td><td>会话/显示/主题/协议/命令/连接/系统</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>会话管理组（连接+缓冲）</td><td>sf-conn 全量配置项</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>显示组（编码/换行/时间戳）</td><td>sf-disp</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>主题外观组（13 主题+自定义）</td><td>sf-theme 主题预设/自定义主色/背景图</td><td class="st-have">已有</td><td>已实现</td></tr>
-    <tr><td>协议 / 命令 / 网络 / 系统组</td><td>sf-proto / sf-cmd / sf-net / sf-sys</td><td class="st-have">已有</td><td>已实现</td></tr>
+    <tr><td>协议 / 命令 / 连接 / 系统组</td><td>sf-proto / sf-cmd / sf-net / sf-sys</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>作用域标记（全局 g / 会话 s）</td><td>sf-scope g / s 标签</td><td class="st-have">已有</td><td>已实现</td></tr>
     <tr><td>临时作用域（t）</td><td>无</td><td class="st-miss">缺失</td><td>需新增（见 09）</td></tr>
     <tr><td>设置操作（重置/应用/保存）</td><td>按钮存在</td><td class="st-have">已有</td><td>线框已补（见 7.10.1）：底部操作栏 + 未保存标记；逻辑需实现（见 09）</td></tr>
