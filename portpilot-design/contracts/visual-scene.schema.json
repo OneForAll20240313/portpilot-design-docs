@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "visual-scene.schema.json",
+  "title": "VisualScene",
+  "description": "可视化场景模型契约（04 章，D-07）。场景可序列化为 JSON。GUI 用 QtNodes 节点编辑器（D-35），TUI 收敛为波形图+柱状图（D-52），三宿主复用同一场景模型。本契约是 SSOT。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "场景唯一标识"
+    },
+    "name": {
+      "type": "string",
+      "description": "场景名称"
+    },
+    "elements": {
+      "type": "array",
+      "description": "场景元素列表",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "元素唯一标识" },
+          "type": {
+            "type": "string",
+            "enum": ["waveform", "bar"],
+            "description": "waveform=波形图，bar=柱状图（D-52 收敛范围）"
+          },
+          "dataSources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "数据源字段引用，格式 = 协议名.字段标识"
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "元素显示标题"
+          },
+          "refreshRate": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "刷新频率（Hz），默认 10"
+          },
+          "range": {
+            "type": "object",
+            "description": "坐标量程（axis 缩放到该范围）",
+            "properties": {
+              "min": { "type": "number" },
+              "max": { "type": "number" }
+            }
+          },
+          "color": {
+            "type": "string",
+            "description": "曲线/柱体颜色（十六进制 CSS 色值，如 #1E88E5）"
+          },
+          "threshold": {
+            "type": "number",
+            "description": "告警阈值（可选，超过则高亮）"
+          }
+        },
+        "required": ["id", "type", "dataSources"],
+        "additionalProperties": false
+      }
+    },
+    "connections": {
+      "type": "array",
+      "description": "节点连线（QtNodes 数据流范式）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fromNode": { "type": "string", "description": "源节点 id" },
+          "fromPort": { "type": "string", "description": "源端口" },
+          "toNode": { "type": "string", "description": "目标节点 id" },
+          "toPort": { "type": "string", "description": "目标端口" }
+        },
+        "required": ["fromNode", "toNode"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["id", "name", "elements", "connections"],
+  "additionalProperties": false
+}

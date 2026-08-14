@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "route-state.schema.json",
+  "title": "RouteState",
+  "description": "交互路由状态契约（08 章）。统一视图/模块互斥切换、lastView 返回档位、会话选择规则。本契约是 SSOT，其余文档仅引用。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "currentView": {
+      "type": "string",
+      "enum": ["view-bytes", "view-terminal", "view-protocol"],
+      "description": "会话视图，三视图互斥。session.mode 决定可用视图：bytes 模式=view-bytes + view-protocol，terminal 模式=view-terminal"
+    },
+    "currentModule": {
+      "type": ["string", "null"],
+      "enum": [null, "page-viz", "page-cmd", "page-settings"],
+      "description": "当前打开的模块页，三模块互斥。null=无模块（处于会话视图）。模块与会话视图互斥"
+    },
+    "lastView": {
+      "type": ["string", "null"],
+      "enum": [null, "view-bytes", "view-terminal", "view-protocol"],
+      "description": "离开会话视图前记录的视图，用于 backToLastView 返回档位还原"
+    },
+    "currentSessionId": {
+      "type": ["string", "null"],
+      "description": "当前选中会话 id。模块内会话切换规则：page-settings 保持设置页，其他模块返回会话视图"
+    },
+    "modal": {
+      "type": ["string", "null"],
+      "enum": [null, "new-session", "session-detail", "session-settings"],
+      "description": "顶层模态框（z-index 200）。新建会话/会话详情/会话设置"
+    }
+  },
+  "required": ["currentView", "currentModule", "lastView", "currentSessionId", "modal"],
+  "additionalProperties": false
+}

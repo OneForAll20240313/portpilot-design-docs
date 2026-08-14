@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "session.schema.json",
+  "title": "Session",
+  "description": "会话聚合根契约。会话是 PortPilot 的最小工作单元，所有功能挂载其上。状态机四态见 D-38；连接参数在线不可改约束见各模块 DoD。本契约是 SSOT，其余文档仅引用。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "会话唯一标识（UUID）"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "会话显示名称"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["bytes", "terminal"],
+      "description": "会话模式，互斥。bytes=字节流模式（含协议视图），terminal=终端模式"
+    },
+    "group": {
+      "type": "string",
+      "description": "会话所属分组。空串表示未分组；分组仅用于会话树组织，不影响连接行为"
+    },
+    "connectTarget": {
+      "type": "object",
+      "description": "连接目标。串口或网络二选一，由 type 决定",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["serial", "network"]
+        },
+        "port": {
+          "type": "string",
+          "description": "串口号（type=serial 时），如 COM3 或 /dev/ttyUSB0"
+        },
+        "baud": {
+          "type": "integer",
+          "description": "波特率（type=serial 时）"
+        },
+        "dataBits": {
+          "type": "integer",
+          "enum": [5, 6, 7, 8]
+        },
+        "stopBits": {
+          "type": "integer",
+          "enum": [1, 2]
+        },
+        "parity": {
+          "type": "string",
+          "enum": ["none", "even", "odd", "mark", "space"]
+        },
+        "addr": {
+          "type": "string",
+          "description": "网络地址（type=network 时）"
+        },
+        "tcpPort": {
+          "type": "integer",
+          "description": "TCP 端口（type=network 时）"
+        }
+      },
+      "required": ["type"]
+    },
+    "state": {
+      "type": "string",
+      "enum": ["offline", "connecting", "online", "disconnecting"],
+      "description": "会话四态状态机（D-38）。迁移：offline->connecting->online，online->disconnecting->offline；connecting->offline（端口打开失败回退，见 01 章状态表）"
+    },
+    "sessionConfig": {
+      "type": "object",
+      "description": "会话级配置（引用设置作用域，见 route-state 无关，设置见 07 章）",
+      "additionalProperties": true
+    },
+    "stats": {
+      "type": "object",
+      "description": "收发统计",
+      "properties": {
+        "rxBytes": { "type": "integer", "minimum": 0 },
+        "txBytes": { "type": "integer", "minimum": 0 },
+        "rxSpeed": { "type": "number", "description": "接收速率 KB/s" },
+        "connectionDuration": { "type": "integer", "minimum": 0, "description": "本会话累计连接时长（秒）" },
+        "bufferUsage": { "type": "integer", "minimum": 0, "description": "当前缓冲已用字节数" }
+      }
+    }
+  },
+  "required": ["id", "name", "mode", "connectTarget", "state"],
+  "allOf": [
+    {
+      "if": {
+        "properties": { "connectTarget": { "properties": { "type": { "const": "serial" } } } }
+      },
+      "then": {
+        "properties": { "connectTarget": { "required": ["port", "baud", "dataBits", "stopBits", "parity"] } }
+      }
+    },
+    {
+      "if": {
+        "properties": { "connectTarget": { "properties": { "type": { "const": "network" } } } }
+      },
+      "then": {
+        "properties": { "connectTarget": { "required": ["addr", "tcpPort"] } }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "protocol.schema.json",
+  "title": "Protocol",
+  "description": "协议定义契约（03 章）。协议是全局模板，不随会话隔离（D-44）。支持通用/自定义、固定/可变长度、字段定义。本契约是 SSOT。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "协议唯一标识"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "协议名称"
+    },
+    "schemaType": {
+      "type": "string",
+      "enum": ["generic", "custom"],
+      "description": "通用模板或自定义协议"
+    },
+    "lengthType": {
+      "type": "string",
+      "enum": ["fixed", "variable"],
+      "description": "帧长度：固定长度或可变长度"
+    },
+    "frameDef": {
+      "type": "object",
+      "description": "帧定义",
+      "properties": {
+        "fixedLength": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "lengthType=fixed 时的固定帧长（字节）"
+        },
+        "lengthField": {
+          "type": "object",
+          "description": "lengthType=variable 时的长度字段定位",
+          "properties": {
+            "offset": { "type": "integer", "minimum": 0 },
+            "width": { "type": "integer", "enum": [1, 2, 4] },
+            "byteOrder": { "type": "string", "enum": ["little", "big"] }
+          }
+        },
+        "startPattern": {
+          "type": "string",
+          "description": "帧起始标识（十六进制字节序列，如 7E）"
+        },
+        "endPattern": {
+          "type": "string",
+          "description": "帧结束标识（十六进制字节序列，如 0D0A）。缺省表示按长度/长度字段定界"
+        },
+        "crc": {
+          "type": "object",
+          "description": "帧校验配置（可选）",
+          "properties": {
+            "type": { "type": "string", "enum": ["crc8", "crc16", "none"] },
+            "position": { "type": "string", "enum": ["tail", "head"], "description": "校验字段相对帧的位置" }
+          }
+        }
+      }
+    },
+    "fields": {
+      "type": "array",
+      "description": "字段定义列表",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "字段标识，用于字段池引用（fieldRef = 协议名.字段标识）"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["uint8", "uint16", "uint32", "int8", "int16", "int32", "float32", "double", "bytes", "ascii", "hex", "bitfield"],
+            "description": "字段类型"
+          },
+          "length": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "字段长度（字节），bytes/ascii/hex 必填"
+          },
+          "byteOrder": {
+            "type": "string",
+            "enum": ["little", "big"],
+            "description": "字节序，多字节数值类型必填"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "字段在帧内偏移（字节）"
+          },
+          "scale": {
+            "type": "number",
+            "default": 1,
+            "description": "缩放系数"
+          },
+          "unit": {
+            "type": "string",
+            "description": "物理单位，如 mV、°C"
+          }
+        },
+        "required": ["name", "type"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["id", "name", "schemaType", "lengthType", "frameDef", "fields"],
+  "allOf": [
+    {
+      "if": { "properties": { "lengthType": { "const": "fixed" } } },
+      "then": { "required": ["frameDef"], "properties": { "frameDef": { "required": ["fixedLength"] } } }
+    },
+    {
+      "if": { "properties": { "lengthType": { "const": "variable" } } },
+      "then": { "required": ["frameDef"], "properties": { "frameDef": { "required": ["lengthField"] } } }
+    }
+  ],
+  "additionalProperties": false
+}
