@@ -173,7 +173,7 @@
   <div class="table-wrap">
   <table>
     <tr><th>组件</th><th>职责</th><th>说明</th></tr>
-    <tr><td>SerialWorker</td><td>串口设备交互</td><td>实现 DevicePort，参数可编程切换（D-53）</td></tr>
+    <tr><td>SerialWorker</td><td>串口设备交互</td><td>实现 DevicePort，参数可编程切换（D-53）；为<span class="badge b-accent">跨平台串口实现</span>统一入口——落地 Core 轻量平台抽象层（POSIX termios + Windows DCB 双后端，`#ifdef _WIN32` 隔离，Qt-free，见 7.1「跨平台串口实现策略」）</td></tr>
     <tr><td>PortEnumerator</td><td>串口枚举（系统级设备发现）</td><td>实现 Domain 的 <code>DevicePortEnumerator</code>，落地 <code>QSerialPortInfo::availablePorts</code> 等平台枚举，映射 <code>PortInfo[]</code>（含 pty 等非标准设备，对应对应 A-214）</td></tr>
     <tr><td>NetworkTransport</td><td>TCP/IP 网络交互（预留扩展）</td><td>实现 DevicePort；TCP/IP 为非核心范围，见需求收敛</td></tr>
     <tr><td>FileRepository</td><td>配置/协议持久化</td><td>作用域持久化、备份</td></tr>
@@ -312,6 +312,7 @@
     <tr><td>Core 实现接口</td><td>Domain 定义 DevicePort 等接口，Core 实现</td><td>依赖倒置：Core→Domain 引用接口类型；测试 mock 替换</td></tr>
     <tr><td>宿主隔离</td><td>多宿主仅交互层不同，核心共享（WebUI 范围外）</td><td>宿主实现不得侵入核心</td></tr>
     <tr><td>契约文件</td><td>按限界上下文放 contracts/</td><td>与实现分离，独立校验</td></tr>
+    <tr><td>跨平台串口实现策略</td><td>Core 层串口收发走<b>自写轻量平台抽象层</b>（POSIX termios + Windows DCB 双后端，`#ifdef _WIN32` 隔离），保持 <b>Qt-free、可独立单测</b></td><td>串口是操作系统能力非 Qt 能力；为保「Core 无 Qt 依赖 + 双宿主共享 + 可单测」，平台差异由 Core 自写抽象层吸收；端口<b>枚举</b>仍可经 UI 适配层用 <code>QSerialPortInfo</code>（见 13.3 PortEnumerator）。禁止在 Core 直接依赖 Qt</td></tr>
   </table>
   </div>
 
