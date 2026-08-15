@@ -12,7 +12,7 @@
 .conn-actions{display:flex;align-items:center;gap:6px}
 .conn-row1 select{flex:1;min-width:0;font-size:11px;padding:3px 8px}
 .vid-pid{font-size:10px;color:var(--muted);font-family:var(--mono);flex-shrink:0;white-space:nowrap}
-.conn-btn{background:var(--primary);border-color:var(--primary);color:#04211e;font-weight:600;padding:2px 12px;font-size:11px;flex-shrink:0}
+.conn-btn{background:var(--grad);border:none;color:#fff;font-weight:600;padding:3px 14px;font-size:11px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:all .2s ease}
 .conn-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.35);opacity:.92;color:#fff}
 .param-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
 .param-row label{display:flex;flex-direction:column;gap:1px;font-size:9px;color:var(--muted)}
@@ -54,7 +54,7 @@
 .send-area{display:flex;flex-direction:column;gap:3px;flex-shrink:0;padding:5px 6px;background:var(--bg2);border:1px solid var(--rule);border-radius:6px}
 .send-top{display:flex;gap:4px;align-items:center}
 .send-top input{flex:1;font-size:11px;padding:4px 6px;min-width:0}
-.send-btn{background:var(--primary);border-color:var(--primary);color:#04211e;font-weight:600;font-size:11px;padding:4px 12px;flex-shrink:0}
+.send-btn{background:var(--grad);border:none;color:#fff;font-weight:600;font-size:11px;padding:5px 14px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:all .2s ease}
 .send-row2{display:flex;gap:4px 8px;align-items:center;font-size:9px;color:var(--muted);flex-wrap:wrap;row-gap:3px}
 .send-row2 label{display:flex;align-items:center;gap:2px;white-space:nowrap}
 .send-row2 .sep{width:1px;height:12px;background:var(--rule);flex-shrink:0;margin:0 2px}

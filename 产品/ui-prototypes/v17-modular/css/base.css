@@ -56,7 +56,10 @@ input[type=range]::-moz-range-thumb{
 }
 
 /* --- Toggle Switch (通用开关渐变) --- */
+.toggle{width:40px;height:22px;border-radius:11px;background:var(--bg4);position:relative;cursor:pointer;transition:background .2s;display:inline-block;vertical-align:middle;border:1px solid var(--rule)}
+.toggle .knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:all .2s ease;box-shadow:0 1px 2px rgba(0,0,0,.2)}
 .toggle.on{background:var(--grad);border-color:transparent;box-shadow:0 1px 4px rgba(0,0,0,.2) inset}
+.toggle.on .knob{left:20px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .toggle.on .knob{box-shadow:0 1px 3px rgba(0,0,0,.3)}
 
 /* --- Progress Bar Fill (通用进度条渐变填充) --- */
