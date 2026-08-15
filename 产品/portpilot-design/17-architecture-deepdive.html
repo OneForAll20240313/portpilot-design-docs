@@ -129,7 +129,7 @@ public:
     <span class="cb-cap">include/service/protocol/iprotocol_service.h</span>
 <pre>namespace portpilot::service::protocol {
 
-// 协议用例接口（契约 A-401~A-413，SSOT: contracts/service-api.md §3）
+// 协议用例接口（契约 A-401~A-416，SSOT: contracts/service-api.md §3）
 class IProtocolService {
 public:
     virtual ~IProtocolService() = default;
@@ -147,6 +147,9 @@ public:
     virtual core::Result&lt;domain::ProtocolId&gt; duplicateProtocol(const domain::ProtocolId&amp; id) = 0; // A-411
     virtual core::Result&lt;domain::Bytes&gt; encodeFrame(const domain::ProtocolSchema&amp; schema, const std::vector&lt;domain::FieldValue&gt;&amp; values) = 0; // A-412
     virtual core::Result&lt;void&gt; manageTemplates(domain::TemplateAction action, const domain::TemplateData&amp; data) = 0; // A-413
+    virtual core::Result&lt;void&gt; sendFrame(const domain::ConnectionId&amp; connId, const domain::ProtocolSchema&amp; schema, const std::vector&lt;domain::FieldValue&gt;&amp; values) = 0; // A-414
+    virtual core::Result&lt;void&gt; sendFrames(const domain::ConnectionId&amp; connId, const domain::ProtocolSchema&amp; schema, const std::vector&lt;std::vector&lt;domain::FieldValue&gt;&gt;&amp; frameValues) = 0; // A-415
+    virtual core::Result&lt;domain::LoopbackResult&gt; loopbackVerify(const domain::ConnectionId&amp; connId, const domain::ProtocolSchema&amp; schema, const std::vector&lt;domain::FieldValue&gt;&amp; values, core::ms_t timeout) = 0; // A-416
 };
 
 } // namespace portpilot::service::protocol</pre>
@@ -427,6 +430,7 @@ enum class ErrorCode {
     BufConnInvalid, BufSendFailed, BufKeywordInvalid, BufParamInvalid, BufTagInvalid, BufCtrlInvalid,
     // 协议 PROTO
     ProtoFrameInvalid, ProtoFieldInvalid, ProtoParamInvalid, ProtoNotFound, ProtoInUse, ProtoEncodeInvalid, ProtoTemplateInvalid,
+    ProtoConnInvalid, ProtoSendFailed, ProtoLoopbackTimeout, ProtoLoopbackMismatch,
     // 可视化 VIZ
     VizTypeInvalid, VizProtoInvalid, VizBindInvalid, VizConnectInvalid, VizParamInvalid,
     VizSceneNotFound, VizElementNotFound, VizSourceNotFound, VizViewInvalid, VizCustomInvalid,
@@ -607,6 +611,15 @@ using FrameList = std::vector&lt;Frame&gt;;
 
 // 字段值（A-402/A-406/P-708）
 struct FieldValue { FieldId fieldId; std::string value; };
+
+// 回环验证结果（A-416）：发送→接收→响应比对
+struct LoopbackResult {
+    bool ok;                 // 验证是否完成（未超时）
+    bool matched;            // 响应与期望是否一致
+    Bytes sent;              // 实际发送的帧
+    Bytes received;          // 实际接收的响应
+    std::string detail;      // 不一致原因（matched=false 时）
+};
 
 // 协议 schema（对齐 protocol.schema.json）
 struct ProtocolSchema {

@@ -310,13 +310,14 @@ ctest --coverage                // 覆盖率</div>
     <tr><th>模块 · 接口</th><th>数量</th><th>测试层级</th><th>测试断言的契约点</th></tr>
     <tr><td>会话 A-201~A-213</td><td>13</td><td>T1×10 / T2×3</td><td>session.schema.json、events.md `session.*`</td></tr>
     <tr><td>字节流 A-301~A-309</td><td>9</td><td>T1×5 / T2×3 / T3×1</td><td>events.md `buffer.*`、FakeDevice</td></tr>
-    <tr><td>协议 A-401~A-413</td><td>13</td><td>T1×12 / T2×1</td><td>protocol.schema.json、events.md `protocol.*`/`field.updated`</td></tr>
+    <tr><td>协议 A-401~A-416</td><td>16</td><td>T1×12 / T2×4</td><td>protocol.schema.json、events.md `protocol.*`/`field.updated`/`protocol.sent`/`protocol.loopbackDone`</td></tr>
     <tr><td>可视化 A-501~A-515</td><td>15</td><td>T1×14 / T2×1</td><td>visual-scene.schema.json、events.md `visual.*`</td></tr>
     <tr><td>终端 A-601~A-611</td><td>11</td><td>T1×9 / T2×2</td><td>events.md `terminal.*`、ANSI 纯函数</td></tr>
     <tr><td>命令 A-701~A-715 + SDK P-701~P-708</td><td>15+8</td><td>A-70x T1×13/T2×2 + P-70x T1×1/T2×7</td><td>events.md `cmd.*`、pytest 断言 SDK</td></tr>
     <tr><td>设置 A-801~A-806</td><td>6</td><td>T1×4 / T2×2</td><td>events.md `cfg.*`、Scope 三级作用域</td></tr>
     <tr><td>路由 A-901~A-904</td><td>4</td><td>T1×4</td><td>route-state.schema.json、events.md `route.*`</td></tr></table>
   </div>
+  <div class="note"><b>功能测试 · 协议收发闭环（必须）</b>：协议发送（A-414/A-415/A-416）是功能测试的关键能力，缺它无法验证"解析"为真。标准场景为<b>双串口收发闭环</b>：会话 A 连接串口发端（组帧编辑→发送完整协议帧），会话 B 连接串口收端（协议解析→字段提取），两串口对接（物理回环或虚拟串口对）。验收：A 发送的协议帧在 B 完整解析出预期字段；A-416 回环验证返回 <code>ok=true, matched=true</code>。该场景挂 T3/E2E（15.6），用虚拟串口对实施。</div>
 
   <h3>8.2 可测试性达成判据</h3>
   <ul>

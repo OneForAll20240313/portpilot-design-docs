@@ -503,9 +503,33 @@
             <td class="evt-code">protocol.templateChanged</td>
             <td class="tst-code">T1</td>
           </tr>
+          <tr>
+            <td>A-414</td>
+            <td class="sig">void sendFrame(ConnectionId connId, ProtocolSchema schema, FieldValue[] values)</td>
+            <td>connId 会话在线；schema 与 values 匹配</td>
+            <td class="err-code">PROTO_CONN_INVALID / PROTO_ENCODE_INVALID / PROTO_SEND_FAILED</td>
+            <td class="evt-code">protocol.sent</td>
+            <td class="tst-code">T2</td>
+          </tr>
+          <tr>
+            <td>A-415</td>
+            <td class="sig">void sendFrames(ConnectionId connId, ProtocolSchema schema, FieldValue[][] frameValues)</td>
+            <td>connId 会话在线；每帧 schema 与 values 匹配</td>
+            <td class="err-code">PROTO_CONN_INVALID / PROTO_ENCODE_INVALID / PROTO_SEND_FAILED</td>
+            <td class="evt-code">protocol.sent</td>
+            <td class="tst-code">T2</td>
+          </tr>
+          <tr>
+            <td>A-416</td>
+            <td class="sig">LoopbackResult loopbackVerify(ConnectionId connId, ProtocolSchema schema, FieldValue[] values, timeout)</td>
+            <td>connId 会话在线；回环链路（发→收）可用</td>
+            <td class="err-code">PROTO_CONN_INVALID / PROTO_ENCODE_INVALID / PROTO_SEND_FAILED / PROTO_LOOPBACK_TIMEOUT / PROTO_LOOPBACK_MISMATCH</td>
+            <td class="evt-code">protocol.loopbackDone</td>
+            <td class="tst-code">T2</td>
+          </tr>
         </table>
       </div>
-      <div class="note"><b>可测试性</b>：A-401/A-402/A-412 为协议引擎纯函数，T1 单测覆盖固定/可变长度切分、字节序/缩放/单位、组帧编码（非法帧丢弃并记日志）；A-403~A-411、A-413 用内存 Repository 断言协议 CRUD/导入导出/复制/模板（15.5 mock 点）；A-406 断言字段池环形缓冲写入与事件（mock FieldPool）。</div>
+      <div class="note"><b>可测试性</b>：A-401/A-402/A-412 为协议引擎纯函数，T1 单测覆盖固定/可变长度切分、字节序/缩放/单位、组帧编码（非法帧丢弃并记日志）；A-414~A-416 为协议发送用例，T2 用 FakeDevice 断言"组帧→写设备"与"发送→接收→回环比对"（15.5 mock 点）；A-403~A-411、A-413 用内存 Repository 断言协议 CRUD/导入导出/复制/模板（15.5 mock 点）；A-406 断言字段池环形缓冲写入与事件（mock FieldPool）。</div>
       <h4>关键数据模型</h4>
       <div class="iface-block">Protocol { id, name, lengthType: fixed|variable, frameDef }
 Field { type: uint8|uint16|float32|bytes|ascii|hex|bitfield,
@@ -525,8 +549,9 @@ Frame { fields: [FieldValue] }</div>
         <li>协议为全局模板，不随会话隔离</li>
         <li>非法帧丢弃并记日志</li>
         <li>协议 CRUD/导入导出/复制/模板管理齐备，组帧可编码发送</li>
+        <li>协议帧可发送到指定会话（A-414/A-415，复用 DevicePort.write），支持回环收发验证（A-416）</li>
       </ul>
-      <p><span class="task-chip tc-new">L3-601 帧切分</span><span class="task-chip tc-w">L3-602 字段提取</span><span class="task-chip tc-w">L3-603 字段池写入</span><span class="task-chip tc-w">L3-604 协议 CRUD</span><span class="task-chip tc-w">L3-605 组帧编码</span></p>
+      <p><span class="task-chip tc-new">L3-601 帧切分</span><span class="task-chip tc-w">L3-602 字段提取</span><span class="task-chip tc-w">L3-603 字段池写入</span><span class="task-chip tc-w">L3-604 协议 CRUD</span><span class="task-chip tc-w">L3-605 组帧编码</span><span class="task-chip tc-new">L3-606 协议帧发送</span><span class="task-chip tc-w">L3-607 回环验证</span></p>
     </div>
   </div>
 </section>

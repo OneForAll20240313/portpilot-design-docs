@@ -272,13 +272,14 @@
   <h3>3.6.2 操作定义</h3>
   <div class="table-wrap">
   <table>
-    <tr><th>操作</th><th>说明</th></tr>
-    <tr><td>批量组帧</td><td>按模板批量生成多帧</td></tr>
-    <tr><td>回环验证</td><td>发送后接收并验证响应</td></tr>
-    <tr><td>保存模板</td><td>将当前配置保存为模板</td></tr>
-    <tr><td>发送</td><td>将预览帧发送到设备</td></tr>
+    <tr><th>操作</th><th>说明</th><th>用例</th></tr>
+    <tr><td>批量组帧</td><td>按模板批量生成多帧</td><td>A-415</td></tr>
+    <tr><td>回环验证</td><td>发送后接收并验证响应</td><td>A-416</td></tr>
+    <tr><td>保存模板</td><td>将当前配置保存为模板</td><td>A-413</td></tr>
+    <tr><td>发送</td><td>将预览帧发送到设备</td><td>A-414</td></tr>
   </table>
   </div>
+  <div class="note"><b>用例回填（协议发送）</b>：组帧编辑的"发送/批量组帧/回环验证"对应协议域用例 A-414/A-415/A-416（SSOT: <code>contracts/service-api.md</code> §3）。发送须指定目标会话，支持功能测试"一端口发完整协议、一端口收完整协议"的收发闭环（15.8 双串口回环）。</div>
 </section>
 
 <section id="s7">

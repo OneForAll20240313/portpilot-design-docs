@@ -64,6 +64,11 @@
 | A-411 | `ProtocolId duplicateProtocol(ProtocolId id)` | `PROTO_NOT_FOUND` | `protocol.duplicated` |
 | A-412 | `bytes[] encodeFrame(ProtocolSchema schema, FieldValue[] values)` | `PROTO_ENCODE_INVALID` | — |
 | A-413 | `void manageTemplates(TemplateAction action, TemplateData data)` | `PROTO_TEMPLATE_INVALID` | `protocol.templateChanged` |
+| A-414 | `void sendFrame(ConnectionId connId, ProtocolSchema schema, FieldValue[] values)` | `PROTO_CONN_INVALID / PROTO_ENCODE_INVALID / PROTO_SEND_FAILED` | `protocol.sent` |
+| A-415 | `void sendFrames(ConnectionId connId, ProtocolSchema schema, FieldValue[][] frameValues)` | `PROTO_CONN_INVALID / PROTO_ENCODE_INVALID / PROTO_SEND_FAILED` | `protocol.sent` |
+| A-416 | `LoopbackResult loopbackVerify(ConnectionId connId, ProtocolSchema schema, FieldValue[] values, timeout_t timeout)` | `PROTO_CONN_INVALID / PROTO_ENCODE_INVALID / PROTO_SEND_FAILED / PROTO_LOOPBACK_TIMEOUT / PROTO_LOOPBACK_MISMATCH` | `protocol.loopbackDone` |
+
+> **协议发送（A-414~A-416，回填 03.6 组帧编辑的"发送/批量组帧/回环验证"）**：组帧编码（A-412）后，发送/批量发送/回环验证须落到指定会话的设备（`ConnectionId`）。功能测试需"一端口发完整协议、一端口收完整协议"的收发闭环，故发送必须可指定目标会话、可回环比对响应。发送底层复用 `DevicePort.write`（§9）。
 
 ProtocolEngine（Core 层）实现协议帧切分/字段提取，见 §9 同层。
 

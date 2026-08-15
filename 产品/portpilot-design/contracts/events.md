@@ -57,6 +57,8 @@
 | `protocol.imported` | `{ protocolId }` | 协议导入 | A-410 |
 | `protocol.duplicated` | `{ protocolId, newId }` | 协议复制 | A-411 |
 | `protocol.templateChanged` | `{ action, templateId }` | 协议模板增删改 | A-413 |
+| `protocol.sent` | `{ connectionId, bytes }` | 协议帧发送成功（组帧后写设备，A-412→A-414/A-415） | A-414/A-415 |
+| `protocol.loopbackDone` | `{ connectionId, ok, matched }` | 回环验证完成（发送→接收→响应比对） | A-416 |
 
 ### 4. 可视化域
 
