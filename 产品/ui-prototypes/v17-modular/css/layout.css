@@ -36,7 +36,7 @@
 .sg-body.hidden{display:none}
 .session-node{display:flex;align-items:center;gap:6px;padding:5px 6px;border-radius:6px;cursor:pointer;font-size:12px}
 .session-node:hover{background:var(--bg3)}
-.session-node.active{background:var(--primary-dim);color:var(--primary)}
+.session-node.active{background:var(--primary-dim);color:var(--primary);border-left:3px solid;border-image:var(--grad) 1;font-weight:500}
 .sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .sdot.on{background:var(--accent2);box-shadow:0 0 5px var(--accent2)}
 .sdot.off{background:var(--muted)}

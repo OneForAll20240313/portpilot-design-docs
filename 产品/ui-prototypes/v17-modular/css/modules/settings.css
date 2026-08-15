@@ -100,3 +100,7 @@
 .about-links{margin-top:16px;font-size:11px}
 .about-links a{color:var(--primary);text-decoration:none}
 .about-links a:hover{text-decoration:underline}
+
+/* ===== Settings Footer Actions ===== */
+.sf-actions .save-btn{background:var(--grad);border:none;color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:all .2s ease;padding:5px 16px;min-width:72px}
+.sf-actions .save-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.35);opacity:.92;color:#fff}
