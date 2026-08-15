@@ -905,7 +905,7 @@ renderRx();
 
 // ===== 主题 =====
 var themes=[
- {name:'默认',cls:'',css:'linear-gradient(135deg,#0fc6b7,#58a6ff)'},
+ {name:'默认',cls:'th-default',css:'linear-gradient(135deg,#0fc6b7,#58a6ff)'},
  {name:'红',cls:'th-red',css:'linear-gradient(135deg,#e5484d,#ff6b6b)'},
  {name:'橙',cls:'th-orange',css:'linear-gradient(135deg,#ff9432,#ffc078)'},
  {name:'黄',cls:'th-yellow',css:'linear-gradient(135deg,#e3a53c,#ffd43b)'},
@@ -934,8 +934,10 @@ function initThemes(){
 function setTheme(cls,el){
  document.querySelectorAll('.th-one').forEach(function(x){x.classList.remove('active')});
  if(el)el.classList.add('active');
- document.body.className = document.body.className.replace(/ ?th-[a-z]+/g,'');
- document.body.classList.add(cls);
+ document.body.className = document.body.className.replace(/ ?th-[a-z0-9-]+/g,'');
+ if(cls)document.body.classList.add(cls);
+ // 切换主题后重新初始化滑块填充（确保 --grad 更新后渐变正确）
+ if(window.initAllSliderFills)window.initAllSliderFills();
 }
 function applyCustomColor(c){
  var r=document.createElement('style');

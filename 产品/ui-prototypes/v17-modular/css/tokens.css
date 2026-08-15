@@ -20,6 +20,12 @@
  --bgimg:''; /* 背景图片 */
 }
 /* 主题方案：红 */
+body.th-default{
+  --primary:#0fc6b7;
+  --primary-dim:rgba(15,198,183,.12);
+  --grad:linear-gradient(135deg,#0fc6b7,#58a6ff);
+}
+
 body.th-red{--primary:#e5484d;--primary-dim:rgba(229,72,77,.12);--grad:linear-gradient(135deg,#e5484d,#ff6b6b);--accent2:#f66d6d}
 /* 橙 */
 body.th-orange{--primary:#ff9432;--primary-dim:rgba(255,148,50,.12);--grad:linear-gradient(135deg,#ff9432,#ffc078);--accent2:#ffb066}
