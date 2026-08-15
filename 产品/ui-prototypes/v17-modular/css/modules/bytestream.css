@@ -13,7 +13,7 @@
 .conn-row1 select{flex:1;min-width:0;font-size:11px;padding:3px 8px}
 .vid-pid{font-size:10px;color:var(--muted);font-family:var(--mono);flex-shrink:0;white-space:nowrap}
 .conn-btn{background:var(--primary);border-color:var(--primary);color:#04211e;font-weight:600;padding:2px 12px;font-size:11px;flex-shrink:0}
-.conn-btn:hover{filter:brightness(1.1)}
+.conn-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.35);opacity:.92;color:#fff}
 .param-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
 .param-row label{display:flex;flex-direction:column;gap:1px;font-size:9px;color:var(--muted)}
 .param-row select{width:100%;padding:1px 4px;font-size:10px}
