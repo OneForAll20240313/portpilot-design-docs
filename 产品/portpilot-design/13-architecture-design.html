@@ -161,7 +161,8 @@
     <tr><td>Buffer</td><td>数据缓冲模型</td><td>策略、大小、溢出策略</td></tr>
     <tr><td>CommandGroup</td><td>命令组/宏集合</td><td>组名、命令列表、类型、循环间隔</td></tr>
     <tr><td>Macro</td><td>录制操作序列，自动转为命令组</td><td>名称、操作序列</td></tr>
-    <tr><td>DevicePort（接口）</td><td>设备抽象接口，由 Core 实现</td><td>open/close/write/read/onData/isOpen/probe</td></tr>
+    <tr><td>DevicePort（接口）</td><td>设备抽象接口，由 Core 实现</td><td>open/close/write/read/onData/onDisconnect/onError/isOpen/probe（成员见 service-api.md §9）</td></tr>
+    <tr><td>DevicePortEnumerator（接口）</td><td>系统级串口发现接口，由 Core 实现</td><td>listAvailablePorts（连接前枚举可用串口，含 pty 等非标准设备）</td></tr>
     <tr><td>Router（聚合）</td><td>交互路由状态机（视图/模块互斥、返回档位）</td><td>currentView/currentModule/lastView</td></tr>
     <tr><td>Terminal（聚合根）</td><td>终端交互状态模型</td><td>行缓冲、历史、焦点、prompt</td></tr>
     <tr><td>Scope</td><td>设置作用域（全局/会话/临时三级解析）</td><td>作用域层级、值覆盖规则</td></tr>
@@ -173,6 +174,7 @@
   <table>
     <tr><th>组件</th><th>职责</th><th>说明</th></tr>
     <tr><td>SerialWorker</td><td>串口设备交互</td><td>实现 DevicePort，参数可编程切换（D-53）</td></tr>
+    <tr><td>PortEnumerator</td><td>串口枚举（系统级设备发现）</td><td>实现 Domain 的 <code>DevicePortEnumerator</code>，落地 <code>QSerialPortInfo::availablePorts</code> 等平台枚举，映射 <code>PortInfo[]</code>（含 pty 等非标准设备，对应对应 A-214）</td></tr>
     <tr><td>NetworkTransport</td><td>TCP/IP 网络交互（预留扩展）</td><td>实现 DevicePort；TCP/IP 为非核心范围，见需求收敛</td></tr>
     <tr><td>FileRepository</td><td>配置/协议持久化</td><td>作用域持久化、备份</td></tr>
     <tr><td>EventLoop</td><td>统一事件派发</td><td>跨宿主事件流</td></tr>

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tag.schema.json",
+  "title": "TagDefinition",
+  "description": "接收字节标签/调色板/高亮开关契约。被 BufferService A-307 manageTag 引用（14.3 前置条件写死本 schema 校验）。标签用于对接收字节匹配命中时高亮着色，属字节流域（Domain 纯业务模型）。本契约是 SSOT。",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "标签唯一标识（UUID）"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "标签显示名称"
+    },
+    "color": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "description": "标签命中时的高亮颜色（十六进制，如 #FF0000）"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "标签高亮开关（false 时命中不渲染高亮，但标签仍存在）"
+    },
+    "match": {
+      "type": "string",
+      "description": "匹配规则（字节/子串匹配模式，命中则对该段接收字节打标签高亮）。空串表示不自动匹配，仅手动标记"
+    }
+  },
+  "required": ["id", "label", "color"],
+  "additionalProperties": true
+}

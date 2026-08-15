@@ -20,13 +20,14 @@
 | `session.duplicated` | `{ id, newId, name }` | 会话复制（D-41 只复制连接+缓冲参数） | A-203 |
 | `session.renamed` | `{ id, name }` | 会话重命名 | A-204 |
 | `session.deleted` | `{ id }` | 会话删除 | A-205 |
-| `session.stateChanged` | `{ id, state, prevState }` | 状态机四态迁移（D-38：offline/connecting/online/disconnecting） | A-206/A-207 |
+| `session.stateChanged` | `{ id, state, prevState }` | 状态机四态迁移（D-38：offline/connecting/online/disconnecting） | A-206/A-207/P-701/P-712/P-713 |
 | `session.modeChanged` | `{ id, mode }` | 会话模式切换（bytes/terminal 互斥） | A-208 |
 | `session.statsUpdated` | `{ id, rxBytes, txBytes, rxSpeed, connectionDuration, bufferUsage }` | 收发统计更新（含连接时长与缓冲占用） | A-206/A-207（连接在线期间由 DevicePort 数据回调驱动） |
 | `session.statsReset` | `{ id }` | 收发统计清零 | A-210 |
 | `session.logExported` | `{ id, path }` | 会话日志导出 | A-211 |
 | `session.probeDone` | `{ params, result }` | 端口探测完成 | A-212 |
 | `session.persisted` | `{}` | 会话持久化保存 | A-213 |
+| `session.portsListed` | `{ ports, timestamp }` | 可用串口列表枚举完成（`ports` 为 `PortInfo[]`） | A-214 |
 
 ### 2. 字节流域
 
@@ -40,6 +41,9 @@
 | `buffer.cleared` | `{ connectionId }` | 接收缓冲清空 | A-306 |
 | `buffer.tagChanged` | `{ tagId, def }` | 标签/调色板/高亮开关变更 | A-307 |
 | `buffer.lineControlChanged` | `{ connectionId, rts, dtr }` | RTS/DTR 电平控制变更 | A-308 |
+| `buffer.recordingStarted` | `{ connectionId, filePath }` | 接收字节录制开始 | A-310 |
+| `buffer.recordingStopped` | `{ connectionId, filePath, bytes, durationMs }` | 接收字节录制结束 | A-311 |
+| `buffer.responseReceived` | `{ connectionId, bytes }` | 发送后收到设备应答（sendAndWait） | A-312 |
 
 ### 3. 协议域
 
@@ -51,7 +55,7 @@
 | `protocol.exported` | `{ protocolId }` | 协议导出 | A-404 |
 | `protocol.toGlobal` | `{ protocolId }` | 协议转为全局模板（D-44） | A-405 |
 | `protocol.invalidFrame` | `{ protocolId, reason }` | 非法帧丢弃并记日志 | — |
-| `field.updated` | `{ protocolId, fieldId, value, timestamp }` | 字段写入字段池（环形缓冲 500 条），可视化/命令消费 | A-406 |
+| `field.updated` | `{ protocolId, fieldId, value, timestamp }` | 字段写入字段池（环形缓冲 500 条），可视化/命令消费 | A-406/P-709 |
 | `protocol.updated` | `{ protocolId, name }` | 协议定义更新 | A-407 |
 | `protocol.deleted` | `{ protocolId }` | 协议定义删除 | A-408 |
 | `protocol.imported` | `{ protocolId }` | 协议导入 | A-410 |
@@ -59,6 +63,7 @@
 | `protocol.templateChanged` | `{ action, templateId }` | 协议模板增删改 | A-413 |
 | `protocol.sent` | `{ connectionId, bytes }` | 协议帧发送成功（组帧后写设备，A-412→A-414/A-415） | A-414/A-415 |
 | `protocol.loopbackDone` | `{ connectionId, ok, matched }` | 回环验证完成（发送→接收→响应比对） | A-416 |
+| `protocol.fieldsListed` | `{ protocolId, fields }` | 协议字段列表返回（数据源选择器用） | A-418 |
 
 ### 4. 可视化域
 
@@ -100,10 +105,12 @@
 | `cmd.stateChanged` | `{ groupId, state }` | 执行状态五态（D-25：pending/running/paused/done/error） | A-702~A-705/A-712/A-713 |
 | `cmd.stepDone` | `{ groupId, index }` | 单步执行完成 | A-704 |
 | `cmd.macroRecorded` | `{ name, macro }` | 宏录制完成（D-29） | A-706 |
+| `cmd.macroRecordingStarted` | `{}` | 宏录制开始（录制中已录 N 条由状态上报） | A-716 |
 | `cmd.groupUpdated` | `{ groupId, name }` | 命令组更新 | A-708 |
 | `cmd.groupDeleted` | `{ groupId }` | 命令组删除 | A-709 |
 | `cmd.loopChanged` | `{ on, interval }` | 循环播放开关/间隔变更 | A-711 |
 | `cmd.macroDeleted` | `{ macroId }` | 宏删除 | A-714 |
+| `cmd.sdkLog` | `{ msg, timestamp }` | Python SDK 执行日志（P-711 log） | P-711 |
 | `cmd.scriptChanged` | `{ action, scriptId }` | 脚本导入/编辑/删除 | A-715 |
 
 ### 7. 设置域

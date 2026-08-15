@@ -223,6 +223,14 @@
             <td class="evt-code">session.persisted</td>
             <td class="tst-code">T1</td>
           </tr>
+          <tr>
+            <td>A-214</td>
+            <td class="sig">PortInfo[] listAvailablePorts()</td>
+            <td>—</td>
+            <td class="err-code">SESS_PORT_ENUM_FAILED</td>
+            <td class="evt-code">session.portsListed</td>
+            <td class="tst-code">T2</td>
+          </tr>
         </table>
       </div>
       <div class="note"><b>可测试性</b>：A-201~A-205、A-208 为纯业务（Domain），T1 单测注入 mock DevicePort；A-206/A-207 触发 DevicePort.open()/close()，用 FakeDevice mock 断言状态迁移与事件（详见 15.2 T2、15.5 mock 点）。所有错误码、事件名与 <code>contracts/events.md</code>、<code>contracts/service-api.md</code> 一致。</div>
@@ -348,6 +356,30 @@
             <td class="evt-code">buffer.sent</td>
             <td class="tst-code">T2</td>
           </tr>
+          <tr>
+            <td>A-310</td>
+            <td class="sig">void startRecording(ConnectionId connId, RecordingConfig cfg)</td>
+            <td>cfg 符合 buffer.schema.json recording</td>
+            <td class="err-code">BUF_CONN_INVALID / BUF_RECORDING_INVALID</td>
+            <td class="evt-code">buffer.recordingStarted</td>
+            <td class="tst-code">T2</td>
+          </tr>
+          <tr>
+            <td>A-311</td>
+            <td class="sig">RecordingResult stopRecording(ConnectionId connId)</td>
+            <td>当前正在录制</td>
+            <td class="err-code">BUF_CONN_INVALID / BUF_NOT_RECORDING</td>
+            <td class="evt-code">buffer.recordingStopped</td>
+            <td class="tst-code">T2</td>
+          </tr>
+          <tr>
+            <td>A-312</td>
+            <td class="sig">void sendAndWait(ConnectionId connId, bytes[] data, timeout_t timeout)</td>
+            <td>connId 会话在线</td>
+            <td class="err-code">BUF_CONN_INVALID / BUF_SEND_FAILED / BUF_RESPONSE_TIMEOUT</td>
+            <td class="evt-code">buffer.sent / buffer.responseReceived</td>
+            <td class="tst-code">T2</td>
+          </tr>
         </table>
       </div>
       <div class="note"><b>可测试性</b>：A-303/A-304/A-305/A-306/A-307 为纯缓冲/标签逻辑（Domain），T1 单测注入内存 Buffer 断言清空与标签/调色板/高亮配置校验；A-308 用 FakeDevice mock 断言 RTS/DTR 电平写脚；A-302/A-309 用 FakeDevice mock 断言字节写出；A-301 由 DevicePort 注入数据源驱动，T3 E2E 用 FakeDevice 回环注入确定性字节流。</div>
@@ -355,7 +387,7 @@
       <div class="iface-block">Buffer {
   strategy: ring|append|double,  // 环形/追加/双缓冲
   size: 16MB|1MB|4MB|64MB,
-  overflow: stop|dropOldest,
+  overflow: stop|drop-oldest|wrap,  // 溢出策略（对齐 buffer.schema.json overflowPolicy 与 service-api.md A-305）
   entries: [ReceivedBytes]
 }</div>
       <h4>关键时序：接收与缓冲</h4>
@@ -527,12 +559,36 @@
             <td class="evt-code">protocol.loopbackDone</td>
             <td class="tst-code">T2</td>
           </tr>
+          <tr>
+            <td>A-417</td>
+            <td class="sig">ProtocolSchema getProtocol(ProtocolId id)</td>
+            <td>协议存在</td>
+            <td class="err-code">PROTO_NOT_FOUND</td>
+            <td class="evt-code">—</td>
+            <td class="tst-code">T1</td>
+          </tr>
+          <tr>
+            <td>A-418</td>
+            <td class="sig">FieldDef[] listFields(ProtocolId id)</td>
+            <td>协议存在</td>
+            <td class="err-code">PROTO_NOT_FOUND</td>
+            <td class="evt-code">protocol.fieldsListed</td>
+            <td class="tst-code">T1</td>
+          </tr>
+          <tr>
+            <td>A-419</td>
+            <td class="sig">ParseStats getParseStats()</td>
+            <td>—</td>
+            <td class="err-code">—</td>
+            <td class="evt-code">—</td>
+            <td class="tst-code">T1</td>
+          </tr>
         </table>
       </div>
       <div class="note"><b>可测试性</b>：A-401/A-402/A-412 为协议引擎纯函数，T1 单测覆盖固定/可变长度切分、字节序/缩放/单位、组帧编码（非法帧丢弃并记日志）；A-414~A-416 为协议发送用例，T2 用 FakeDevice 断言"组帧→写设备"与"发送→接收→回环比对"（15.5 mock 点）；A-403~A-411、A-413 用内存 Repository 断言协议 CRUD/导入导出/复制/模板（15.5 mock 点）；A-406 断言字段池环形缓冲写入与事件（mock FieldPool）。</div>
       <h4>关键数据模型</h4>
       <div class="iface-block">Protocol { id, name, lengthType: fixed|variable, frameDef }
-Field { type: uint8|uint16|float32|bytes|ascii|hex|bitfield,
+Field { type: uint8|uint16|float32|double|bytes|ascii|hex|bitfield,
         length, byteOrder, offset, scale, unit }
 Frame { fields: [FieldValue] }</div>
       <h4>关键时序：字段提取到字段池</h4>
@@ -1006,6 +1062,30 @@ ANSI 解析: 颜色/光标保留，其余剥离（D-22/D-50）</div>
             <td class="evt-code">cmd.scriptChanged</td>
             <td class="tst-code">T1</td>
           </tr>
+          <tr>
+            <td>A-716</td>
+            <td class="sig">void startMacroRecording()</td>
+            <td>当前无正在进行的录制</td>
+            <td class="err-code">CMD_MACRO_INVALID</td>
+            <td class="evt-code">cmd.macroRecordingStarted</td>
+            <td class="tst-code">T1</td>
+          </tr>
+          <tr>
+            <td>A-717</td>
+            <td class="sig">Macro stopMacroRecording(string name)</td>
+            <td>当前正在录制</td>
+            <td class="err-code">CMD_MACRO_INVALID</td>
+            <td class="evt-code">cmd.macroRecorded</td>
+            <td class="tst-code">T1</td>
+          </tr>
+          <tr>
+            <td>A-718</td>
+            <td class="sig">MacroSummary[] listMacros()</td>
+            <td>—</td>
+            <td class="err-code">—</td>
+            <td class="evt-code">—</td>
+            <td class="tst-code">T1</td>
+          </tr>
         </table>
       </div>
       <div class="api-block">
@@ -1074,6 +1154,46 @@ ANSI 解析: 颜色/光标保留，其余剥离（D-22/D-50）</div>
             <td>字段池存在该字段</td>
             <td class="err-code">CMD_FIELD_NOT_FOUND</td>
             <td class="evt-code">—</td>
+            <td class="tst-code">T2</td>
+          </tr>
+          <tr>
+            <td>P-709</td>
+            <td class="sig">void set_field(string name, FieldValue value)</td>
+            <td>字段池存在该字段</td>
+            <td class="err-code">CMD_FIELD_INVALID</td>
+            <td class="evt-code">field.updated</td>
+            <td class="tst-code">T2</td>
+          </tr>
+          <tr>
+            <td>P-710</td>
+            <td class="sig">bytes build_frame(FieldValue[] fields, ProtocolSchema schema)</td>
+            <td>schema 合法</td>
+            <td class="err-code">CMD_FRAME_INVALID</td>
+            <td class="evt-code">—</td>
+            <td class="tst-code">T2</td>
+          </tr>
+          <tr>
+            <td>P-711</td>
+            <td class="sig">void log(string msg)</td>
+            <td>—</td>
+            <td class="err-code">—</td>
+            <td class="evt-code">cmd.sdkLog</td>
+            <td class="tst-code">T1</td>
+          </tr>
+          <tr>
+            <td>P-712</td>
+            <td class="sig">void on_connect(callback cb)</td>
+            <td>—</td>
+            <td class="err-code">—</td>
+            <td class="evt-code">session.stateChanged(online) → cb</td>
+            <td class="tst-code">T2</td>
+          </tr>
+          <tr>
+            <td>P-713</td>
+            <td class="sig">void on_disconnect(callback cb)</td>
+            <td>—</td>
+            <td class="err-code">—</td>
+            <td class="evt-code">session.stateChanged(offline) → cb</td>
             <td class="tst-code">T2</td>
           </tr>
         </table>
