@@ -1,0 +1,67 @@
+/* ============================================================
+   Protocol Module - Protocol tree, parsing, fields
+   PortPilot UI Prototype v16
+   ============================================================ */
+
+/* ===== 协议视图 ===== */
+.proto-body{display:flex;gap:8px;flex:1;min-height:0}
+.proto-tree{width:190px;flex-shrink:0;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;display:flex;flex-direction:column;overflow:hidden}
+.tree-header{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--rule)}
+.tree-header button{font-size:10px;padding:2px 8px}
+.tree-items{flex:1;overflow:auto;padding:6px}
+.titem{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;font-size:12px;cursor:pointer}
+.titem:hover{background:var(--bg3)}
+.titem .icon{font-size:10px;color:var(--primary)}
+.titem .field-type{margin-left:auto;font-size:10px;color:var(--muted)}
+.proto-right{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.tabs{display:flex;gap:2px}
+.tabs button{font-size:11px;padding:4px 12px;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);border-radius:0}
+.tabs button.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-content{flex:1;overflow:auto;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:10px}
+.parse-table{width:100%;border-collapse:collapse;font-size:12px}
+.parse-table th,.parse-table td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--rule)}
+.parse-table th{color:var(--muted);font-weight:500;font-size:11px}
+.frame-editor{background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:10px}
+.fe-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.fe-row label{font-size:11px}
+.fe-row input{width:50px}
+.preview{font-family:var(--mono);font-size:11px;color:var(--primary);background:var(--primary-dim);padding:2px 8px;border-radius:4px}
+.fe-actions{display:flex;gap:6px;margin-top:8px}
+
+/* ===== 可视化增强：时间范围 + 联动 + 筛选 ===== */
+/* 可视化时间范围选择器 */
+.viz-time-range{display:flex;align-items:center;gap:4px;background:var(--bg3);border-radius:6px;padding:3px;border:1px solid var(--rule)}
+.viz-tr-btn{font-size:10px;padding:3px 8px;border-radius:4px;background:transparent;color:var(--muted);border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.viz-tr-btn:hover{color:var(--ink2);background:var(--bg4)}
+.viz-tr-btn.active{background:var(--primary-dim);color:var(--primary);font-weight:600}
+.viz-tr-custom{font-size:10px;padding:3px 6px;border-radius:4px;border:1px solid var(--rule);background:var(--bg);color:var(--ink2);font-family:var(--mono);width:90px}
+.viz-tr-custom:focus{outline:none;border-color:var(--primary)}
+
+/* 可视化联动开关 */
+.viz-link-toggle{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted)}
+.viz-link-toggle input[type="checkbox"]{accent-color:var(--primary);cursor:pointer}
+.viz-link-toggle.on{color:var(--primary)}
+
+/* 可视化数据筛选 */
+.viz-filters{margin-top:12px;padding-top:12px;border-top:1px solid var(--rule)}
+.viz-filters .vf-title{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.viz-filters .vf-title::before{content:'';width:3px;height:10px;background:var(--primary);border-radius:2px;margin-right:6px}
+.viz-filters .vf-title button{font-size:10px;padding:2px 6px;border-radius:4px;border:1px solid var(--rule);background:var(--bg3);color:var(--muted);cursor:pointer}
+.viz-filters .vf-title button:hover{border-color:var(--primary);color:var(--primary)}
+.vf-list{display:flex;flex-direction:column;gap:6px}
+.vf-item{display:flex;align-items:center;gap:4px;padding:5px 6px;background:var(--bg3);border-radius:6px;border:1px solid var(--rule);font-size:10px}
+.vf-item .vf-field{color:var(--ink2);font-weight:600;flex-shrink:0;max-width:60px;overflow:hidden;text-overflow:ellipsis}
+.vf-item .vf-op{color:var(--muted);flex-shrink:0}
+.vf-item .vf-val{flex:1;min-width:0;color:var(--primary);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis}
+.vf-item .vf-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:0 2px;opacity:.6}
+.vf-item .vf-del:hover{opacity:1;color:var(--danger)}
+.vf-add{display:flex;gap:4px;margin-top:6px}
+.vf-add select,.vf-add input{font-size:10px;padding:4px 6px;border-radius:4px;border:1px solid var(--rule);background:var(--bg3);color:var(--ink2)}
+.vf-add select:focus,.vf-add input:focus{outline:none;border-color:var(--primary)}
+.vf-add button{font-size:10px;padding:4px 8px;border-radius:4px;border:1px solid var(--rule);background:var(--bg3);color:var(--muted);cursor:pointer;white-space:nowrap}
+.vf-add button:hover{border-color:var(--primary);color:var(--primary)}
+.vf-empty{font-size:10px;color:var(--muted);text-align:center;padding:8px;font-style:italic}
+
+/* 筛选高亮效果 */
+.viz-component.filtered{opacity:.4;filter:grayscale(.5)}
+.viz-component.highlight{box-shadow:0 0 0 2px var(--primary),var(--shadow);z-index:10}

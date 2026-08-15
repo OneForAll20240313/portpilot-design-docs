@@ -1,0 +1,68 @@
+/* ============================================================
+   Settings Module - Preferences, themes, logs
+   PortPilot UI Prototype v16
+   ============================================================ */
+
+/* ===== 设置 ===== */
+.settings-search{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;margin-bottom:6px;flex-shrink:0}
+.settings-search input{flex:1;font-size:12px}
+.settings-body{display:flex;gap:8px;flex:1;min-height:0}
+.settings-nav{width:150px;flex-shrink:0;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:6px;display:flex;flex-direction:column;gap:2px;overflow:auto}
+.sn-item{padding:7px 10px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--muted)}
+.sn-item:hover{background:var(--bg3);color:var(--ink)}
+.sn-item.active{background:var(--primary-dim);color:var(--primary)}
+.settings-form{flex:1;overflow:auto;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:12px;min-width:0}
+.sf-group{margin-bottom:14px}
+.sf-title{font-size:12px;font-weight:600;margin-bottom:8px;color:var(--ink)}
+.sf-session-panel{background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:10px;margin-bottom:10px}
+.sf-sess-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sf-sess-conn{display:flex;gap:8px;align-items:center}
+.sf-sess-conn .conn-btn{padding:6px 16px;font-size:12px}
+.sf-note{font-size:11px;color:var(--muted);background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;margin-top:10px;line-height:1.6}
+.sf-item .sf-control select:disabled,.sf-item .sf-control input:disabled{opacity:.45;cursor:not-allowed}
+.adv-toggle{cursor:pointer;font-size:12px;color:var(--primary);padding:6px 0;user-select:none}
+.adv-toggle .adv-arrow{display:inline-block;transition:transform .18s ease;margin-right:4px}
+.adv-toggle.open .adv-arrow{transform:rotate(90deg)}
+.adv-body{border-top:1px dashed var(--rule);padding-top:8px;margin-top:4px}
+.sf-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(48,54,61,.4)}
+.sf-label{width:130px;flex-shrink:0;font-size:12px;color:var(--muted)}
+.sf-control{flex:1;max-width:260px}
+.sf-control select,.sf-control input{width:100%;font-size:12px}
+.sf-scope{font-size:10px;padding:1px 7px;border-radius:10px;flex-shrink:0}
+.sf-scope.s{background:var(--primary-dim);color:var(--primary)}
+.sf-scope.g{background:rgba(163,113,247,.15);color:var(--purple)}
+.toggle{width:36px;height:20px;background:var(--bg4);border-radius:20px;position:relative;cursor:pointer;transition:var(--transition)}
+.toggle.on{background:var(--primary)}
+.toggle .knob{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:var(--transition)}
+.toggle.on .knob{left:18px}
+.sf-actions{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
+.sf-actions-right{display:flex;gap:8px}
+.apply-btn{background:var(--primary);border-color:var(--primary);color:#04211e;font-weight:600}
+
+/* ===== 主题设置面板 ===== */
+.theme-panel{background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:12px;margin-bottom:12px}
+.theme-presets{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+.th-one{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px;border-radius:8px;border:2px solid transparent}
+.th-one:hover{border-color:var(--rule2)}
+.th-one.active{border-color:var(--primary)}
+.th-swatch{width:34px;height:34px;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.th-name{font-size:9px;color:var(--muted)}
+.th-dual{width:34px;height:34px;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.theme-custom{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.theme-custom label{font-size:11px;color:var(--muted)}
+.theme-custom input[type=color]{width:40px;height:28px;border:none;padding:0;background:none;cursor:pointer}
+.theme-bg{margin-bottom:12px}
+.theme-bg label{font-size:11px;color:var(--muted);display:block;margin-bottom:6px}
+.bg-actions{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.bg-actions input[type=text]{flex:1;font-size:11px}
+.mask-ctrl{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted)}
+.mask-ctrl input[type=range]{flex:1;accent-color:var(--primary)}
+
+/* ===== 背景图下载进度条 ===== */
+.bg-download-bar{background:var(--bg3);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;margin-bottom:10px}
+.bdb-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:11px}
+.bdb-label{color:var(--ink2);font-weight:500}
+.bdb-percent{color:var(--primary);font-weight:600;font-family:var(--mono)}
+.bdb-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.bdb-fill{height:100%;width:0%;background:var(--grad);border-radius:3px;transition:width .15s ease}
+.bdb-status{font-size:10px;color:var(--muted)}

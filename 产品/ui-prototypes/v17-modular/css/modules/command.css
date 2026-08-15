@@ -1,0 +1,30 @@
+/* ============================================================
+   Command Automation Module - Command groups, execution
+   PortPilot UI Prototype v16
+   ============================================================ */
+
+/* ===== 命令自动化 ===== */
+.cmd-body{display:flex;gap:8px;flex:1;min-height:0}
+.cmd-list{width:190px;flex-shrink:0;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;display:flex;flex-direction:column;overflow:hidden}
+.cl-header{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--rule)}
+.cl-items{flex:1;overflow:auto;padding:6px}
+.cl-item{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:6px;font-size:12px;cursor:pointer}
+.cl-item:hover{background:var(--bg3)}
+.cl-item.active{background:var(--primary-dim);color:var(--primary)}
+.cl-item .count{margin-left:auto;font-size:10px;color:var(--muted)}
+.cmd-right{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.cmd-edit{flex:1;overflow:auto;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:10px}
+.cmd-row .idx{width:22px;font-size:11px;color:var(--muted);text-align:center;flex-shrink:0}
+.cmd-row input{flex:1;font-size:11px}
+.cmd-row .delay{width:70px;flex-shrink:0}
+.cmd-bar{display:flex;align-items:center;gap:6px;padding:8px;background:var(--bg2);border:1px solid var(--rule);border-radius:8px}
+.play-btn{background:var(--primary);border-color:var(--primary);color:#04211e;font-weight:600}
+.sdk-bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--primary-dim);border:1px solid var(--primary);border-radius:8px;font-size:11px}
+.sdk-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 6px var(--primary)}
+
+/* 命令组右键菜单 */
+.cmd-ctx-menu{position:fixed;display:none;background:var(--bg3);border:1px solid var(--rule);border-radius:8px;padding:6px;z-index:300;box-shadow:var(--shadow);min-width:160px}
+.cmd-ctx-menu.show{display:block}
+.cmd-ctx-menu .ctx-item{padding:6px 10px;font-size:12px;cursor:pointer;border-radius:6px;color:var(--ink2)}
+.cmd-ctx-menu .ctx-item:hover{background:var(--primary-dim);color:var(--primary)}
+.cmd-ctx-menu .ctx-item.ctx-danger:hover{background:rgba(248,81,73,.15);color:var(--danger)}

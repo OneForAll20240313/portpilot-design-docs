@@ -1,0 +1,23 @@
+/* ============================================================
+   Terminal Module - Terminal view, command input
+   PortPilot UI Prototype v16
+   ============================================================ */
+
+/* ===== 终端视图 ===== */
+.term-wrap{flex:1;display:flex;flex-direction:column;min-height:0}
+.term-area{flex:1;overflow:auto;background:#0a0e14;border:1px solid var(--rule);border-radius:8px;padding:10px;font-family:var(--mono);font-size:12px;line-height:1.6;margin-bottom:6px;cursor:text;outline:none}
+.term-area:focus{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-dim)}
+.prompt{color:var(--accent2)}
+.prompt .t{color:var(--primary)}
+.cursor{display:inline-block;width:7px;height:14px;background:var(--ink);animation:blink 1s step-end infinite;vertical-align:bottom}
+@keyframes blink{50%{opacity:0}}
+.term-cmd-panel{flex-shrink:0;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:8px}
+.tcp-title{font-size:10px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.tcp-title .t{color:var(--primary)}
+.tcp-grid{display:flex;flex-wrap:wrap;gap:5px}
+.tcp-btn{font-size:10px;padding:3px 8px;background:var(--bg3);border:1px solid var(--rule);border-radius:5px;white-space:nowrap}
+.tcp-btn:hover{border-color:var(--primary);color:var(--primary)}
+.tcp-btn .ph{color:var(--accent3);font-family:var(--mono);font-size:9px}
+.tcp-actions{display:flex;gap:5px;margin-top:6px;align-items:center}
+.tcp-actions select{font-size:10px;padding:1px 6px}
+.tcp-actions .tbtn{font-size:10px;padding:2px 8px;margin-left:auto}

@@ -1,0 +1,21 @@
+/* ============================================================
+   Session Module - Session tree, connection state
+   PortPilot UI Prototype v16
+   ============================================================ */
+
+/* ===== 协议搜索过滤 ===== */
+/* 协议树搜索 */
+.proto-search-bar{padding:8px;border-bottom:1px solid var(--rule);background:var(--bg3)}
+.proto-search-input{width:100%;font-size:11px;padding:5px 8px 5px 26px;border-radius:6px;border:1px solid var(--rule);background:var(--bg) url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%238b949e%27 stroke-width=%272%27><circle cx=%2711%27 cy=%2711%27 r=%278%27/><path d=%27m21 21-4.35-4.35%27/></svg>") no-repeat 8px center;color:var(--ink);font-family:var(--mono)}
+.proto-search-input:focus{outline:none;border-color:var(--primary)}
+.proto-search-input::placeholder{color:var(--muted)}
+.proto-tree.filtering .proto-item{display:none}
+.proto-tree.filtering .proto-item.match{display:flex}
+.proto-tree.filtering .proto-item.match .proto-subitems{display:none}
+.proto-tree.filtering .proto-subitem{display:none}
+.proto-tree.filtering .proto-subitem.match{display:flex}
+.proto-tree.filtering .proto-item.match + .proto-subitems{display:block}
+.proto-item .pi-name.match-highlight{color:var(--primary);font-weight:600}
+.proto-subitem .match-highlight{color:var(--primary);font-weight:600}
+.proto-search-empty{padding:20px;text-align:center;font-size:11px;color:var(--muted);display:none}
+.proto-tree.filtering .proto-search-empty.no-result{display:block}

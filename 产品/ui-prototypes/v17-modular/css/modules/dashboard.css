@@ -1,0 +1,32 @@
+/* ============================================================
+   Dashboard Module - Real-time dashboard widgets
+   PortPilot UI Prototype v16
+   ============================================================ */
+
+/* ===== Log viewer ===== */
+/* Log viewer */
+.log-viewer{display:flex;flex-direction:column;height:100%;gap:8px}
+.log-toolbar{display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.log-search{position:relative;flex:1;min-width:200px}
+.log-search input{width:100%;font-size:11px;padding:6px 8px 6px 26px;border-radius:6px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);font-family:var(--mono)}
+.log-search input:focus{outline:none;border-color:var(--primary)}
+.log-level-filter{display:flex;gap:2px;background:var(--bg3);border-radius:6px;padding:2px;border:1px solid var(--rule)}
+.llf-btn{font-size:10px;padding:3px 8px;border-radius:4px;background:transparent;color:var(--muted);border:none;cursor:pointer;transition:all .15s}
+.llf-btn:hover{color:var(--ink2)}
+.llf-btn.active{background:var(--bg);color:var(--ink2);font-weight:600}
+.llf-btn.error.active{color:var(--danger)}
+.llf-btn.warn.active{color:var(--accent3)}
+.llf-btn.info.active{color:var(--primary)}
+.log-count{font-size:10px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.log-content{flex:1;overflow:auto;background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:8px;font-family:var(--mono);font-size:11px;line-height:1.6}
+.log-line{display:flex;gap:8px;padding:2px 4px;border-radius:4px}
+.log-line:hover{background:var(--bg3)}
+.log-line.match{background:var(--primary-dim)}
+.log-time{color:var(--muted);flex-shrink:0;min-width:90px}
+.log-level-tag{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;flex-shrink:0;height:16px;line-height:14px;text-transform:uppercase}
+.log-level-tag.info{background:rgba(15,198,183,.15);color:var(--primary)}
+.log-level-tag.warn{background:rgba(255,188,66,.15);color:var(--accent3)}
+.log-level-tag.error{background:rgba(248,81,73,.15);color:var(--danger)}
+.log-level-tag.debug{background:rgba(139,148,158,.15);color:var(--muted)}
+.log-msg{flex:1;min-width:0;color:var(--ink2);word-break:break-all}
+.log-msg .hl{background:rgba(255,188,66,.3);color:var(--accent3);padding:0 2px;border-radius:2px;font-weight:600}

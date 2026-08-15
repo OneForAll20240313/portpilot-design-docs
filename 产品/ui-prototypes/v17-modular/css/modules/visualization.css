@@ -1,0 +1,24 @@
+/* ============================================================
+   Visualization Module - Drag-drop canvas, charts
+   PortPilot UI Prototype v16
+   ============================================================ */
+
+/* ===== 可视化 ===== */
+.viz-body{display:flex;gap:8px;flex:1;min-height:0}
+.viz-canvas{flex:1;position:relative;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;overflow:hidden;min-width:0}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(48,54,61,.4) 1px,transparent 1px),linear-gradient(90deg,rgba(48,54,61,.4) 1px,transparent 1px);background-size:20px 20px}
+.viz-toolbar{position:absolute;top:8px;right:8px;display:flex;gap:6px;z-index:5;align-items:center}
+.viz-sidebar{width:150px;flex-shrink:0;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;overflow:auto}
+.sb-header{padding:7px 10px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--rule)}
+.sb-items{padding:4px}
+.sb-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;font-size:12px;cursor:pointer}
+.sb-item:hover{background:var(--bg3)}
+.viz-prop{width:200px;flex-shrink:0;background:var(--bg2);border:1px solid var(--rule);border-radius:8px;display:flex;flex-direction:column;overflow:hidden}
+.pp-header{padding:8px 10px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:6px}
+.pp-body{flex:1;overflow:auto;padding:10px}
+.pp-item{margin-bottom:10px}
+.pp-item label{display:block;font-size:10px;color:var(--muted);margin-bottom:4px}
+.pp-item input,.pp-item select{width:100%;font-size:11px}
+.viz-component{position:absolute;background:var(--bg3);border:1px solid var(--rule);border-radius:8px;padding:10px;min-width:120px;min-height:70px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.vc-value{font-size:24px;font-weight:700;font-family:var(--mono);color:var(--primary)}
+.pose-cube{width:60px;height:60px;margin:16px auto 0;background:var(--grad);transform:rotateX(30deg) rotateZ(45deg);border-radius:6px;box-shadow:0 6px 16px var(--primary-dim)}

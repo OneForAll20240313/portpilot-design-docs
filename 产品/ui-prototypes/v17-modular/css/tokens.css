@@ -1,0 +1,45 @@
+/* ============================================================
+   Design Tokens
+   PortPilot UI Prototype v16
+   ============================================================ */
+
+/* ========== 主题变量（默认为青绿） ========== */
+:root{
+ --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;--bg5:#3d444d;
+ --ink:#e6edf3;--ink2:#c9d1d9;--muted:#8b949e;
+ --rule:#30363d;--rule2:#444c56;
+ --primary:#0fc6b7;--primary-dim:rgba(15,198,183,0.12);
+ --accent2:#3fb950;--accent3:#e3a53c;--danger:#f85149;--purple:#a371f7;
+ --grad:linear-gradient(135deg,#0fc6b7,#58a6ff);
+ --radius:8px;--radius-lg:12px;
+ --shadow:0 8px 24px rgba(0,0,0,.4);
+ --font:'InstrumentSans','Noto Sans CJK SC','WenQuanYi Micro Hei',sans-serif;
+ --mono:'GeistMono','JetBrains Mono',monospace;
+ --transition:all .18s ease;
+ --mask-opacity:.55; /* 背景蒙版透明度 */
+ --bgimg:''; /* 背景图片 */
+}
+/* 主题方案：红 */
+body.th-red{--primary:#e5484d;--primary-dim:rgba(229,72,77,.12);--grad:linear-gradient(135deg,#e5484d,#ff6b6b);--accent2:#f66d6d}
+/* 橙 */
+body.th-orange{--primary:#ff9432;--primary-dim:rgba(255,148,50,.12);--grad:linear-gradient(135deg,#ff9432,#ffc078);--accent2:#ffb066}
+/* 黄 */
+body.th-yellow{--primary:#e3a53c;--primary-dim:rgba(227,165,60,.12);--grad:linear-gradient(135deg,#e3a53c,#ffd43b);--accent2:#e3c565}
+/* 绿 */
+body.th-green{--primary:#3fb950;--primary-dim:rgba(63,185,80,.12);--grad:linear-gradient(135deg,#3fb950,#7ee787);--accent2:#56d364}
+/* 青 */
+body.th-cyan{--primary:#39c0c0;--primary-dim:rgba(57,192,192,.12);--grad:linear-gradient(135deg,#39c0c0,#67e8f9);--accent2:#5dd3d3}
+/* 蓝 */
+body.th-blue{--primary:#58a6ff;--primary-dim:rgba(88,166,255,.12);--grad:linear-gradient(135deg,#58a6ff,#79c0ff);--accent2:#6cb5ff}
+/* 紫 */
+body.th-purple{--primary:#a371f7;--primary-dim:rgba(163,113,247,.12);--grad:linear-gradient(135deg,#a371f7,#bc8cff);--accent2:#b18cff}
+/* 红绿 */
+body.th-rdgr{--primary:#e5484d;--primary-dim:rgba(229,72,77,.12);--grad:linear-gradient(135deg,#e5484d,#3fb950);--accent2:#4ddb6e;--accent3:#ff6b6b}
+/* 红蓝 */
+body.th-rdbl{--primary:#e5484d;--primary-dim:rgba(229,72,77,.12);--grad:linear-gradient(135deg,#e5484d,#58a6ff);--accent2:#6cb5ff;--accent3:#ff6b6b}
+/* 黄绿 */
+body.th-ylgr{--primary:#e3a53c;--primary-dim:rgba(227,165,60,.12);--grad:linear-gradient(135deg,#e3a53c,#3fb950);--accent2:#56d364;--accent3:#ffd43b}
+/* 青紫 */
+body.th-cypu{--primary:#39c0c0;--primary-dim:rgba(57,192,192,.12);--grad:linear-gradient(135deg,#39c0c0,#a371f7);--accent2:#b18cff;--accent3:#67e8f9}
+/* 彩虹 */
+body.th-rainbow{--primary:#58a6ff;--primary-dim:rgba(88,166,255,.12);--grad:linear-gradient(90deg,#e5484d,#ff9432,#e3a53c,#3fb950,#39c0c0,#58a6ff,#a371f7);--accent2:#7ee787;--accent3:#ffd43b}
