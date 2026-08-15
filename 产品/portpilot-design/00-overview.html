@@ -28,6 +28,7 @@
   <a href="14-module-design.html">14 模块设计</a>
   <a href="15-test-design.html">15 测试设计</a>
   <a href="16-architecture-review.html">16 架构评审</a>
+  <a href="17-architecture-deepdive.html">17 架构深化</a>
 </nav>
 
 <header class="cover">
@@ -36,7 +37,7 @@
   <p class="sub">以产品定义为纲，按章节拆分为独立设计文档。每章包含功能定义、界面线框原型（标注每个按钮的位置与层级）、交互定义，以及与现有 v15 原型的对照。</p>
   <div class="meta">
     <span class="chip">版本 v1.1</span>
-    <span class="chip">10 功能章节 + 治理/设计层 6 章 + 汇总</span>
+    <span class="chip">10 功能章节 + 治理/设计层 7 章 + 汇总</span>
     <span class="chip">参考原型 v15</span>
     <span class="chip">2026-08-14</span>
   </div>
@@ -44,7 +45,7 @@
 
 <section id="s1">
   <h2><span class="secnum">00.1</span>文档结构</h2>
-  <p class="lead">本设计稿按产品定义分类拆分为 16 个独立章节（10 功能章节 + 治理与设计层 6 章），每章一个 HTML 文件，共享同一套设计系统（<code>_shared/css/design.css</code>）。</p>
+  <p class="lead">本设计稿按产品定义分类拆分为 17 个独立章节（10 功能章节 + 治理与设计层 7 章），每章一个 HTML 文件，共享同一套设计系统（<code>_shared/css/design.css</code>）。</p>
   <div class="table-wrap">
   <table>
     <tr><th>章节</th><th>文件</th><th>核心内容</th><th>状态</th></tr>
@@ -64,7 +65,8 @@
     <tr><td><strong>13 架构设计</strong></td><td><code>13-architecture-design.html</code></td><td>技术架构：五层 DDD、技术选型、组件职责与层归属裁定、部署、数据、非功能设计、测试框架设计、架构级协作约束、设计原则承接</td><td><span class="badge b-accent">设计</span></td></tr>
     <tr><td><strong>14 模块设计</strong></td><td><code>14-module-design.html</code></td><td>模块级 LLD：8 限界上下文模块的职责/接口/数据模型/DoD/任务分解、模块级协作约束</td><td><span class="badge b-accent">设计</span></td></tr>
     <tr><td><strong>15 测试设计</strong></td><td><code>15-test-design.html</code></td><td>测试设计层：可测试性原则、测试分层、测试框架与工具链、依赖注入装配、mock 点清单、测试隔离、契约校验与测试命令、接口可测试性登记</td><td><span class="badge b-accent">设计</span></td></tr>
-    <tr><td><strong>16 架构评审</strong></td><td><code>16-architecture-review.html</code></td><td>架构评审方案：评审对象、评审维度（D1~D7）、多 subagent 分工矩阵、评审流程、评审输出模板、评审结论记录</td><td><span class="badge b-accent">评审</span></td></tr></table>
+    <tr><td><strong>16 架构评审</strong></td><td><code>16-architecture-review.html</code></td><td>架构评审方案：评审对象、评审维度（D1~D7）、多 subagent 分工矩阵、评审流程、评审输出模板、评审结论记录</td><td><span class="badge b-accent">评审</span></td></tr>
+    <tr><td><strong>17 架构深化</strong></td><td><code>17-architecture-deepdive.html</code></td><td>编码级架构深化：C++ 接口契约（纯虚类）、值类型与参数类型、事件系统 C++ 表示与 EventBus、形式化状态机、模块文件组织、依赖注入与装配根、非功能深化</td><td><span class="badge b-accent">设计</span></td></tr></table>
   </div>
 </section>
 
@@ -170,6 +172,7 @@
     <div class="step"><h4>14 模块设计</h4><p>模块级 LLD：8 限界上下文模块的职责/接口/数据模型/DoD/任务分解、模块级协作约束。</p></div>
     <div class="step"><h4>15 测试设计</h4><p>测试设计层：可测试性原则、测试分层策略、测试框架与工具链、依赖注入装配、mock 点清单、测试隔离、契约校验与测试命令、接口可测试性登记。横向支撑 12/13/14。</p></div>
     <div class="step"><h4>16 架构评审</h4><p>架构评审方案：评审对象与维度、多 subagent 分工、评审流程与输出模板。作为架构是否成立的验收依据。</p></div>
+    <div class="step"><h4>17 架构深化</h4><p>编码级架构深化：C++ 接口契约（纯虚类）、值类型与参数类型、事件系统 C++ 表示与 EventBus、形式化状态机、模块文件组织、依赖注入与装配根、非功能深化。13/14 章的编码落点。</p></div>
   </div>
 </section>
 
