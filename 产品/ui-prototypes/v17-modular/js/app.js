@@ -1084,8 +1084,9 @@ document.addEventListener('DOMContentLoaded', function(){
 // ============================================
 // Dynamic Slider Track Fill (滑块轨道动态渐变填充)
 
+
 // ============================================
-// Dynamic Slider Track Fill v2 (滑块轨道渐变填充)
+// Slider Fill v3 - CSS Variable Approach
 // ============================================
 function updateSliderFill(slider){
   if(!slider || slider.type !== 'range') return;
@@ -1095,8 +1096,7 @@ function updateSliderFill(slider){
   var pct = ((val - min) / (max - min)) * 100;
   if(pct < 0) pct = 0;
   if(pct > 100) pct = 100;
-  slider.style.backgroundImage = 'linear-gradient(to right, var(--grad) 0%, var(--grad) ' + pct + '%, var(--bg4) ' + pct + '%, var(--bg4) 100%)';
-  slider.style.backgroundColor = 'transparent';
+  slider.style.setProperty('--fill-pct', pct + '%');
 }
 
 function initAllSliderFills(){
@@ -1111,11 +1111,31 @@ function initAllSliderFills(){
   });
 }
 
+(function(){ try { initAllSliderFills(); } catch(e){} })();
 document.addEventListener('DOMContentLoaded', function(){
   setTimeout(function(){ initAllSliderFills(); }, 0);
   setTimeout(function(){ initAllSliderFills(); }, 100);
   setTimeout(function(){ initAllSliderFills(); }, 500);
   setTimeout(function(){ initAllSliderFills(); }, 1500);
+  if(window.MutationObserver){
+    var observer = new MutationObserver(function(mutations){
+      var need = false;
+      mutations.forEach(function(m){
+        if(m.addedNodes && m.addedNodes.length){
+          for(var i=0; i<m.addedNodes.length; i++){
+            var n = m.addedNodes[i];
+            if(n.nodeType === 1){
+              if(n.querySelector && n.querySelector('input[type=range]')){ need = true; break; }
+              if(n.tagName === 'INPUT' && n.type === 'range'){ need = true; break; }
+            }
+          }
+        }
+      });
+      if(need) setTimeout(function(){ initAllSliderFills(); }, 10);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
 });
 window.initAllSliderFills = initAllSliderFills;
 window.updateSliderFill = updateSliderFill;
+

@@ -149,10 +149,10 @@ input[type=range]::-moz-range-thumb{
 }
 
 /* ============================================
-   FULL THEME GRADIENT SYSTEM v3 (全面主题渐变)
+   FULL THEME GRADIENT SYSTEM v4 (全面主题渐变)
    ============================================ */
 
-/* ===== 1. PRIMARY BUTTONS (主按钮渐变 - 修复边缘断层) ===== */
+/* ===== 1. PRIMARY BUTTONS (主按钮渐变) ===== */
 .conn-btn,
 .send-btn,
 .apply-btn,
@@ -164,13 +164,13 @@ input[type=range]::-moz-range-thumb{
 .proto-save-btn,
 .confirm-btn,
 button.primary {
-  background: var(--grad);
-  border: none;
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,.25);
-  transition: all .2s ease;
-  padding: 5px 14px;
+  background: var(--grad) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25) !important;
+  transition: all .2s ease !important;
+  padding: 5px 14px !important;
 }
 .conn-btn:hover,
 .send-btn:hover,
@@ -180,10 +180,10 @@ button.primary {
 .save-btn:hover,
 .sb-header .new-btn:hover,
 .add-cmd-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(0,0,0,.35);
-  opacity: .92;
-  color: #fff;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35) !important;
+  opacity: .92 !important;
+  color: #fff !important;
 }
 .conn-btn:active,
 .send-btn:active,
@@ -191,38 +191,37 @@ button.primary {
 .play-btn:active,
 .reset-btn:active,
 .save-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 4px rgba(0,0,0,.25);
-  color: #fff;
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25) !important;
 }
 .conn-btn:disabled,
 .send-btn:disabled,
 .apply-btn:disabled,
 .play-btn:disabled,
 .save-btn:disabled {
-  background: var(--bg4);
-  color: var(--muted);
-  box-shadow: none;
-  transform: none;
-  cursor: not-allowed;
+  background: var(--bg4) !important;
+  color: var(--muted) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: not-allowed !important;
 }
 
 /* ===== 2. DANGER BUTTON (危险按钮红色渐变) ===== */
 .danger-ok-btn {
-  background: linear-gradient(135deg, var(--danger), #ff7875);
-  border: none;
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(248,81,73,.35);
-  padding: 5px 14px;
+  background: linear-gradient(135deg, var(--danger), #ff7875) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 8px rgba(248,81,73,.35) !important;
+  padding: 5px 14px !important;
 }
 .danger-ok-btn:hover {
-  box-shadow: 0 4px 14px rgba(248,81,73,.5);
-  transform: translateY(-1px);
-  color: #fff;
+  box-shadow: 0 4px 14px rgba(248,81,73,.5) !important;
+  transform: translateY(-1px) !important;
+  color: #fff !important;
 }
 
-/* ===== 3. RANGE SLIDER (滑块 - 轨道填充+拖柄渐变) ===== */
+/* ===== 3. RANGE SLIDER (滑块 - CSS变量驱动渐变填充) ===== */
 input[type=range] {
   -webkit-appearance: none !important;
   appearance: none !important;
@@ -231,6 +230,14 @@ input[type=range] {
   outline: none !important;
   border: none !important;
   padding: 0 !important;
+  background: linear-gradient(
+    to right,
+    var(--grad) 0%,
+    var(--grad) var(--fill-pct, 50%),
+    var(--bg4) var(--fill-pct, 50%),
+    var(--bg4) 100%
+  ) !important;
+  background-color: transparent !important;
 }
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none !important;
@@ -261,6 +268,17 @@ input[type=range]::-moz-range-thumb {
 .sf-slider input[type=range] { accent-color: initial !important; }
 .dc-slider input[type=range] { accent-color: initial !important; }
 
+.dc-slider input[type=range],
+.sf-slider input[type=range] {
+  height: 4px !important;
+}
+.dc-slider input[type=range]::-webkit-slider-thumb,
+.sf-slider input[type=range]::-webkit-slider-thumb {
+  width: 14px !important;
+  height: 14px !important;
+  border-width: 2px !important;
+}
+
 /* ===== 4. TOGGLE SWITCH (开关渐变) ===== */
 .toggle.on {
   background: var(--grad) !important;
@@ -283,8 +301,9 @@ input[type=range]::-moz-range-thumb {
 .th-one.active {
   position: relative;
   border: 2px solid transparent !important;
-  background: var(--bg2);
+  background: var(--bg2) !important;
   border-radius: 10px;
+  box-shadow: none !important;
 }
 .th-one.active::before {
   content: '';
@@ -315,7 +334,7 @@ input[type=range]::-moz-range-thumb {
 .sn-item.active {
   background: var(--grad) !important;
   color: #fff !important;
-  font-weight: 600;
+  font-weight: 600 !important;
   border-left: none !important;
   position: relative;
 }
@@ -332,11 +351,12 @@ input[type=range]::-moz-range-thumb {
 
 /* ===== 8. TAB ACTIVE (标签页激活 - 渐变底条) ===== */
 .tabs button.active {
-  color: var(--primary);
+  color: var(--primary) !important;
   border-bottom: none !important;
   position: relative;
   font-weight: 600;
   padding-bottom: 8px;
+  background: transparent !important;
 }
 .tabs button.active::after {
   content: '';
@@ -345,7 +365,7 @@ input[type=range]::-moz-range-thumb {
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--grad);
+  background: var(--grad) !important;
 }
 .vt-item.active::after {
   background: var(--grad) !important;
@@ -382,4 +402,25 @@ input[type=range]::-moz-range-thumb {
   height: 3px;
   border-radius: 2px;
   background: var(--grad);
+}
+
+/* ===== 12. TERMINAL THEME SELECTED (终端主题选中渐变边框) ===== */
+.tc-item.active {
+  position: relative;
+  border: 2px solid transparent !important;
+  border-radius: 8px;
+  background: var(--bg2) !important;
+}
+.tc-item.active::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 8px;
+  padding: 2px;
+  background: var(--grad);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
