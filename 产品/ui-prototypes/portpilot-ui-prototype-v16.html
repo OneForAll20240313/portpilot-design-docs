@@ -1219,6 +1219,217 @@ input[type=range]{-webkit-appearance:none;appearance:none;height:6px;background:
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--grad);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 1px 4px rgba(0,0,0,.3);transition:transform .15s ease}
 input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
 input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--grad);cursor:pointer;border:2px solid var(--bg2);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+
+/* ============================================
+   THEME GRADIENT ENHANCEMENT v2 (主题渐变强化)
+   ============================================ */
+
+/* --- 1. Primary Action Buttons (主按钮渐变) --- */
+.conn-btn, .send-btn, .apply-btn, .play-btn, .reset-btn, .save-btn,
+.sb-header .new-btn, .bg-actions button:first-of-type,
+.modal-footer .conn-btn, .modal-footer .reset-btn{
+  background:var(--grad) !important;
+  border-color:transparent !important;
+  color:#fff !important;
+  font-weight:600;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  transition:all .2s ease;
+}
+.conn-btn:hover, .send-btn:hover, .apply-btn:hover, .play-btn:hover, 
+.reset-btn:hover, .save-btn:hover, .sb-header .new-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 14px rgba(0,0,0,.35);
+  opacity:.9;
+}
+.conn-btn:disabled, .send-btn:disabled, .apply-btn:disabled,
+.save-btn:disabled, .reset-btn:disabled{
+  background:var(--bg4) !important;
+  color:var(--muted) !important;
+  box-shadow:none;
+  transform:none;
+  cursor:not-allowed;
+}
+
+/* --- 2. Toggle Switch (开关渐变) --- */
+.toggle.on{
+  background:var(--grad) !important;
+  border-color:transparent !important;
+  box-shadow:0 1px 4px rgba(0,0,0,.2) inset, 0 1px 2px rgba(0,0,0,.15);
+}
+.toggle.on .knob{
+  box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+
+/* --- 3. Range Slider Thumb (滑块拖柄渐变) --- */
+input[type=range]::-webkit-slider-thumb{
+  background:var(--grad) !important;
+  border:2px solid var(--bg2) !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.35) !important;
+  -webkit-appearance:none;
+  appearance:none;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover{
+  transform:scale(1.15);
+  box-shadow:0 3px 10px rgba(0,0,0,.45) !important;
+}
+input[type=range]::-moz-range-thumb{
+  background:var(--grad) !important;
+  border:2px solid var(--bg2) !important;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.35) !important;
+}
+input[type=range]{
+  -webkit-appearance:none;
+  appearance:none;
+  height:6px;
+  background:var(--bg4) !important;
+  border-radius:3px;
+  outline:none;
+  border:none;
+  padding:0;
+}
+/* Remove old accent-color approach */
+.mask-ctrl input[type=range]{accent-color:initial !important}
+
+/* --- 4. Theme Preset Swatches (主题预设色板) --- */
+.th-swatch{
+  box-shadow:0 2px 8px rgba(0,0,0,.35) !important;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.th-one:hover .th-swatch{
+  transform:scale(1.12);
+  box-shadow:0 4px 14px rgba(0,0,0,.45) !important;
+}
+.th-one.active{
+  border-color:var(--ink) !important;
+  box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--primary),0 4px 12px rgba(0,0,0,.3) !important;
+}
+.th-one.active .th-swatch{
+  transform:scale(1.05);
+}
+
+/* --- 5. Scrollbar Thumb (滚动条滑块渐变) --- */
+*::-webkit-scrollbar-thumb{
+  background:var(--grad) !important;
+  border:2px solid var(--bg2);
+  border-radius:5px;
+  transition:opacity .2s ease;
+}
+*::-webkit-scrollbar-thumb:hover{
+  opacity:.85;
+}
+
+/* --- 6. Active Navigation Indicator (侧边栏激活项渐变指示) --- */
+.sn-item.active{
+  background:var(--primary-dim) !important;
+  border-left:3px solid;
+  border-image:var(--grad) 1;
+  color:var(--ink) !important;
+  font-weight:600;
+}
+
+/* --- 7. Tab / View Switch Active (视图切换激活态渐变底条) --- */
+.tabs button.active{
+  color:var(--primary);
+  border-bottom:2px solid transparent;
+  border-image:var(--grad) 1;
+  font-weight:600;
+}
+.vt-item.active::after{
+  background:var(--grad) !important;
+}
+
+/* --- 8. Chip / Tag Active (激活芯片渐变边框) --- */
+.chip.active{
+  border:1px solid transparent !important;
+  background:var(--primary-dim);
+  background-clip:padding-box;
+  position:relative;
+}
+.chip.active::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  background:var(--grad);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+}
+
+/* --- 9. Progress Bar Fill (进度条填充渐变) --- */
+.progress-bar-fill, .log-save-progress-bar-fill, .bdb-fill, .dc-bar-fill{
+  background:var(--grad) !important;
+  box-shadow:0 1px 3px rgba(0,0,0,.25);
+  border-radius:inherit;
+}
+
+/* --- 10. Status Dot / Indicator (状态点渐变) --- */
+.sdot.on, .session-dot.on{
+  background:var(--grad);
+  box-shadow:0 0 6px rgba(15,198,183,.5);
+}
+
+/* --- 11. Danger Button (危险操作按钮渐变) --- */
+.danger-ok-btn{
+  background:linear-gradient(135deg,var(--danger),#ff7875) !important;
+  border-color:transparent !important;
+  color:#fff !important;
+  box-shadow:0 2px 8px rgba(248,81,73,.35);
+  font-weight:600;
+}
+.danger-ok-btn:hover{
+  box-shadow:0 4px 14px rgba(248,81,73,.5);
+  transform:translateY(-1px);
+}
+
+/* --- 12. Log Level Filter Active (日志级别筛选激活渐变) --- */
+.llf-item.active{
+  background:var(--grad) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+}
+
+/* --- 13. Dashboard Card Accent (仪表盘卡片顶部渐变条) --- */
+.dash-widget-card{
+  position:relative;
+  overflow:hidden;
+}
+.dash-widget-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:var(--grad);
+  opacity:.6;
+}
+
+/* --- 14. Modal Title Accent (模态框标题渐变下划线) --- */
+.modal-header h3{
+  position:relative;
+  padding-bottom:6px;
+}
+.modal-header h3::after{
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:32px;
+  height:3px;
+  border-radius:2px;
+  background:var(--grad);
+}
+
 </style>
 <style data-id="immersive-translate-input-injected-css"></style></head>
 <body class="th-rdbl">
@@ -9005,6 +9216,25 @@ function logToggleLevel(level, btn){
   var input = document.getElementById('logSearchInput');
   logSearch(input ? input.value : '');
 }
+
+
+// ---- Dynamic Slider Track Fill (滑块轨道动态渐变填充) ----
+function updateSliderFill(slider){
+  var min = parseFloat(slider.min) || 0;
+  var max = parseFloat(slider.max) || 100;
+  var val = parseFloat(slider.value) || 0;
+  var pct = ((val - min) / (max - min)) * 100;
+  slider.style.background = 'linear-gradient(to right, var(--grad) 0%, var(--grad) ' + pct + '%, var(--bg4) ' + pct + '%, var(--bg4) 100%)';
+}
+// Initialize all sliders on page load
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){
+    document.querySelectorAll('input[type=range]').forEach(function(s){
+      updateSliderFill(s);
+      s.addEventListener('input', function(){ updateSliderFill(this); });
+    });
+  }, 100);
+});
 
 </script>
 

@@ -1070,5 +1070,24 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   
   console.log('[PortPilot] UI boot complete');
+
+  // Initialize slider gradient fills
+  setTimeout(function(){
+    document.querySelectorAll('input[type=range]').forEach(function(s){
+      updateSliderFill(s);
+      s.addEventListener('input', function(){ updateSliderFill(this); });
+    });
+  }, 50);
 });
 
+
+// ============================================
+// Dynamic Slider Track Fill (滑块轨道动态渐变填充)
+// ============================================
+function updateSliderFill(slider){
+  var min = parseFloat(slider.min) || 0;
+  var max = parseFloat(slider.max) || 100;
+  var val = parseFloat(slider.value) || 0;
+  var pct = ((val - min) / (max - min)) * 100;
+  slider.style.background = 'linear-gradient(to right, var(--grad) 0%, var(--grad) ' + pct + '%, var(--bg4) ' + pct + '%, var(--bg4) 100%)';
+}

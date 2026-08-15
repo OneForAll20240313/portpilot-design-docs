@@ -167,3 +167,47 @@
 .confirm-modal .modal-body{padding:20px 16px}
 .confirm-text{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:8px}
 .confirm-hint{font-size:11px;color:var(--muted)}
+
+/* --- Theme Gradient: Tab Active (标签页激活渐变底条) --- */
+.tabs button.active{
+  color:var(--primary);
+  border-bottom:2px solid transparent;
+  border-image:var(--grad) 1;
+  font-weight:600;
+}
+
+/* --- Theme Gradient: Chip Active (激活芯片渐变边框) --- */
+.chip.active{
+  border:1px solid transparent !important;
+  background:var(--primary-dim);
+  background-clip:padding-box;
+  position:relative;
+}
+.chip.active::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+  background:var(--grad);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+}
+
+/* --- Theme Gradient: Modal Title (模态框标题渐变下划线) --- */
+.modal-header h3{
+  position:relative;
+  padding-bottom:6px;
+}
+.modal-header h3::after{
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:32px;
+  height:3px;
+  border-radius:2px;
+  background:var(--grad);
+}
