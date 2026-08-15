@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PortPilot - 串口调试工作台 v17 模块化版</title>
+
+  <!-- Design Tokens (SSOT) -->
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/modules/shared.css">
+  <link rel="stylesheet" href="../css/modules/session.css">
+  <link rel="stylesheet" href="../css/modules/bytestream.css">
+  <link rel="stylesheet" href="../css/modules/terminal.css">
+  <link rel="stylesheet" href="../css/modules/protocol.css">
+  <link rel="stylesheet" href="../css/modules/dashboard.css">
+  <link rel="stylesheet" href="../css/modules/visualization.css">
+  <link rel="stylesheet" href="../css/modules/command.css">
+  <link rel="stylesheet" href="../css/modules/settings.css">
+</head>
+<body class="th-default">
+<!-- 背景图 + 蒙版 -->
+<div id="bgLayer"></div>
+<div id="maskLayer"></div>
+<div id="app">
+<!-- Toast 容器 -->
+<div class="toast-container" id="toastContainer"></div>
+<!-- 顶部栏 -->
+<header class="top-bar">
+<div class="logo"><span class="dot"></span> PortPilot</div>
+<div class="title-meta">
+<span class="tag">v2.0</span>
+<span>串口调试工具</span>
+</div>
+<div class="top-actions">
+<span class="global-status"><span class="gs-dot"></span> 已连接 · 传感器 · COM4</span>
+<button class="icon-btn" type="button" onclick="openManual()">📖 手册</button>
+<button class="icon-btn" type="button" onclick="openThemeModal()">🎨 主题</button>
+<button class="icon-btn" type="button" onclick="openNewSession()">＋ 新建会话</button>
+</div>
+</header>
+<!-- 主体 -->
+<div class="main-layout">
+<!-- 左侧会话面板 -->
+<aside class="sidebar">
+<div class="sb-header"><span>会话</span><span><button class="grp-add-btn" type="button" onclick="addGroupPrompt()" title="新建分组">+ 分组</button><button class="new-btn" type="button" onclick="openNewSession()">+ 新建</button></span></div>
+<div class="session-search"><input type="text" placeholder="搜索会话..." oninput="filterSessions(this.value)"></div>
+<div class="session-tree" id="sessionTree">
+<div class="session-group" data-group="现场设备">
+<div class="sg-header" onclick="toggleGroup(this)" oncontextmenu="showGroupMenu(event,this)"><span class="sg-arrow">▾</span> 现场设备 <span class="sg-count">2</span></div>
+<div class="sg-body">
+<div class="session-node" data-mode="bytes" data-state="online" data-name="设备 A · COM3" onclick="selectSession(this,'设备 A · COM3')" oncontextmenu="showSessionMenu(event,'设备 A · COM3')">
+<span class="sdot on"></span>
+<span class="name">设备 A · COM3</span>
+<span class="badge">115200</span>
+<span class="mode-tag">字节流</span>
+<span class="s-more" onclick="event.stopPropagation();showSessionMenu(event,'设备 A · COM3')">⋯</span>
+</div>
+<div class="session-node active" data-mode="terminal" data-state="online" data-name="传感器 · COM4" onclick="selectSession(this,'传感器 · COM4')" oncontextmenu="showSessionMenu(event,'传感器 · COM4')">
+<span class="sdot on"></span>
+<span class="name">传感器 · COM4</span>
+<span class="badge">9600</span>
+<span class="mode-tag">终端</span>
+<span class="s-more" onclick="event.stopPropagation();showSessionMenu(event,'传感器 · COM4')">⋯</span>
+</div>
+</div>
+</div>
+<div class="session-group" data-group="离线设备">
+<div class="sg-header" onclick="toggleGroup(this)" oncontextmenu="showGroupMenu(event,this)"><span class="sg-arrow">▾</span> 离线设备 <span class="sg-count">1</span></div>
+<div class="sg-body">
+<div class="session-node" data-mode="bytes" data-state="offline" data-name="PLC 控制器 · COM5" onclick="selectSession(this,'PLC 控制器 · COM5')" oncontextmenu="showSessionMenu(event,'PLC 控制器 · COM5')">
+<span class="sdot off"></span>
+<span class="name">PLC 控制器 · COM5</span>
+<span class="badge">19200</span>
+<span class="mode-tag">字节流</span>
+<span class="s-more" onclick="event.stopPropagation();showSessionMenu(event,'PLC 控制器 · COM5')">⋯</span>
+</div>
+</div>
+</div>
+</div>
+<div class="session-detail" id="sessionDetail">
+<div class="sd-title">当前会话 <span class="sdot on" id="sdStateDot" style="display:inline-block"></span></div>
+<div class="sd-row"><span>设备</span><b id="sdDeviceName" class="sd-name-edit" onclick="startDetailRename(this)">传感器 · COM4</b></div>
+<div class="sd-row"><span>波特率</span><b id="sdBaudRate">115200</b></div>
+<div class="sd-row"><span>连接时长</span><b id="sdConnDuration">00:42:18</b></div>
+<div class="sd-row"><span>RX / TX</span><b id="sdRxtx">3,591 / 1,284</b></div>
+<div class="sd-actions">
+<button type="button" onclick="openSessionDetail()">详情</button>
+<button type="button" class="sd-reset-btn" onclick="resetSessionStats()" title="重置统计数据">↺ 重置</button>
+</div>
+</div>
+</aside>
+<!-- 工作区 -->
+<div class="workspace">
+<div class="view-tabs">
+<span class="vt-label">视图模式</span>
+<button class="vt-item vm-bytes vm-protocol" data-view="view-bytes" type="button" onclick="switchView('view-bytes',this)" style="display: none;">字节流</button>
+<button class="vt-item vm-terminal active" data-view="view-terminal" type="button" onclick="switchView('view-terminal',this)" style="">终端</button>
+<button class="vt-item vm-bytes vm-protocol" data-view="view-protocol" type="button" onclick="switchView('view-protocol',this)" style="display: none;">协议</button>
+<button class="vt-item vm-bytes vm-protocol vm-dashboard" data-view="view-dashboard" type="button" onclick="switchView('view-dashboard',this)" style="display: none;">仪表盘</button>
+<span style="flex:1"></span>
+<button class="tbtn" id="backBtn" type="button" onclick="backToView()" style="display: none;">← 返回视图</button>
+<button class="tbtn vm-bytes vm-protocol" id="vizBtn" type="button" onclick="openModule('page-viz')" style="display: none;">可视化</button>
+<button class="tbtn" type="button" onclick="openModule('page-cmd')">命令自动化</button>
+<button class="tbtn" type="button" onclick="openModule('page-settings')">设置</button>
+</div>
+<div class="workspace-body">
+<!-- 字节流视图 -->
+<div class="page view-bytes" id="view-bytes">
+<div class="offline-banner" id="bytesOfflineBanner"><span class="ob-dot"></span> 会话已离线，发送功能已禁用</div>
+<div class="conn-area">
+<div class="conn-row1">
+<span class="conn-summary">
+<span class="cs-dot connected" id="bytesStateDot"></span>
+<span id="bytesStateText">已连接 · 9600 bps</span>
+<span class="conn-sep"></span>
+<span id="bytesPortText">传感器 · COM4</span>
+</span>
+<span class="conn-actions" style="margin-left:auto">
+<button class="conn-btn" type="button" onclick="openSessionSettings()">会话设置</button>
+</span>
+</div>
+</div>
+<div class="rx-toolbar">
+<label>编码<select><option>ASCII</option><option>HEX</option><option>UTF-8</option></select></label>
+<label><input type="checkbox">暂停</label>
+<label><input type="checkbox">时间戳</label>
+<span style="margin-left:auto;display:flex;gap:3px">
+<button class="tbtn" type="button" onclick="openLogSaveModal('bytes')">保存</button>
+<button class="tbtn active" type="button">换行</button>
+<button class="tbtn" type="button" onclick="clearRx()">清空</button>
+</span>
+</div>
+<div class="search-bar">
+<input class="search-input" id="searchInput" type="text" placeholder="搜索关键字，回车添加标签" onkeydown="addChip(event)">
+<button class="tbtn" type="button" onclick="addChipFromInput()">添加</button>
+<button class="tbtn active" id="searchToggle" type="button" onclick="toggleSearch(this)">高亮</button>
+<span class="search-hint" id="searchCount">4 处命中 / 1 标签</span>
+<span style="margin-left:auto"></span>
+<button class="tbtn" id="navPrev" type="button" onclick="jumpSearch(-1)">←</button>
+<button class="tbtn" id="navNext" type="button" onclick="jumpSearch(1)">→</button>
+</div>
+<div class="chips-row">
+<div class="chips" id="chipsBox"><span class="chip active" data-kw="7E" data-color="#e3a53c" style="background: rgba(227,165,60,.55); color: rgb(11,15,20);">7E<span class="chip-x">×</span></span></div>
+<button class="tbtn chips-toggle" id="chipsToggle" type="button" onclick="toggleChips()">展开</button>
+</div>
+<div class="basic-main">
+<div class="rx-area" id="rxArea"><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:01</span><span class="data"><span class="kw" style="background: rgba(227, 165, 60, 0.55); color: rgb(11, 15, 20);">7E</span> 01 03 00 00 10 00 00 00 01 00 00 00 00 00 00 14 00 02 01 4A <span class="kw" style="background: rgba(227, 165, 60, 0.55); color: rgb(11, 15, 20);">7E</span></span></div><div class="line"><span class="dir tx">TX</span><span class="ts">10:32:01</span><span class="data"><span class="kw" style="background: rgba(227, 165, 60, 0.55); color: rgb(11, 15, 20);">7E</span> 01 02 00 00 10 00 00 00 00 00 00 00 00 00 00 00 00 02 01 4A <span class="kw" style="background: rgba(227, 165, 60, 0.55); color: rgb(11, 15, 20);">7E</span></span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:02</span><span class="data">收到响应帧: 状态码 = 0x00 正常</span></div><div class="line"><span class="dir tx">TX</span><span class="ts">10:32:05</span><span class="data">AT+STATUS? (查询设备状态)</span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:05</span><span class="data">OK STATUS=RUNNING UPTIME=86400s</span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:12</span><span class="data">温度: 25.3°C, 湿度: 62%, 气压: 1013hPa</span></div><div class="line"><span class="dir tx">TX</span><span class="ts">10:32:15</span><span class="data">AT+WRITE REG=0x10 VAL=0xAA</span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:15</span><span class="data">OK WRITE SUCCESS</span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:20</span><span class="data">设备心跳: 运行正常, 电压 3.3V, 温度 42°C</span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:25</span><span class="data">AT+VER? → PortPilot v2.1.0 build 20260801</span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:30</span><span class="data">告警: 缓冲区使用率超过 80%</span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:35</span><span class="data">数据帧校验错误 CRC mismatch, 已丢弃</span></div><div class="line"><span class="dir rx">RX</span><span class="ts">10:32:40</span><span class="data">GPS 定位成功: 纬度 39.9042°N, 经度 116.4074°E</span></div></div>
+<div class="send-area" id="sendArea">
+<div class="send-top">
+<input type="text" placeholder="输入发送内容...">
+<button class="send-btn" type="button">发送</button>
+</div>
+<div class="send-row2">
+<label><input type="checkbox"> HEX</label>
+<label><input type="checkbox"> 换行</label>
+<label><input type="checkbox"> 应答</label>
+<span class="sep"></span>
+<span class="lbl">电平:</span>
+<button type="button">RTS↑</button>
+<button type="button">DTR↓</button>
+<span class="sep"></span>
+<span class="lbl">快捷:</span>
+<button class="qbtn" type="button">AT+STATUS?</button>
+<button class="qbtn" type="button">AT+RESET</button>
+<button class="qbtn" type="button">7E 01 02</button>
+<button class="qbtn" type="button">+管理</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 终端视图 -->
+<div class="page view-terminal active" id="view-terminal">
+<div class="offline-banner" id="termOfflineBanner"><span class="ob-dot"></span> 会话已离线，终端输入已禁用</div>
+<div class="term-wrap term-scheme-default">
+<div class="term-offline-mask" id="termOfflineMask">
+<div class="tom-icon">⏸</div>
+<div class="tom-text">会话已离线</div>
+<div style="font-size:11px;color:var(--muted);opacity:.7">连接后可恢复终端输入</div>
+</div>
+<div class="term-area term-wrap-on" id="termArea" tabindex="0" onclick="this.focus()" onkeydown="termKey(event)" style="font-size: 12px; line-height: 1.6;">
+<div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div>
+<div><span class="prompt">root@<span class="t">device</span>:~$</span> uname -a</div>
+<div>Linux device 5.10.120 #1 SMP Thu Jan 10 10:00:00 CST 2026 armv7l GNU/Linux</div>
+<div><span class="prompt">root@<span class="t">device</span>:~$</span> cat /proc/cpuinfo</div>
+<div>processor : 0<br>model name : ARM Cortex-A7<br>BogoMIPS : 198.00<br>Hardware : Allwinner H3</div>
+<div><span class="prompt">root@<span class="t">device</span>:~$</span> ifconfig eth0</div>
+<div>eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt; mtu 1500<br>&nbsp;&nbsp;&nbsp;&nbsp;inet 192.168.1.100 netmask 255.255.255.0 broadcast 192.168.1.255</div>
+<div><span class="prompt">root@<span class="t">device</span>:~$</span> ifconfig eth0</div><div>eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt; mtu 1500<br>&nbsp;&nbsp;&nbsp;&nbsp;inet 192.168.1.100 netmask 255.255.255.0</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> cat /proc/cpuinfo</div><div>processor : 0<br>model name : ARM Cortex-A7<br>BogoMIPS : 198.00<br>Hardware : Allwinner H3</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> free -m</div><div>total used free shared buff/cache<br>Mem: 1024 342 512 12 170</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> ps aux</div><div>USER PID %CPU %MEM VSZ RSS<br>root 1 0.0 1.2 13256 4264 ? Ss init</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> df -h</div><div>Filesystem Size Used Avail Use%<br>/dev/root 1.9G 642M 1.2G 36% /</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> ping 192.168.3.1 -c 4</div><div>PING 192.168.1.1 : 56 data bytes<br>64 bytes: icmp_seq=1 ttl=64 time=0.8 ms</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> cat /etc/os-release</div><div>NAME="Buildroot"<br>VERSION="2024.02"<br>ID=buildroot</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> reboot</div><div>Connection closed by remote host.</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> reboot</div><div>Connection closed by remote host.</div><div class=""><span class="prompt">root@<span class="t">device</span>:~$</span> </div><div><span class="prompt">root@<span class="t">device</span>:~$</span> ls -lh</div><div>-sh: ls -lh: not found</div><div class="term-input-line"><span class="prompt">root@<span class="t">device</span>:~$</span> <span class="cursor" style="display: inline-block; background: var(--primary); width: 8px; height: 1em;">&nbsp;</span></div></div>
+<div class="term-cmd-panel">
+<div class="tcp-title"><span class="t">⚡</span> 自动化命令 · 点击快捷发送<button class="manage-btn" type="button" onclick="termOpenCmdManager()">+管理</button></div>
+<div class="tcp-grid" id="termQuickCmdGrid"><button class="tcp-btn" type="button" onclick="sendTermCmd('ifconfig eth0')">ifconfig eth0</button><button class="tcp-btn" type="button" onclick="sendTermCmd('cat /proc/cpuinfo')">cat /proc/cpuinfo</button><button class="tcp-btn" type="button" onclick="sendTermCmd('free -m')">free -m</button><button class="tcp-btn" type="button" onclick="sendTermCmd('top -b -n 1')">top -n1</button><button class="tcp-btn" type="button" onclick="sendTermCmd('df -h')">df -h</button><button class="tcp-btn" type="button" onclick="sendTermCmd('ps aux')">ps aux</button><button class="tcp-btn" type="button" onclick="sendTermCmd('ping {ip} -c 4')">ping <span class="ph">{ip}</span></button><button class="tcp-btn" type="button" onclick="sendTermCmd('cat /etc/os-release')">os-release</button><button class="tcp-btn" type="button" onclick="sendTermCmd('reboot')">reboot</button><button class="tcp-btn" type="button" onclick="sendTermCmd('ls -lh')">ls</button></div>
+<div class="tcp-actions">
+<select id="termEncoding" title="编码" onchange="termChangeEncoding(this.value)">
+<option value="UTF-8">UTF-8</option>
+<option value="ASCII">ASCII</option>
+<option value="HEX">HEX</option>
+<option value="GBK">GBK</option>
+<option value="GB2312">GB2312</option>
+</select>
+<button class="tbtn active" id="termEchoBtn" type="button" onclick="termToggleEcho()">回显</button>
+<button class="tbtn active" id="termWrapBtn" type="button" onclick="termToggleWrap()">自动换行</button>
+<button class="tbtn" type="button" onclick="clearTerm()">清屏</button>
+<button class="tbtn" type="button" onclick="resetTerm()">重置</button>
+<button class="tbtn" type="button" onclick="openLogSaveModal('terminal')" style="margin-left:auto">保存日志</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 协议视图 -->
+<div class="page view-protocol" id="view-protocol">
+<div class="proto-body">
+<!-- 左侧协议树 -->
+<div class="proto-tree">
+<div class="tree-header">
+  <span>协议定义</span>
+  <div class="proto-tree-actions">
+    <button type="button" class="proto-add-btn" onclick="protoOpenAddMenu(event)">+添加</button>
+    <div class="proto-add-menu" id="protoAddMenu" style="display: none;">
+      <div class="pam-item" onclick="protoShowNewModal('fixed')">固定长度协议</div>
+      <div class="pam-item" onclick="protoShowNewModal('variable')">可变长度协议</div>
+      <div class="pam-item" onclick="protoShowNewModal('textline')">文本行协议</div>
+      <div class="pam-item" onclick="protoShowNewModal('csv')">CSV 协议</div>
+      <div class="pam-sep"></div>
+      <div class="pam-item" onclick="protoImportJson()">导入 JSON</div>
+    </div>
+  </div>
+</div>
+<div class="proto-search-bar">
+  <input type="text" class="proto-search-input" id="protoSearchInput" placeholder="搜索协议或字段..." oninput="protoFilterTree(this.value)" onkeydown="if(event.key==='Escape'){this.value='';protoFilterTree('')}">
+</div>
+<div class="proto-search-empty" id="protoSearchEmpty">未找到匹配项</div>
+<div class="tree-items" id="protoTreeItems"><div class="proto-item active" data-id="p1"><span class="pi-arrow">▼</span><span class="pi-name">Modbus RTU</span><span class="pi-type">可变长度</span></div><div class="proto-subitems show"><div class="proto-subitem"><span class="psi-icon">■</span> addr <span class="psi-type">uint8</span></div><div class="proto-subitem"><span class="psi-icon">■</span> func_code <span class="psi-type">uint8</span></div><div class="proto-subitem"><span class="psi-icon">■</span> start_addr <span class="psi-type">uint16</span></div><div class="proto-subitem"><span class="psi-icon">■</span> reg_count <span class="psi-type">uint16</span></div></div><div class="proto-item" data-id="p2"><span class="pi-arrow">▼</span><span class="pi-name">传感器数据帧</span><span class="pi-type">固定长度</span></div><div class="proto-subitems show"><div class="proto-subitem"><span class="psi-icon">■</span> header <span class="psi-type">uint8</span></div><div class="proto-subitem"><span class="psi-icon">■</span> temp <span class="psi-type">float32</span></div><div class="proto-subitem"><span class="psi-icon">■</span> humidity <span class="psi-type">float32</span></div><div class="proto-subitem"><span class="psi-icon">■</span> pressure <span class="psi-type">uint16</span></div><div class="proto-subitem"><span class="psi-icon">■</span> status <span class="psi-type">uint8</span></div><div class="proto-subitem" style="color: var(--muted);"><span class="psi-icon">…</span> 共 6 个字段</div></div><div class="proto-item" data-id="p3"><span class="pi-arrow">▼</span><span class="pi-name">文本指令协议</span><span class="pi-type">文本行</span></div><div class="proto-subitems show"><div class="proto-subitem"><span class="psi-icon">■</span> cmd <span class="psi-type">ascii</span></div></div></div>
+</div>
+<!-- 右侧内容区 -->
+<div class="proto-right">
+<div class="tabs">
+<button class="" type="button" data-proto-tab="parse" onclick="protoSwitchTab('parse',this)">解析结果</button>
+<button type="button" data-proto-tab="fields" onclick="protoSwitchTab('fields',this)" class="active">字段</button>
+<button type="button" data-proto-tab="frame" onclick="protoSwitchTab('frame',this)" class="">组帧编辑</button>
+<button type="button" data-proto-tab="template" onclick="protoSwitchTab('template',this)" class="">模板</button>
+</div>
+<!-- 解析结果 tab -->
+<div class="tab-content proto-tab-content" id="protoTabParse" style="display: none;">
+  <div class="proto-parse-toolbar">
+    <div class="ppt-left">
+      <span class="ppt-proto-name" id="pptProtoName">Modbus RTU</span>
+      <span class="ppt-proto-type" id="pptProtoType">可变长度</span>
+    </div>
+    <div class="ppt-right">
+      <button type="button" class="tbtn" onclick="protoSimulateParse()">模拟解析</button>
+      <button type="button" class="tbtn" onclick="protoToggleAutoParse()" id="autoParseBtn">自动解析: 关</button>
+    </div>
+  </div>
+  <div class="proto-hex-view" id="protoHexView"></div>
+  <table class="parse-table" id="protoParseTable">
+  <thead><tr><th style="width:40px">#</th><th style="width:120px">字段</th><th style="width:100px">类型</th><th>值</th><th style="width:60px">字节</th><th>说明</th></tr></thead>
+  <tbody id="protoParseBody"><tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">点击「模拟解析」生成示例数据</td></tr></tbody></table>
+</div>
+<!-- 字段编辑器 tab -->
+<div class="tab-content proto-tab-content" id="protoTabFields" style="display: flex;">
+  <div class="proto-field-header">
+    <div class="pfh-info">
+      <span class="pfh-name" id="pfhName">Modbus RTU</span>
+      <span class="pfh-type" id="pfhType">可变长度</span>
+      <span class="pfh-length">总长度: <b id="pfhTotalLen">6</b> 字节</span>
+    </div>
+    <div class="pfh-config">
+      <button type="button" class="tbtn" onclick="protoOpenConfig()">协议配置</button>
+    </div>
+  </div>
+  <!-- 帧结构可视化条 -->
+  <div class="proto-frame-viz" id="protoFrameViz"><div class="pfv-segment " style="flex:16.666666666666664;background:#0fc6b7" title="addr (uint8)"><span class="pfv-seg-label">addr</span></div><div class="pfv-segment " style="flex:16.666666666666664;background:#58a6ff" title="func_code (uint8)"><span class="pfv-seg-label">func_code</span></div><div class="pfv-segment " style="flex:33.33333333333333;background:#a371f7" title="start_addr (uint16)"><span class="pfv-seg-label">start_addr</span></div><div class="pfv-segment " style="flex:33.33333333333333;background:#3fb950" title="reg_count (uint16)"><span class="pfv-seg-label">reg_count</span></div></div>
+  <div class="proto-field-table-wrap">
+  <table class="parse-table proto-field-table">
+  <thead><tr>
+    <th style="width:40px">#</th>
+    <th style="width:120px">字段名</th>
+    <th style="width:100px">类型</th>
+    <th style="width:80px">长度</th>
+    <th style="width:90px">字节序</th>
+    <th>说明</th>
+    <th style="width:130px">操作</th>
+  </tr></thead>
+  <tbody id="protoFieldBody"><tr data-idx="0"><td>1</td><td><input type="text" value="addr" onchange="protoUpdateFieldName(0, this.value)"></td><td><select onchange="protoUpdateFieldType(0, this.value)"><option value="uint8" selected="">uint8</option><option value="uint16">uint16</option><option value="uint32">uint32</option><option value="int8">int8</option><option value="int16">int16</option><option value="int32">int32</option><option value="float32">float32</option><option value="double">double</option><option value="bytes">bytes</option><option value="ascii">ascii</option><option value="hex">hex</option><option value="bitfield">bitfield</option></select></td><td>1 B</td><td>-</td><td><input type="text" value="设备地址" onchange="protoUpdateFieldDesc(0, this.value)"></td><td><div class="field-actions"><button type="button" onclick="protoMoveField(0,-1)" title="上移" disabled="" style="opacity:.4;cursor:not-allowed">↑</button><button type="button" onclick="protoMoveField(0,1)" title="下移">↓</button><button type="button" onclick="protoDeleteField(0)" title="删除" style="color:var(--danger)">✕</button></div></td></tr><tr data-idx="1"><td>2</td><td><input type="text" value="func_code" onchange="protoUpdateFieldName(1, this.value)"></td><td><select onchange="protoUpdateFieldType(1, this.value)"><option value="uint8" selected="">uint8</option><option value="uint16">uint16</option><option value="uint32">uint32</option><option value="int8">int8</option><option value="int16">int16</option><option value="int32">int32</option><option value="float32">float32</option><option value="double">double</option><option value="bytes">bytes</option><option value="ascii">ascii</option><option value="hex">hex</option><option value="bitfield">bitfield</option></select></td><td>1 B</td><td>-</td><td><input type="text" value="功能码" onchange="protoUpdateFieldDesc(1, this.value)"></td><td><div class="field-actions"><button type="button" onclick="protoMoveField(1,-1)" title="上移">↑</button><button type="button" onclick="protoMoveField(1,1)" title="下移">↓</button><button type="button" onclick="protoDeleteField(1)" title="删除" style="color:var(--danger)">✕</button></div></td></tr><tr data-idx="2"><td>3</td><td><input type="text" value="start_addr" onchange="protoUpdateFieldName(2, this.value)"></td><td><select onchange="protoUpdateFieldType(2, this.value)"><option value="uint8">uint8</option><option value="uint16" selected="">uint16</option><option value="uint32">uint32</option><option value="int8">int8</option><option value="int16">int16</option><option value="int32">int32</option><option value="float32">float32</option><option value="double">double</option><option value="bytes">bytes</option><option value="ascii">ascii</option><option value="hex">hex</option><option value="bitfield">bitfield</option></select></td><td>2 B</td><td>大端</td><td><input type="text" value="起始地址" onchange="protoUpdateFieldDesc(2, this.value)"></td><td><div class="field-actions"><button type="button" onclick="protoMoveField(2,-1)" title="上移">↑</button><button type="button" onclick="protoMoveField(2,1)" title="下移">↓</button><button type="button" onclick="protoDeleteField(2)" title="删除" style="color:var(--danger)">✕</button></div></td></tr><tr data-idx="3"><td>4</td><td><input type="text" value="reg_count" onchange="protoUpdateFieldName(3, this.value)"></td><td><select onchange="protoUpdateFieldType(3, this.value)"><option value="uint8">uint8</option><option value="uint16" selected="">uint16</option><option value="uint32">uint32</option><option value="int8">int8</option><option value="int16">int16</option><option value="int32">int32</option><option value="float32">float32</option><option value="double">double</option><option value="bytes">bytes</option><option value="ascii">ascii</option><option value="hex">hex</option><option value="bitfield">bitfield</option></select></td><td>2 B</td><td>大端</td><td><input type="text" value="寄存器数量" onchange="protoUpdateFieldDesc(3, this.value)"></td><td><div class="field-actions"><button type="button" onclick="protoMoveField(3,-1)" title="上移">↑</button><button type="button" onclick="protoMoveField(3,1)" title="下移" disabled="" style="opacity:.4;cursor:not-allowed">↓</button><button type="button" onclick="protoDeleteField(3)" title="删除" style="color:var(--danger)">✕</button></div></td></tr></tbody></table>
+  </div>
+  <div class="proto-field-add">
+    <button type="button" onclick="protoAddField()">+ 添加字段</button>
+  </div>
+</div>
+<!-- 组帧编辑 tab -->
+<div class="tab-content proto-tab-content" id="protoTabFrame" style="display: none;">
+  <div class="proto-frame-toolbar">
+    <div class="pft-left">
+      <label>模板:</label>
+      <select id="protoFrameTemplate" onchange="protoApplyFrameTemplate()">
+        <option value="">-- 选择模板 --</option>
+      </select>
+      <button type="button" class="tbtn" onclick="protoSaveFrameTemplate()">保存模板</button>
+    </div>
+    <div class="pft-right">
+      <button type="button" class="tbtn" onclick="protoBatchFrame()">批量组帧</button>
+      <button type="button" class="tbtn" onclick="protoLoopbackVerify()">回环验证</button>
+      <button type="button" class="conn-btn" onclick="protoSendFrame()">发送</button>
+    </div>
+  </div>
+  <div class="proto-frame-fields" id="protoFrameFields"><div class="frame-field-item"><span class="ffi-label">addr</span><span class="ffi-input"><input type="text" value="0" placeholder="数值" oninput="protoOnFrameFieldChange('addr', this.value)"></span><span class="ffi-type">uint8</span></div><div class="frame-field-item"><span class="ffi-label">func_code</span><span class="ffi-input"><input type="text" value="0" placeholder="数值" oninput="protoOnFrameFieldChange('func_code', this.value)"></span><span class="ffi-type">uint8</span></div><div class="frame-field-item"><span class="ffi-label">start_addr</span><span class="ffi-input"><input type="text" value="0" placeholder="数值" oninput="protoOnFrameFieldChange('start_addr', this.value)"></span><span class="ffi-type">uint16</span></div><div class="frame-field-item"><span class="ffi-label">reg_count</span><span class="ffi-input"><input type="text" value="0" placeholder="数值" oninput="protoOnFrameFieldChange('reg_count', this.value)"></span><span class="ffi-type">uint16</span></div></div>
+  <div class="proto-frame-preview">
+    <div class="pfp-label">帧预览 (HEX):</div>
+    <div class="pfp-hex" id="protoFrameHex">00 00 00 00 00 00 1B 00</div>
+    <div class="pfp-info">
+      <span id="protoFrameLen">8 字节</span>
+      <span class="pfp-sep"></span>
+      <span id="protoFrameCrc">CRC: 0x1B00</span>
+    </div>
+  </div>
+</div>
+<!-- 模板 tab -->
+<div class="tab-content proto-tab-content" id="protoTabTemplate" style="display: none;">
+  <div class="proto-template-header">
+    <span>内置协议模板</span>
+    <span class="proto-tpl-hint">点击基于模板创建新协议</span>
+  </div>
+  <div class="proto-template-grid" id="protoTemplateGrid"><div class="proto-tpl-card" onclick="protoCreateFromTemplate('modbus-rtu')"><div class="ptc-name">Modbus RTU</div><div class="ptc-type">可变长度</div><div class="ptc-desc">工业标准Modbus RTU协议，含CRC16校验</div><div class="ptc-action">基于此创建 →</div></div><div class="proto-tpl-card" onclick="protoCreateFromTemplate('ymodem')"><div class="ptc-name">YMODEM</div><div class="ptc-type">可变长度</div><div class="ptc-desc">YMODEM文件传输协议，128/1024字节数据块</div><div class="ptc-action">基于此创建 →</div></div><div class="proto-tpl-card" onclick="protoCreateFromTemplate('nmea0183')"><div class="ptc-name">NMEA 0183</div><div class="ptc-type">文本行</div><div class="ptc-desc">GPS标准NMEA 0183文本协议，$开头\r\n结尾</div><div class="ptc-action">基于此创建 →</div></div><div class="proto-tpl-card" onclick="protoCreateFromTemplate('sbus')"><div class="ptc-name">SBUS</div><div class="ptc-type">固定长度</div><div class="ptc-desc">FrSky SBUS遥控协议，25字节固定长度</div><div class="ptc-action">基于此创建 →</div></div><div class="proto-tpl-card" onclick="protoCreateFromTemplate('custom-fixed')"><div class="ptc-name">自定义固定帧</div><div class="ptc-type">固定长度</div><div class="ptc-desc">固定长度协议模板，可自定义字段</div><div class="ptc-action">基于此创建 →</div></div><div class="proto-tpl-card" onclick="protoCreateFromTemplate('csv-simple')"><div class="ptc-name">CSV 数据</div><div class="ptc-type">CSV</div><div class="ptc-desc">逗号分隔的CSV文本协议</div><div class="ptc-action">基于此创建 →</div></div></div>
+  <div class="proto-template-header" style="margin-top:16px">
+    <span>我的模板</span>
+    <button type="button" class="tbtn" onclick="protoRefreshUserTemplates()">刷新</button>
+  </div>
+  <div class="proto-template-grid" id="protoUserTemplateGrid"><div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:20px;font-size:12px">暂无自定义模板，在「组帧编辑」中保存模板</div></div>
+</div>
+</div>
+</div>
+</div>
+<!-- 仪表盘视图 -->
+<div class="page view-dashboard" id="view-dashboard">
+<div class="dash-body">
+  <!-- 顶部切换栏 -->
+  <div class="dash-switcher">
+    <div class="dash-tabs" id="dashTabs">
+      <div class="dash-tab" data-id="dash-1" onclick="dashSwitchTab(this,'dash-1')">默认面板<span class="dt-close" onclick="event.stopPropagation();dashCloseTab('dash-1')">×</span></div>
+      <div class="dash-tab active" data-id="dash-2" onclick="dashSwitchTab(this,'dash-2')">温度监控<span class="dt-close" onclick="event.stopPropagation();dashCloseTab('dash-2')">×</span></div>
+    </div>
+    <div class="dash-tab-add" onclick="dashAddTab()" title="新建仪表盘">+</div>
+    <div class="dash-mode-switch">
+      <button class="dash-mode-btn active" data-mode="run" onclick="dashSetMode('run')">运行</button>
+      <button class="dash-mode-btn" data-mode="config" onclick="dashSetMode('config')">配置</button>
+    </div>
+  </div>
+  <!-- 告警条 -->
+  <div class="dash-alert-bar show" id="dashAlertBar" style="background: rgba(248, 81, 73, 0.12); border-color: rgb(248, 81, 73); color: rgb(248, 81, 73);">
+    <span class="ab-icon">⚠</span>
+    <span class="ab-text" id="dashAlertText">⚠ 缓冲区使用率 超过上限 90%</span>
+    <span class="ab-close" onclick="dashHideAlert()">×</span>
+  </div>
+  <!-- 画布区 -->
+  <div class="dash-canvas-wrap" id="dashCanvasWrap">
+    <div class="dash-canvas" id="dashCanvas">
+      <div class="grid-bg"></div>
+      <div class="dash-drop-hint" id="dashDropHint">拖拽组件到此处</div>
+      <!-- 组件 1：数值显示 -->
+      
+      <!-- 组件 2：仪表盘 -->
+      
+      <!-- 组件 3：折线图 -->
+      
+      <!-- 组件 4：状态灯 -->
+      
+      <!-- 组件 5：柱状条 -->
+      
+      <!-- 组件 6：开关 -->
+      
+      <!-- 框选框 -->
+      <div class="dash-marquee" id="dashMarquee"></div>
+    <div class="dash-card" data-id="w-1" data-type="number" style="left: 30px; top: 30px; width: 180px; height: 120px; background: rgba(22, 27, 34, 0.8);"><div class="dc-drag-handle">⋮⋮</div><div class="dc-delete-btn" onclick="event.stopPropagation();dashDeleteWidget('w-1')">×</div><div class="dc-resize-handle" onmousedown="event.stopPropagation();dashStartResize(event,'w-1')"></div><div class="dc-header"><div class="dc-title">温度</div></div><div class="dc-content"><div class="dc-value" id="w-1-value" style="font-size:28px">23.7</div><div class="dc-unit">°C</div></div></div><div class="dash-card" data-id="w-2" data-type="gauge" style="left: 240px; top: 30px; width: 200px; height: 160px; background: rgba(22, 27, 34, 0.8);"><div class="dc-drag-handle">⋮⋮</div><div class="dc-delete-btn" onclick="event.stopPropagation();dashDeleteWidget('w-2')">×</div><div class="dc-resize-handle" onmousedown="event.stopPropagation();dashStartResize(event,'w-2')"></div><div class="dc-header"><div class="dc-title">湿度</div></div><div class="dc-content"><svg class="dc-gauge" viewBox="0 0 100 50"><path d="M 10 45 A 40 40 0 0 1 90 45" fill="none" stroke="var(--bg4)" stroke-width="6" stroke-linecap="round"></path><path id="w-2-arc" d="M 10 45 A 40 40 0 1 1 32.2 9.2" fill="none" stroke="url(#gaugeGrad2)" stroke-width="6" stroke-linecap="round"></path><defs><linearGradient id="gaugeGrad2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#0fc6b7"></stop><stop offset="100%" style="stop-color:#58a6ff"></stop></linearGradient></defs><line id="w-2-needle" x1="50" y1="45" x2="50" y2="12" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" transform="rotate(114.39417931257125,50,45)"></line><circle cx="50" cy="45" r="3" fill="var(--primary)"></circle></svg><div class="dc-value" style="font-size:18px" id="w-2-value">64%</div></div></div><div class="dash-card" data-id="w-3" data-type="line" style="left: 470px; top: 30px; width: 280px; height: 160px; background: rgba(22, 27, 34, 0.8);"><div class="dc-drag-handle">⋮⋮</div><div class="dc-delete-btn" onclick="event.stopPropagation();dashDeleteWidget('w-3')">×</div><div class="dc-resize-handle" onmousedown="event.stopPropagation();dashStartResize(event,'w-3')"></div><div class="dc-header"><div class="dc-title">压力趋势</div></div><div class="dc-content"><svg class="dc-chart" id="w-3-chart" viewBox="0 0 260 60" preserveAspectRatio="none"><defs><linearGradient id="w-3-grad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#0fc6b7;stop-opacity:.3"></stop><stop offset="100%" style="stop-color:#0fc6b7;stop-opacity:0"></stop></linearGradient></defs><path id="w-3-area" d="M0,28.818921840030935 L8.96551724137931,27.661901808497948 L17.93103448275862,28.72122513194083 L26.89655172413793,28.882930386295868 L35.86206896551724,25.067956662837545 L44.82758620689655,26.246493783121583 L53.79310344827586,26.740212532724975 L62.75862068965517,27.56555592519431 L71.72413793103448,27.5795280862458 L80.68965517241378,27.0555470509663 L89.6551724137931,30.077996659659632 L98.62068965517241,30.044502892550796 L107.58620689655172,29.893050596414064 L116.55172413793102,28.486091506868842 L125.51724137931033,28.51209108613865 L134.48275862068965,30.306903127004475 L143.44827586206895,29.182412430241392 L152.41379310344826,30.029580959089763 L161.37931034482756,28.73521373839793 L170.3448275862069,30.12526587244996 L179.3103448275862,28.72870735473371 L188.2758620689655,29.285222543225927 L197.24137931034483,30.952557246402627 L206.20689655172413,29.243883099541268 L215.17241379310343,29.523858836194325 L224.13793103448273,31.784476486481324 L233.10344827586204,30.619734336622685 L242.06896551724137,28.58502995520401 L251.03448275862067,29.13384522071986 L260,30.324545227695346 L260,60 L0,60 Z" fill="url(#w-3-grad)"></path><path id="w-3-line" d="M0,28.818921840030935 L8.96551724137931,27.661901808497948 L17.93103448275862,28.72122513194083 L26.89655172413793,28.882930386295868 L35.86206896551724,25.067956662837545 L44.82758620689655,26.246493783121583 L53.79310344827586,26.740212532724975 L62.75862068965517,27.56555592519431 L71.72413793103448,27.5795280862458 L80.68965517241378,27.0555470509663 L89.6551724137931,30.077996659659632 L98.62068965517241,30.044502892550796 L107.58620689655172,29.893050596414064 L116.55172413793102,28.486091506868842 L125.51724137931033,28.51209108613865 L134.48275862068965,30.306903127004475 L143.44827586206895,29.182412430241392 L152.41379310344826,30.029580959089763 L161.37931034482756,28.73521373839793 L170.3448275862069,30.12526587244996 L179.3103448275862,28.72870735473371 L188.2758620689655,29.285222543225927 L197.24137931034483,30.952557246402627 L206.20689655172413,29.243883099541268 L215.17241379310343,29.523858836194325 L224.13793103448273,31.784476486481324 L233.10344827586204,30.619734336622685 L242.06896551724137,28.58502995520401 L251.03448275862067,29.13384522071986 L260,30.324545227695346" fill="none" stroke="#0fc6b7" stroke-width="1.5"></path></svg><div style="display:flex;justify-content:space-between;width:100%;margin-top:4px"><span class="dc-unit">1010.2 hPa</span><span class="dc-unit" style="color:var(--accent2)">实时</span></div></div></div><div class="dash-card" data-id="w-4" data-type="status" style="left: 30px; top: 180px; width: 140px; height: 110px; background: rgba(22, 27, 34, 0.8);"><div class="dc-drag-handle">⋮⋮</div><div class="dc-delete-btn" onclick="event.stopPropagation();dashDeleteWidget('w-4')">×</div><div class="dc-resize-handle" onmousedown="event.stopPropagation();dashStartResize(event,'w-4')"></div><div class="dc-header"><div class="dc-title">设备状态</div></div><div class="dc-content"><div class="dc-status-light" id="w-4-light" style="background: rgb(63, 185, 80); box-shadow: rgb(63, 185, 80) 0px 0px 10px;"></div><div class="dc-text" style="font-size: 11px; color: rgb(63, 185, 80);" id="w-4-text">运行中</div></div></div><div class="dash-card" data-id="w-5" data-type="bar" style="left: 200px; top: 180px; width: 200px; height: 110px; background: rgba(22, 27, 34, 0.8);"><div class="dc-drag-handle">⋮⋮</div><div class="dc-delete-btn" onclick="event.stopPropagation();dashDeleteWidget('w-5')">×</div><div class="dc-resize-handle" onmousedown="event.stopPropagation();dashStartResize(event,'w-5')"></div><div class="dc-header"><div class="dc-title">缓冲区使用率</div></div><div class="dc-content" style="justify-content:center"><div class="dc-value" style="font-size:22px" id="w-5-value">69<span style="font-size:12px;color:var(--muted)">%</span></div><div class="dc-bar-wrap" style="width:100%"><div class="dc-bar-fill" id="w-5-bar" style="width: 69.2728%; background: var(--grad);"></div></div></div></div><div class="dash-card" data-id="w-6" data-type="switch" style="left: 430px; top: 220px; width: 140px; height: 110px; background: rgba(22, 27, 34, 0.8);"><div class="dc-drag-handle">⋮⋮</div><div class="dc-delete-btn" onclick="event.stopPropagation();dashDeleteWidget('w-6')">×</div><div class="dc-resize-handle" onmousedown="event.stopPropagation();dashStartResize(event,'w-6')"></div><div class="dc-header"><div class="dc-title">继电器控制</div></div><div class="dc-content"><div class="dc-switch on" id="w-6-switch" onclick="event.stopPropagation();dashToggleSwitch('w-6')"></div><div class="dc-text" style="font-size:11px" id="w-6-text">已开启</div></div></div></div>
+    <!-- 添加组件浮动按钮 -->
+    <button class="dash-add-btn" id="dashAddBtn" onclick="dashToggleWidgetPicker()" title="添加组件">+</button>
+    <!-- 组件选择面板 -->
+    <div class="dash-widget-picker" id="dashWidgetPicker">
+      <div class="dwp-header">
+        <span>添加组件</span>
+        <span class="dwp-close" onclick="dashToggleWidgetPicker()">×</span>
+      </div>
+      <div class="dwp-category">数值类</div>
+      <div class="dwp-items">
+        <div class="dwp-item" onclick="dashAddWidget('number')">
+          <div class="dwp-icon">🔢</div>
+          <div class="dwp-name">数字显示</div>
+        </div>
+        <div class="dwp-item" onclick="dashAddWidget('gauge')">
+          <div class="dwp-icon">🎯</div>
+          <div class="dwp-name">仪表盘</div>
+        </div>
+        <div class="dwp-item" onclick="dashAddWidget('bar')">
+          <div class="dwp-icon">📊</div>
+          <div class="dwp-name">柱状条</div>
+        </div>
+      </div>
+      <div class="dwp-category">曲线类</div>
+      <div class="dwp-items">
+        <div class="dwp-item" onclick="dashAddWidget('line')">
+          <div class="dwp-icon">📈</div>
+          <div class="dwp-name">折线图</div>
+        </div>
+        <div class="dwp-item" onclick="dashAddWidget('histogram')">
+          <div class="dwp-icon">📶</div>
+          <div class="dwp-name">柱状图</div>
+        </div>
+      </div>
+      <div class="dwp-category">状态类</div>
+      <div class="dwp-items">
+        <div class="dwp-item" onclick="dashAddWidget('status')">
+          <div class="dwp-icon">💡</div>
+          <div class="dwp-name">状态灯</div>
+        </div>
+        <div class="dwp-item" onclick="dashAddWidget('switch')">
+          <div class="dwp-icon">🔘</div>
+          <div class="dwp-name">开关</div>
+        </div>
+        <div class="dwp-item" onclick="dashAddWidget('text')">
+          <div class="dwp-icon">📝</div>
+          <div class="dwp-name">文本</div>
+        </div>
+      </div>
+      <div class="dwp-category">控制类</div>
+      <div class="dwp-items">
+        <div class="dwp-item" onclick="dashAddWidget('button')">
+          <div class="dwp-icon">🔼</div>
+          <div class="dwp-name">按钮</div>
+        </div>
+        <div class="dwp-item" onclick="dashAddWidget('slider')">
+          <div class="dwp-icon">🎚️</div>
+          <div class="dwp-name">滑块</div>
+        </div>
+      </div>
+    </div>
+    <!-- 属性面板 -->
+    <div class="dash-prop-panel" id="dashPropPanel">
+      <div class="dpp-header">
+        <div>
+          <span class="dpp-title" id="dppTitle">压力趋势</span>
+          <span class="dpp-type" id="dppType">折线图</span>
+        </div>
+        <div class="dpp-close" onclick="dashClosePropPanel()">×</div>
+      </div>
+      <div class="dpp-body" id="dppBody">
+        <!-- 通用属性 -->
+        <div class="dpp-section">
+          <div class="dpp-section-title">通用</div>
+          <div class="dpp-row">
+            <label>标题</label>
+            <input type="text" id="dppTitleInput" value="温度" oninput="dashUpdateProp('title',this.value)">
+          </div>
+          <div class="dpp-row">
+            <label>位置 X</label>
+            <input type="number" class="dpp-input-small" id="dppPosX" value="30" oninput="dashUpdatePos('x',this.value)">
+            <label style="width:auto">Y</label>
+            <input type="number" class="dpp-input-small" id="dppPosY" value="30" oninput="dashUpdatePos('y',this.value)">
+          </div>
+          <div class="dpp-row">
+            <label>宽度</label>
+            <input type="number" class="dpp-input-small" id="dppWidth" value="180" oninput="dashUpdateSize('w',this.value)">
+            <label style="width:auto">高度</label>
+            <input type="number" class="dpp-input-small" id="dppHeight" value="120" oninput="dashUpdateSize('h',this.value)">
+          </div>
+          <div class="dpp-row">
+            <label>背景色</label>
+            <div class="dpp-color-picker" id="dppBgColor">
+              <div class="dpp-color-swatch" style="background:rgba(22,27,34,.8)" data-color="rgba(22,27,34,.8)" onclick="dashUpdateBgColor(this)"></div>
+              <div class="dpp-color-swatch" style="background:rgba(33,38,45,.8)" data-color="rgba(33,38,45,.8)" onclick="dashUpdateBgColor(this)"></div>
+              <div class="dpp-color-swatch" style="background:rgba(15,198,183,.08)" data-color="rgba(15,198,183,.08)" onclick="dashUpdateBgColor(this)"></div>
+              <div class="dpp-color-swatch active" style="background:rgba(88,166,255,.08)" data-color="rgba(88,166,255,.08)" onclick="dashUpdateBgColor(this)"></div>
+            </div>
+          </div>
+        </div>
+        <!-- 数据源 -->
+        <div class="dpp-section">
+          <div class="dpp-section-title">数据源</div>
+          <div class="dpp-row">
+            <label>来源</label>
+            <select id="dppSource" onchange="dashUpdateDataSource('source',this.value)">
+              <option value="current">当前会话</option>
+              <option value="other">其他会话</option>
+            </select>
+          </div>
+          <div class="dpp-row">
+            <label>协议</label>
+            <select id="dppProtocol" onchange="dashUpdateDataSource('protocol',this.value)">
+              <option value="modbus">Modbus RTU</option>
+              <option value="custom">自定义协议</option>
+              <option value="text">文本行解析</option>
+            </select>
+          </div>
+          <div class="dpp-row">
+            <label>字段</label>
+            <select id="dppField" onchange="dashUpdateDataSource('field',this.value)">
+              <option value="temperature">温度 (temperature)</option>
+              <option value="humidity">湿度 (humidity)</option>
+              <option value="pressure">压力 (pressure)</option>
+              <option value="status">状态 (status)</option>
+            </select>
+          </div>
+          <div class="dpp-row">
+            <label>更新频率</label>
+            <select id="dppFreq" onchange="dashUpdateDataSource('freq',this.value)">
+              <option value="100">100 ms</option>
+              <option value="500">500 ms</option>
+              <option value="1000" selected="">1 s</option>
+              <option value="5000">5 s</option>
+            </select>
+          </div>
+        </div>
+        <!-- 数值组件属性 -->
+        <div class="dpp-section" id="dppNumberSection" style="display: none;">
+          <div class="dpp-section-title">数值设置</div>
+          <div class="dpp-row">
+            <label>单位</label>
+            <input type="text" id="dppUnit" value="°C" oninput="dashUpdateNumberProp('unit',this.value)">
+          </div>
+          <div class="dpp-row">
+            <label>小数位</label>
+            <input type="number" class="dpp-input-small" id="dppDecimals" value="1" min="0" max="4" oninput="dashUpdateNumberProp('decimals',this.value)">
+          </div>
+          <div class="dpp-row">
+            <label>字号</label>
+            <select id="dppFontSize" onchange="dashUpdateNumberProp('fontSize',this.value)">
+              <option value="18">小 (18px)</option>
+              <option value="24" selected="">中 (24px)</option>
+              <option value="28">大 (28px)</option>
+              <option value="36">特大 (36px)</option>
+            </select>
+          </div>
+        </div>
+        <!-- 折线图属性 -->
+        <div class="dpp-section" id="dppLineSection" style="">
+          <div class="dpp-section-title">图表设置</div>
+          <div class="dpp-row">
+            <label>Y轴最小</label>
+            <input type="number" class="dpp-input-small" id="dppYMin" value="0" oninput="dashUpdateLineProp('yMin',this.value)">
+            <label style="width:auto">最大</label>
+            <input type="number" class="dpp-input-small" id="dppYMax" value="100" oninput="dashUpdateLineProp('yMax',this.value)">
+          </div>
+          <div class="dpp-row">
+            <label>颜色</label>
+            <div class="dpp-color-picker">
+              <div class="dpp-color-swatch active" style="background:#0fc6b7" data-color="#0fc6b7" onclick="dashUpdateLineColor(this)"></div>
+              <div class="dpp-color-swatch" style="background:#58a6ff" data-color="#58a6ff" onclick="dashUpdateLineColor(this)"></div>
+              <div class="dpp-color-swatch" style="background:#a371f7" data-color="#a371f7" onclick="dashUpdateLineColor(this)"></div>
+              <div class="dpp-color-swatch" style="background:#e3a53c" data-color="#e3a53c" onclick="dashUpdateLineColor(this)"></div>
+            </div>
+          </div>
+          <div class="dpp-row">
+            <label>采样点数</label>
+            <input type="number" class="dpp-input-small" id="dppPoints" value="30" min="10" max="100" oninput="dashUpdateLineProp('points',this.value)">
+          </div>
+        </div>
+        <!-- 状态灯属性 -->
+        <div class="dpp-section" id="dppStatusSection" style="display: none;">
+          <div class="dpp-section-title">状态设置</div>
+          <div class="dpp-row">
+            <label>开阈值</label>
+            <input type="number" class="dpp-input-small" id="dppOnThreshold" value="1" oninput="dashUpdateStatusProp('onThreshold',this.value)">
+          </div>
+          <div class="dpp-row">
+            <label>开颜色</label>
+            <div class="dpp-color-picker">
+              <div class="dpp-color-swatch active" style="background:#3fb950" data-color="#3fb950" onclick="dashUpdateStatusColor('on',this)"></div>
+              <div class="dpp-color-swatch" style="background:#0fc6b7" data-color="#0fc6b7" onclick="dashUpdateStatusColor('on',this)"></div>
+              <div class="dpp-color-swatch" style="background:#e3a53c" data-color="#e3a53c" onclick="dashUpdateStatusColor('on',this)"></div>
+            </div>
+          </div>
+          <div class="dpp-row">
+            <label>关颜色</label>
+            <div class="dpp-color-picker">
+              <div class="dpp-color-swatch active" style="background:#8b949e" data-color="#8b949e" onclick="dashUpdateStatusColor('off',this)"></div>
+              <div class="dpp-color-swatch" style="background:#f85149" data-color="#f85149" onclick="dashUpdateStatusColor('off',this)"></div>
+              <div class="dpp-color-swatch" style="background:#30363d" data-color="#30363d" onclick="dashUpdateStatusColor('off',this)"></div>
+            </div>
+          </div>
+        </div>
+        <!-- 柱状条属性 -->
+        <div class="dpp-section" id="dppBarSection" style="display: none;">
+          <div class="dpp-section-title">柱状条设置</div>
+          <div class="dpp-row">
+            <label>最大值</label>
+            <input type="number" id="dppBarMax" value="100" oninput="dashUpdateBarProp('max',this.value)">
+          </div>
+          <div class="dpp-row">
+            <label>颜色</label>
+            <div class="dpp-color-picker">
+              <div class="dpp-color-swatch active" style="background:linear-gradient(135deg,#0fc6b7,#58a6ff)" data-color="var(--grad)" onclick="dashUpdateBarColor(this)"></div>
+              <div class="dpp-color-swatch" style="background:#0fc6b7" data-color="#0fc6b7" onclick="dashUpdateBarColor(this)"></div>
+              <div class="dpp-color-swatch" style="background:#3fb950" data-color="#3fb950" onclick="dashUpdateBarColor(this)"></div>
+              <div class="dpp-color-swatch" style="background:#e3a53c" data-color="#e3a53c" onclick="dashUpdateBarColor(this)"></div>
+            </div>
+          </div>
+        </div>
+        <!-- 告警配置 -->
+        <div class="dpp-section">
+          <div class="dpp-section-title">告警</div>
+          <div class="dpp-row">
+            <label>上限告警</label>
+            <div class="dpp-toggle">
+              <input type="checkbox" id="dppUpperAlert" onchange="dashToggleAlert('upper',this.checked)">
+              <span>启用</span>
+            </div>
+          </div>
+          <div class="dpp-row" id="dppUpperRow" style="display: none;">
+            <label>上限值</label>
+            <input type="number" class="dpp-input-small" id="dppUpperLimit" value="85" oninput="dashUpdateAlert('upper','limit',this.value)">
+            <label style="width:auto">颜色</label>
+            <select class="dpp-input-small" id="dppUpperColor" onchange="dashUpdateAlert('upper','color',this.value)">
+              <option value="#f85149" style="color:#f85149">红</option>
+              <option value="#e3a53c" style="color:#e3a53c">黄</option>
+              <option value="#ff9432" style="color:#ff9432">橙</option>
+            </select>
+          </div>
+          <div class="dpp-row" id="dppUpperBlink" style="display: none;">
+            <label>闪烁</label>
+            <div class="dpp-toggle">
+              <input type="checkbox" id="dppUpperBlinkChk" onchange="dashUpdateAlert('upper','blink',this.checked)">
+              <span>数值闪烁</span>
+            </div>
+          </div>
+          <div class="dpp-row">
+            <label>下限告警</label>
+            <div class="dpp-toggle">
+              <input type="checkbox" id="dppLowerAlert" onchange="dashToggleAlert('lower',this.checked)">
+              <span>启用</span>
+            </div>
+          </div>
+          <div class="dpp-row" id="dppLowerRow" style="display:none">
+            <label>下限值</label>
+            <input type="number" class="dpp-input-small" id="dppLowerLimit" value="10" oninput="dashUpdateAlert('lower','limit',this.value)">
+            <label style="width:auto">颜色</label>
+            <select class="dpp-input-small" id="dppLowerColor" onchange="dashUpdateAlert('lower','color',this.value)">
+              <option value="#e3a53c" style="color:#e3a53c">黄</option>
+              <option value="#f85149" style="color:#f85149">红</option>
+              <option value="#ff9432" style="color:#ff9432">橙</option>
+            </select>
+          </div>
+          <div class="dpp-row" id="dppLowerBlink" style="display:none">
+            <label>闪烁</label>
+            <div class="dpp-toggle">
+              <input type="checkbox" id="dppLowerBlinkChk" onchange="dashUpdateAlert('lower','blink',this.checked)">
+              <span>数值闪烁</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- 可视化模块 -->
+<div class="page view-module" id="page-viz">
+<div class="viz-body">
+<div class="viz-sidebar">
+<div class="sb-header">组件库</div>
+<div class="sb-items">
+<div class="sb-item"><span style="color:var(--primary)">▣</span> 数值显示</div>
+<div class="sb-item"><span style="color:var(--accent3)">◉</span> 仪表盘</div>
+<div class="sb-item"><span style="color:var(--primary)">📈</span> 折线图</div>
+<div class="sb-item"><span style="color:var(--primary)">📊</span> 柱状图</div>
+<div class="sb-item"><span style="color:var(--accent3)">◐</span> 开关</div>
+<div class="sb-item"><span style="color:var(--primary)">🔷</span> 3D 姿态</div>
+</div>
+</div>
+<div class="viz-canvas">
+<div class="grid-bg"></div>
+<div class="viz-offline-overlay" id="vizOfflineOverlay">
+<div class="vo-icon">📊</div>
+<div class="vo-text">离线 · 无数据</div>
+<div class="vo-sub">连接设备后显示实时可视化数据</div>
+</div>
+<div class="viz-toolbar">
+<div <label="" class="viz-link-toggle on"><input type="checkbox" checked="" onchange="vizToggleLink(this)"> 联动class="viz-time-range"&gt;
+  <button type="button" class="viz-tr-btn active" onclick="vizSetTimeRange('1m',this)">1分</button>
+  <button type="button" class="viz-tr-btn" onclick="vizSetTimeRange('5m',this)">5分</button>
+  <button type="button" class="viz-tr-btn" onclick="vizSetTimeRange('15m',this)">15分</button>
+  <button type="button" class="viz-tr-btn" onclick="vizSetTimeRange('1h',this)">1时</button>
+  <button type="button" class="viz-tr-btn" onclick="vizSetTimeRange('6h',this)">6时</button>
+  <button type="button" class="viz-tr-btn" onclick="vizSetTimeRange('24h',this)">24时</button>
+  <input type="text" class="viz-tr-custom" placeholder="自定义范围" onclick="vizOpenRangePicker()" readonly="">
+</div>
+<label class="viz-link-toggle on"><input type="checkbox" checked="" onchange="vizToggleLink(this)"> 联动</label>
+<select><option>默认</option><option>温度监控</option><option>传感器面板</option></select>
+<button type="button">保存画布</button>
+<button type="button">应用</button>
+</div>
+<div class="viz-component" style="left:130px;top:90px">
+<div class="sb-header" style="border:none;padding:0 0 4px">温度</div>
+<span class="vc-value">25.3<span style="font-size:12px;color:var(--muted)">°C</span></span>
+</div>
+<div class="viz-component" style="left:330px;top:90px">
+<div class="sb-header" style="border:none;padding:0 0 4px">设备姿态</div>
+<div class="pose-cube"></div>
+</div>
+</div>
+<div class="viz-prop">
+<div class="pp-header">属性</div>
+<div class="pp-body">
+<div class="pp-item"><label>标题</label><input type="text" value="温度"></div>
+<div class="pp-item"><label>数据源</label><select><option>字段池 · 温度</option></select></div>
+<div class="pp-item"><label>刷新频率</label><select><option>1s</option><option>500ms</option></select></div>
+<div class="viz-filters">
+  <div class="vf-title"><span>数据筛选</span><button type="button" onclick="vizClearFilters()">清空</button></div>
+  <div class="vf-list" id="vizFilterList">
+    <div class="vf-item"><span class="vf-field">温度</span><span class="vf-op">&gt;</span><span class="vf-val">20°C</span><button class="vf-del" type="button" onclick="vizRemoveFilter(this)">×</button></div>
+    <div class="vf-item"><span class="vf-field">状态</span><span class="vf-op">=</span><span class="vf-val">在线</span><button class="vf-del" type="button" onclick="vizRemoveFilter(this)">×</button></div>
+  </div>
+  <div class="vf-add">
+    <select id="vfFieldSel"><option>温度</option><option>湿度</option><option>压力</option><option>状态</option></select>
+    <select id="vfOpSel"><option>=</option><option>≠</option><option>&gt;</option><option>&lt;</option><option>≥</option><option>≤</option></select>
+    <input type="text" id="vfValInput" placeholder="值">
+    <button type="button" onclick="vizAddFilter()">添加</button>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 命令自动化模块 -->
+<div class="page view-module" id="page-cmd">
+<div class="cmd-body">
+<div class="cmd-list">
+<div class="cl-header"><span>命令组</span><button type="button" class="cl-add-btn" onclick="cmdCreateGroup()">+</button></div>
+<div class="cl-items" id="cmdGroupList"><div class="cl-item type-normal active" data-id="g-init"><span class="cl-type-icon"></span><span class="cl-name" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">初始化序列</span><span class="count">5</span><button class="cl-more" type="button" onclick="event.stopPropagation();cmdShowCtxMenu(event,'g-init')">⋯</button></div><div class="cl-item type-normal" data-id="g-poll"><span class="cl-type-icon"></span><span class="cl-name" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">状态轮询</span><span class="count">3</span><button class="cl-more" type="button" onclick="event.stopPropagation();cmdShowCtxMenu(event,'g-poll')">⋯</button></div><div class="cl-item type-normal" data-id="g-calib"><span class="cl-type-icon"></span><span class="cl-name" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">校准流程</span><span class="count">5</span><button class="cl-more" type="button" onclick="event.stopPropagation();cmdShowCtxMenu(event,'g-calib')">⋯</button></div><div class="cl-item type-script" data-id="g-script"><span class="cl-type-icon"></span><span class="cl-name" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">脚本: setup.py</span><span class="count">1</span><button class="cl-more" type="button" onclick="event.stopPropagation();cmdShowCtxMenu(event,'g-script')">⋯</button></div></div>
+</div>
+<div class="cmd-right">
+<div class="cmd-edit" id="cmdEditArea">
+<div class="cmd-edit-header">
+<span class="cmd-group-title" id="cmdGroupTitle">初始化序列</span>
+<span class="cmd-type-tag" id="cmdTypeTag">普通组</span>
+</div>
+<div class="cmd-rows-container" id="cmdRowsContainer"><div class="cmd-row" data-idx="0"><span class="idx">1</span><select class="cmd-type-select" onchange="cmdChangeType(0,this.value)"><option value="send" selected="">发送</option><option value="wait">等待</option><option value="sleep">延时</option><option value="loop">循环</option><option value="condition">条件</option><option value="read">读取</option></select><input type="text" class="cmd-input" value="AT+RST" placeholder="命令内容" onchange="cmdUpdateContent(0,this.value)"><input type="number" class="cmd-delay-input" value="1000" min="0" onchange="cmdUpdateDelay(0,this.value)"><span class="cmd-delay-unit">ms</span><div class="cmd-row-actions"><button class="row-btn" type="button" title="上移" onclick="cmdMoveRow(0,-1)">↑</button><button class="row-btn" type="button" title="下移" onclick="cmdMoveRow(0,1)">↓</button><button class="row-btn del" type="button" title="删除" onclick="cmdDeleteRow(0)">×</button></div></div><div class="cmd-row" data-idx="1"><span class="idx">2</span><select class="cmd-type-select" onchange="cmdChangeType(1,this.value)"><option value="send">发送</option><option value="wait">等待</option><option value="sleep" selected="">延时</option><option value="loop">循环</option><option value="condition">条件</option><option value="read">读取</option></select><div class="cmd-field-row"><span class="cmd-field-label">时长(ms)</span><input type="number" class="cmd-field-input" style="width:70px" value="500" onchange="cmdUpdateField(1,'duration',this.value)"></div><div class="cmd-row-actions"><button class="row-btn" type="button" title="上移" onclick="cmdMoveRow(1,-1)">↑</button><button class="row-btn" type="button" title="下移" onclick="cmdMoveRow(1,1)">↓</button><button class="row-btn del" type="button" title="删除" onclick="cmdDeleteRow(1)">×</button></div></div><div class="cmd-row" data-idx="2"><span class="idx">3</span><select class="cmd-type-select" onchange="cmdChangeType(2,this.value)"><option value="send" selected="">发送</option><option value="wait">等待</option><option value="sleep">延时</option><option value="loop">循环</option><option value="condition">条件</option><option value="read">读取</option></select><input type="text" class="cmd-input" value="AT+CWMODE=1" placeholder="命令内容" onchange="cmdUpdateContent(2,this.value)"><input type="number" class="cmd-delay-input" value="500" min="0" onchange="cmdUpdateDelay(2,this.value)"><span class="cmd-delay-unit">ms</span><div class="cmd-row-actions"><button class="row-btn" type="button" title="上移" onclick="cmdMoveRow(2,-1)">↑</button><button class="row-btn" type="button" title="下移" onclick="cmdMoveRow(2,1)">↓</button><button class="row-btn del" type="button" title="删除" onclick="cmdDeleteRow(2)">×</button></div></div><div class="cmd-row" data-idx="3"><span class="idx">4</span><select class="cmd-type-select" onchange="cmdChangeType(3,this.value)"><option value="send">发送</option><option value="wait" selected="">等待</option><option value="sleep">延时</option><option value="loop">循环</option><option value="condition">条件</option><option value="read">读取</option></select><input type="text" class="cmd-input" value="OK" placeholder="命令内容" onchange="cmdUpdateContent(3,this.value)"><div class="cmd-row-actions"><button class="row-btn" type="button" title="上移" onclick="cmdMoveRow(3,-1)">↑</button><button class="row-btn" type="button" title="下移" onclick="cmdMoveRow(3,1)">↓</button><button class="row-btn del" type="button" title="删除" onclick="cmdDeleteRow(3)">×</button></div></div><div class="cmd-row" data-idx="4"><span class="idx">5</span><select class="cmd-type-select" onchange="cmdChangeType(4,this.value)"><option value="send" selected="">发送</option><option value="wait">等待</option><option value="sleep">延时</option><option value="loop">循环</option><option value="condition">条件</option><option value="read">读取</option></select><input type="text" class="cmd-input" value="AT+CWJAP=&quot;SSID&quot;,&quot;PASS&quot;" placeholder="命令内容" onchange="cmdUpdateContent(4,this.value)"><input type="number" class="cmd-delay-input" value="3000" min="0" onchange="cmdUpdateDelay(4,this.value)"><span class="cmd-delay-unit">ms</span><div class="cmd-row-actions"><button class="row-btn" type="button" title="上移" onclick="cmdMoveRow(4,-1)">↑</button><button class="row-btn" type="button" title="下移" onclick="cmdMoveRow(4,1)">↓</button><button class="row-btn del" type="button" title="删除" onclick="cmdDeleteRow(4)">×</button></div></div></div>
+<div class="cmd-add-row">
+<button type="button" class="cmd-add-btn" onclick="cmdAddRow()">+ 添加命令</button>
+</div>
+<div class="cmd-loop-config">
+<div class="clc-title">循环配置</div>
+<div class="clc-row">
+<label>循环模式</label>
+<select id="cmdLoopMode" onchange="cmdUpdateLoopConfig()">
+<option value="none">不循环</option>
+<option value="count">循环 N 次</option>
+<option value="infinite">无限循环</option>
+</select>
+</div>
+<div class="clc-row" id="cmdLoopCountRow" style="display:none">
+<label>循环次数</label>
+<input type="number" id="cmdLoopCount" value="3" min="1" style="width:100px" onchange="cmdUpdateLoopConfig()">
+<span class="clc-unit">次</span>
+</div>
+<div class="clc-row">
+<label>循环间隔</label>
+<input type="number" id="cmdLoopInterval" value="1000" min="0" style="width:100px" onchange="cmdUpdateLoopConfig()">
+<span class="clc-unit">ms</span>
+</div>
+</div>
+</div>
+<div class="cmd-bar" id="cmdBar">
+<button class="play-btn" type="button" id="cmdPlayBtn" onclick="cmdPlay()">▶ 播放</button>
+<button class="cmd-btn" type="button" id="cmdLoopBtn" onclick="cmdToggleLoopBtn()">循环</button>
+<button class="cmd-btn" type="button" id="cmdPauseBtn" onclick="cmdPause()">暂停</button>
+<button class="cmd-btn" type="button" id="cmdStepBtn" onclick="cmdStep()">单步</button>
+<button class="cmd-btn" type="button" id="cmdStopBtn" onclick="cmdStop()">停止</button>
+<div class="cmd-multi-device">
+<button class="cmd-btn" type="button" onclick="cmdToggleMultiDevice()">多设备执行 ▾</button>
+<div class="cmd-md-panel" id="cmdMdPanel">
+<div class="cmd-md-header">选择设备并行执行</div>
+<div class="cmd-md-list" id="cmdMdList">
+<!-- 设备列表由 JS 渲染 -->
+</div>
+<div class="cmd-md-footer">
+<button type="button" class="cmd-btn" onclick="cmdCloseMultiDevice()">取消</button>
+<button type="button" class="play-btn" onclick="cmdRunMultiDevice()">并行执行</button>
+</div>
+</div>
+</div>
+<span class="cmd-status" id="cmdStatus" style="margin-left:auto">待执行 · 5 条命令</span>
+</div>
+<div class="sdk-bar">
+<span class="sdk-dot"></span>
+<span>Python SDK 已连接</span>
+<code style="margin-left:auto">connect() send() read() run_command_group()</code>
+</div>
+</div>
+</div>
+</div>
+<!-- 命令组右键菜单 -->
+<div class="cmd-ctx-menu" id="cmdCtxMenu">
+<div class="ctx-item" onclick="cmdRenameGroup()">重命名</div>
+<div class="ctx-item" onclick="cmdDuplicateGroup()">复制</div>
+<div class="ctx-item ctx-danger" onclick="cmdDeleteGroup()">删除</div>
+<div class="ctx-item" onclick="cmdExportGroup()">导出为脚本</div>
+</div>
+<!-- 新建/重命名命令组模态框 -->
+<div class="modal-overlay" id="cmdGroupModal" onclick="if(event.target===this)cmdCloseGroupModal()">
+<div class="modal" style="width:380px">
+<div class="modal-header"><h3 id="cmdGroupModalTitle">新建命令组</h3><button class="modal-close" type="button" onclick="cmdCloseGroupModal()">×</button></div>
+<div class="modal-body">
+<div class="form-row"><label>组名</label><input type="text" id="cmdGroupNameInput" placeholder="请输入命令组名称"></div>
+<div class="form-row"><label>类型</label>
+<select id="cmdGroupTypeSelect">
+<option value="normal">普通组</option>
+<option value="script">脚本组</option>
+</select>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" onclick="cmdCloseGroupModal()">取消</button>
+<button type="button" class="conn-btn" id="cmdGroupModalConfirm" onclick="cmdConfirmGroupModal()">确定</button>
+</div>
+</div>
+</div>
+<!-- 设置模块 -->
+<div class="page view-module" id="page-settings">
+<div class="settings-search">
+<span>🔍</span>
+<input type="text" placeholder="搜索设置项，如：波特率 / 主题 / 缓冲..." oninput="filterSettings(this.value)">
+</div>
+<div class="settings-body">
+<div class="settings-nav">
+<div class="sn-item" onclick="setSettingsTab(this,'conn')">会话管理</div>
+<div class="sn-item" onclick="setSettingsTab(this,'disp')">显示</div>
+<div class="sn-item active" onclick="setSettingsTab(this,'theme')">主题外观</div>
+<div class="sn-item" onclick="setSettingsTab(this,'proto')">协议</div>
+<div class="sn-item" onclick="setSettingsTab(this,'cmd')">命令自动化</div>
+<div class="sn-item" onclick="setSettingsTab(this,'sys')">系统</div>
+<div class="sn-item" onclick="setSettingsTab(this,'log')">日志</div>
+<div class="sn-item" onclick="setSettingsTab(this,'shortcut')">快捷键</div>
+<div class="sn-item" onclick="setSettingsTab(this,'about')">关于</div>
+</div>
+<div class="settings-form" id="settingsForm">
+<div class="sf-group" id="sf-conn" style="display: none;">
+<div class="sf-title">会话管理</div>
+<div class="sf-session-panel">
+<div class="sf-sess-head">
+<span class="sd-title">当前会话：<b id="smName">传感器 · COM4</b></span>
+<span class="mode-tag" id="smMode">终端</span>
+<span class="sdot on" id="smStateDot" style="display:inline-block"></span>
+<span id="smStateText" style="font-size:11px;color:var(--muted)">在线</span>
+</div>
+<div class="sf-sess-conn">
+<button type="button" class="conn-btn" id="smConnectBtn" onclick="toggleConnect()" style="background: var(--danger); border-color: var(--danger); color: rgb(255, 255, 255);">断开</button>
+<button type="button" class="reset-btn" onclick="openNewSession()">新建会话</button>
+</div>
+</div>
+<div class="sf-item"><span class="sf-label">会话名称</span><div class="sf-control"><input type="text" id="smNameInput" value="设备 A · COM3"></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">视图模式</span><div class="sf-control"><select id="smModeInput" onchange="applySessionModeChange()"><option value="bytes">字节流（字节流 + 协议）</option><option value="terminal">终端</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">端口 / 地址</span><div class="sf-control"><select id="smPort" disabled=""><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">波特率</span><div class="sf-control"><select id="smBaud" disabled=""><option>115200</option><option>9600</option><option>57600</option><option>19200</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">数据位</span><div class="sf-control"><select id="smDataBits" disabled=""><option>8</option><option>7</option><option>6</option><option>5</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">停止位</span><div class="sf-control"><select id="smStopBits" disabled=""><option>1</option><option>1.5</option><option>2</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">校验位</span><div class="sf-control"><select id="smParity" disabled=""><option>None</option><option>Even</option><option>Odd</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">缓冲策略</span><div class="sf-control"><select id="smBufStrategy"><option>环形缓冲</option><option>追加缓冲</option><option>双缓冲</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">缓冲大小</span><div class="sf-control"><select id="smBufSize"><option>16 MB</option><option>1 MB</option><option>4 MB</option><option>64 MB</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">溢出策略</span><div class="sf-control"><select id="smOverflow"><option>停止接收</option><option>丢弃最旧</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-note">在线会话：连接参数（端口/波特率/数据位/停止位/校验）不可修改，需先断开。显示与缓冲参数可在线调整。离线会话：全部参数可修改。</div>
+</div>
+<div class="sf-group" id="sf-disp" style="display: none;">
+<div class="sf-title">显示</div>
+<div class="sf-item"><span class="sf-label">接收编码</span><div class="sf-control"><select id="set-recv-encoding"><option value="ascii">ASCII</option><option value="utf8">UTF-8</option><option value="gbk">GBK</option><option value="hex">HEX</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">自动换行</span><div class="sf-control"><div class="toggle on" id="set-word-wrap" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">显示时间戳</span><div class="sf-control"><div class="toggle on" id="set-timestamp" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">时间戳格式</span><div class="sf-control"><select id="set-ts-format" onchange="settingsApplyTimestamp()"><option value="HH:mm:ss">时:分:秒</option><option value="HH:mm:ss.SSS">时:分:秒.毫秒</option><option value="YYYY-MM-DD HH:mm:ss">完整日期时间</option><option value="mm:ss">分:秒</option></select></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">显示字节计数</span><div class="sf-control"><div class="toggle on" id="set-byte-count" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope s">会话</span></div>
+<div class="sf-item"><span class="sf-label">自动滚动</span><div class="sf-control"><div class="toggle on" id="set-auto-scroll" onclick="toggleSwitch(this);settingsApplyAutoScroll()"><span class="knob"></span></div></div><span class="sf-scope s">会话</span></div>
+</div>
+<div class="sf-group" id="sf-theme" style="display: block;">
+<div class="sf-title">主题外观</div>
+<div class="theme-panel">
+<div class="theme-presets" id="themePresets"><div class="th-one active" data-cls=""><span class="th-swatch" style="background:linear-gradient(135deg,#0fc6b7,#58a6ff)"></span><span class="th-name">默认</span></div><div class="th-one" data-cls="th-red"><span class="th-swatch" style="background:linear-gradient(135deg,#e5484d,#ff6b6b)"></span><span class="th-name">红</span></div><div class="th-one" data-cls="th-orange"><span class="th-swatch" style="background:linear-gradient(135deg,#ff9432,#ffc078)"></span><span class="th-name">橙</span></div><div class="th-one" data-cls="th-yellow"><span class="th-swatch" style="background:linear-gradient(135deg,#e3a53c,#ffd43b)"></span><span class="th-name">黄</span></div><div class="th-one" data-cls="th-green"><span class="th-swatch" style="background:linear-gradient(135deg,#3fb950,#7ee787)"></span><span class="th-name">绿</span></div><div class="th-one" data-cls="th-cyan"><span class="th-swatch" style="background:linear-gradient(135deg,#39c0c0,#67e8f9)"></span><span class="th-name">青</span></div><div class="th-one" data-cls="th-blue"><span class="th-swatch" style="background:linear-gradient(135deg,#58a6ff,#79c0ff)"></span><span class="th-name">蓝</span></div><div class="th-one" data-cls="th-purple"><span class="th-swatch" style="background:linear-gradient(135deg,#a371f7,#bc8cff)"></span><span class="th-name">紫</span></div><div class="th-one" data-cls="th-rdgr"><span class="th-swatch" style="background:linear-gradient(135deg,#e5484d,#3fb950)"></span><span class="th-name">红绿</span></div><div class="th-one" data-cls="th-rdbl"><span class="th-swatch" style="background:linear-gradient(135deg,#e5484d,#58a6ff)"></span><span class="th-name">红蓝</span></div><div class="th-one" data-cls="th-ylgr"><span class="th-swatch" style="background:linear-gradient(135deg,#e3a53c,#3fb950)"></span><span class="th-name">黄绿</span></div><div class="th-one" data-cls="th-cypu"><span class="th-swatch" style="background:linear-gradient(135deg,#39c0c0,#a371f7)"></span><span class="th-name">青紫</span></div><div class="th-one" data-cls="th-rainbow"><span class="th-swatch" style="background:linear-gradient(90deg,#e5484d,#ff9432,#e3a53c,#3fb950,#39c0c0,#58a6ff,#a371f7)"></span><span class="th-name">彩虹</span></div></div>
+<div class="theme-custom">
+<label>自定义主色:</label>
+<input type="color" id="customColor" value="#0fc6b7" onchange="applyCustomColor(this.value)">
+<span style="font-size:10px;color:var(--muted)">手动选择任意颜色</span>
+</div>
+<div class="theme-bg">
+<label>背景图片</label>
+<div class="bg-actions">
+<input type="text" id="bgUrl" placeholder="粘贴图片 URL 或选择本地图片..." onkeydown="if(event.key==='Enter')applyBg()">
+<button type="button" onclick="applyBg()">应用</button>
+<button type="button" onclick="clearBg()">清除</button>
+</div>
+
+<div class="bg-download-bar" id="bgDownloadBar">
+<div class="bdb-header">
+<span class="bdb-label">正在下载背景图...</span>
+<span class="bdb-percent" id="bgDlPercent">0%</span>
+</div>
+<div class="bdb-track"><div class="bdb-fill" id="bgDlFill"></div></div>
+<div class="bdb-status" id="bgDlStatus">正在从网络加载图片...</div>
+</div>
+<div class="mask-ctrl">
+<span>蒙版透明度</span>
+<input type="range" id="maskRange" min="30" max="90" value="55" oninput="updateMask(this.value)">
+<span id="maskVal">55%</span>
+</div>
+<div style="font-size:11px;color:var(--muted);margin-top:6px">蒙版用于保证背景图下文字清晰可读。所有主题色可通过上方预设或自定义调整。</div>
+</div>
+</div>
+<div class="sf-title">终端外观</div>
+<div class="sf-item"><span class="sf-label">字体大小</span><div class="sf-control"><div class="sf-slider"><input type="range" id="set-term-fontsize" min="10" max="24" value="12" oninput="settingsApplyFontSize(this.value)"><span class="sf-slider-value" id="set-term-fontsize-val">12px</span></div></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">行高</span><div class="sf-control"><div class="sf-slider"><input type="range" id="set-term-lineheight" min="12" max="24" value="16" oninput="settingsApplyLineHeight(this.value)"><span class="sf-slider-value" id="set-term-lineheight-val">1.6</span></div></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">配色方案</span><div class="sf-control">
+<div class="color-scheme-grid" id="colorSchemeGrid">
+<div class="color-scheme-item active" data-scheme="default" onclick="settingsSetColorScheme('default',this)">
+<div class="color-scheme-preview" style="background:#0a0e14;color:#e6edf3">
+<div class="csp-line1">root@device:~$</div>
+<div class="csp-line2">Hello World</div>
+</div>
+<div class="color-scheme-name">默认深色</div>
+</div>
+<div class="color-scheme-item" data-scheme="solarized" onclick="settingsSetColorScheme('solarized',this)">
+<div class="color-scheme-preview" style="background:#002b36;color:#93a1a1">
+<div class="csp-line1" style="color:#2aa198">user@host:~$</div>
+<div class="csp-line2">solarized dark</div>
+</div>
+<div class="color-scheme-name">Solarized Dark</div>
+</div>
+<div class="color-scheme-item" data-scheme="dracula" onclick="settingsSetColorScheme('dracula',this)">
+<div class="color-scheme-preview" style="background:#282a36;color:#f8f8f2">
+<div class="csp-line1" style="color:#ff79c6">dracula@dev:~$</div>
+<div class="csp-line2" style="color:#bd93f9">// comment</div>
+</div>
+<div class="color-scheme-name">Dracula</div>
+</div>
+<div class="color-scheme-item" data-scheme="onedark" onclick="settingsSetColorScheme('onedark',this)">
+<div class="color-scheme-preview" style="background:#282c34;color:#abb2bf">
+<div class="csp-line1" style="color:#98c379">one@dark:~$</div>
+<div class="csp-line2" style="color:#61afef">const x = 1</div>
+</div>
+<div class="color-scheme-name">One Dark</div>
+</div>
+</div>
+</div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">光标样式</span><div class="sf-control"><select id="set-cursor-style" onchange="settingsApplyCursor()"><option value="block">方块</option><option value="underline">下划线</option><option value="bar">竖线</option></select></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">光标闪烁</span><div class="sf-control"><div class="toggle on" id="set-cursor-blink" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+</div>
+<div class="sf-group" id="sf-sys" style="display: none;">
+<div class="sf-title">系统</div>
+<div class="sf-item"><span class="sf-label">语言</span><div class="sf-control"><select id="set-language" onchange="settingsShowLangHint()"><option value="zh-CN">简体中文</option><option value="en-US">English</option><option value="ja-JP">日本語</option></select></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">自动重连</span><div class="sf-control"><div class="toggle on" id="set-auto-reconnect" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">重连间隔</span><div class="sf-control"><select id="set-reconnect-interval"><option value="3000">3 秒</option><option value="5000" selected="">5 秒</option><option value="10000">10 秒</option><option value="30000">30 秒</option></select></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">日志级别</span><div class="sf-control"><select id="set-log-level"><option value="info" selected="">Info</option><option value="debug">Debug</option><option value="warn">Warning</option><option value="error">Error</option></select></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">自动备份</span><div class="sf-control"><div class="toggle" id="set-auto-backup" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">启动时恢复上次会话</span><div class="sf-control"><div class="toggle on" id="set-restore-session" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+</div>
+<div class="sf-group" id="sf-proto" style="display: none;">
+<div class="sf-title">协议解析</div>
+<div class="sf-item"><span class="sf-label">默认 schema</span><div class="sf-control"><select id="set-proto-default"><option value="modbus-rtu" selected="">Modbus RTU</option><!-- <option value="modbus-tcp">Modbus TCP (规划中)</option> --><option value="custom">自定义</option></select></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">默认字节序</span><div class="sf-control"><select id="set-proto-endian"><option value="big" selected="">大端序 (Big Endian)</option><option value="little">小端序 (Little Endian)</option></select></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">自动滚动解析结果</span><div class="sf-control"><div class="toggle on" id="set-proto-auto-scroll" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">高亮匹配字节</span><div class="sf-control"><div class="toggle on" id="set-proto-highlight" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">解析失败时提示</span><div class="sf-control"><div class="toggle" id="set-proto-error-tip" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+</div>
+<div class="sf-group" id="sf-cmd" style="display: none;">
+<div class="sf-title">命令自动化</div>
+<div class="sf-item"><span class="sf-label">默认循环间隔</span><div class="sf-control"><input type="text" id="set-cmd-interval" value="1000ms"></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">默认命令延迟</span><div class="sf-control"><input type="text" id="set-cmd-delay" value="100ms"></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">自动滚动到当前命令</span><div class="sf-control"><div class="toggle on" id="set-cmd-auto-scroll" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">执行音效提示</span><div class="sf-control"><div class="toggle" id="set-cmd-sound" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+<div class="sf-item"><span class="sf-label">命令失败时暂停</span><div class="sf-control"><div class="toggle on" id="set-cmd-pause-on-error" onclick="toggleSwitch(this)"><span class="knob"></span></div></div><span class="sf-scope g">全局</span></div>
+</div>
+<div class="sf-group" id="sf-shortcut" style="display: none;">
+<div class="sf-title">快捷键配置</div>
+<div class="shortcut-list" id="shortcutList">
+<div class="shortcut-row"><span class="shortcut-name">新建会话</span><span class="shortcut-key" data-key="new-session">Ctrl + N</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'new-session')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">快速连接</span><span class="shortcut-key" data-key="quick-connect">Ctrl + Shift + C</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'quick-connect')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">发送命令</span><span class="shortcut-key" data-key="send-cmd">Enter</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'send-cmd')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">清屏</span><span class="shortcut-key" data-key="clear-screen">Ctrl + L</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'clear-screen')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">切换视图 - 字节流</span><span class="shortcut-key" data-key="view-bytes">Ctrl + 1</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'view-bytes')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">切换视图 - 终端</span><span class="shortcut-key" data-key="view-terminal">Ctrl + 2</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'view-terminal')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">切换视图 - 协议</span><span class="shortcut-key" data-key="view-proto">Ctrl + 3</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'view-proto')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">切换视图 - 仪表盘</span><span class="shortcut-key" data-key="view-dash">Ctrl + 4</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'view-dash')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">保存日志</span><span class="shortcut-key" data-key="save-log">Ctrl + S</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'save-log')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">查找</span><span class="shortcut-key" data-key="find">Ctrl + F</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'find')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">放大字体</span><span class="shortcut-key" data-key="zoom-in">Ctrl + =</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'zoom-in')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">缩小字体</span><span class="shortcut-key" data-key="zoom-out">Ctrl + -</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'zoom-out')">修改</button></div>
+<div class="shortcut-row"><span class="shortcut-name">打开设置</span><span class="shortcut-key" data-key="open-settings">Ctrl + ,</span><button class="shortcut-edit-btn" type="button" onclick="shortcutEdit(this,'open-settings')">修改</button></div>
+</div>
+<div class="shortcut-actions">
+<button type="button" class="reset-btn" onclick="shortcutResetAll()">恢复默认</button>
+</div>
+</div>
+<div class="sf-group" id="sf-about" style="display: none;">
+<div class="about-header">
+<div class="about-logo">P</div>
+<div class="about-app-name">PortPilot</div>
+<div class="about-version">v1.0.0 beta (build 20260801)</div>
+<div class="about-desc">专业的串口调试与终端工作台</div>
+</div>
+<div class="about-section">
+<div class="about-section-title">功能亮点</div>
+<ul class="about-features">
+<li>多会话管理，专注串口调试体验</li>
+<li>强大的协议解析引擎，支持 Modbus 等主流协议</li>
+<li>命令自动化，支持循环执行、条件判断、延迟控制</li>
+<li>实时数据可视化仪表盘，图表自由配置</li>
+<li>高度可定制的终端外观与主题配色</li>
+</ul>
+</div>
+<div class="about-section">
+<div class="about-section-title">相关链接</div>
+<div class="about-links">
+<div class="about-link-item" onclick="showToast('即将打开官方网站','info')">官方网站</div>
+<div class="about-link-item" onclick="showToast('即将打开用户手册','info')">用户手册</div>
+<div class="about-link-item" onclick="showToast('即将打开反馈页面','info')">反馈建议</div>
+<div class="about-link-item" onclick="showToast('即将打开 GitHub 仓库','info')">GitHub</div>
+</div>
+</div>
+<div class="about-section">
+<div class="about-section-title">导入 / 导出配置</div>
+<div class="ie-config-section">
+<div class="ie-config-title">配置管理</div>
+<div class="ie-config-desc">将所有设置、命令组、协议定义、快捷命令等导出为 JSON 文件，方便备份或在多台设备间同步。</div>
+<div class="ie-config-actions">
+<button type="button" onclick="settingsExportConfig()">导出配置</button>
+<button type="button" onclick="settingsImportConfig()">导入配置</button>
+<input type="file" id="configImportFile" accept=".json" style="display:none" onchange="settingsHandleImportFile(this)">
+</div>
+</div>
+</div>
+<div class="about-section">
+<div class="about-section-title">检查更新</div>
+<div class="about-check-update">
+<button type="button" class="apply-btn" onclick="aboutCheckUpdate()">检查更新</button>
+<span id="aboutUpdateStatus" style="font-size: 11px; color: var(--accent2);">已是最新版本</span>
+</div>
+</div>
+<div class="about-section">
+<div class="about-section-title">系统信息</div>
+<div class="about-sys-info">
+操作系统: Windows 11 Pro 23H2<br>
+架构: x64 (AMD64)<br>
+Node.js: v18.17.1<br>
+Electron: v27.0.0<br>
+Chrome: v118.0.5993.88<br>
+应用路径: C:\Program Files\PortPilot\
+</div>
+</div>
+<div class="about-section">
+<div class="about-section-title">许可证</div>
+<div style="font-size:11px;color:var(--muted);line-height:1.6">
+PortPilot 是商业软件，使用本软件需遵守最终用户许可协议（EULA）。<br>
+本软件包含以下开源组件：Electron, Node.js, Monaco Editor, Chart.js 等。<br>
+© 2024-2026 PortPilot Team. All rights reserved.
+</div>
+</div>
+</div>
+<div class="sf-group" id="sf-log" style="display: none;">
+<div class="sf-title">日志查看器</div>
+<div class="log-viewer">
+  <div class="log-toolbar">
+    <div class="log-search">
+      <input type="text" id="logSearchInput" placeholder="搜索日志内容..." oninput="logSearch(this.value)">
+    </div>
+    <div class="log-level-filter">
+      <button type="button" class="llf-btn info active" onclick="logToggleLevel('info',this)">INFO</button>
+      <button type="button" class="llf-btn warn active" onclick="logToggleLevel('warn',this)">WARN</button>
+      <button type="button" class="llf-btn error active" onclick="logToggleLevel('error',this)">ERROR</button>
+      <button type="button" class="llf-btn debug" onclick="logToggleLevel('debug',this)">DEBUG</button>
+    </div>
+    <span class="log-count" id="logCount">显示 15 / 15 条</span>
+  </div>
+  <div class="log-content" id="logContent">
+    <div class="log-line" data-level="info"><span class="log-time">14:32:05.123</span><span class="log-level-tag info">INFO</span><span class="log-msg">串口 COM4 连接成功，波特率 115200</span></div>
+    <div class="log-line" data-level="info"><span class="log-time">14:32:06.456</span><span class="log-level-tag info">INFO</span><span class="log-msg">协议解析引擎初始化完成，已加载 3 个协议定义</span></div>
+    <div class="log-line" data-level="warn"><span class="log-time">14:32:08.789</span><span class="log-level-tag warn">WARN</span><span class="log-msg">接收缓冲区使用率超过 70%</span></div>
+    <div class="log-line" data-level="info"><span class="log-time">14:32:10.001</span><span class="log-level-tag info">INFO</span><span class="log-msg">命令组执行完成，共 5 条命令</span></div>
+    <div class="log-line" data-level="error"><span class="log-time">14:32:12.345</span><span class="log-level-tag error">ERROR</span><span class="log-msg">Modbus RTU 解析失败：CRC 校验不通过</span></div>
+    <div class="log-line" data-level="debug"><span class="log-time">14:32:12.346</span><span class="log-level-tag debug">DEBUG</span><span class="log-msg">计算CRC: 0xC5CD, 期望: 0xABCD</span></div>
+    <div class="log-line" data-level="info"><span class="log-time">14:32:15.678</span><span class="log-level-tag info">INFO</span><span class="log-msg">数据可视化模块已启动，采样频率 1Hz</span></div>
+    <div class="log-line" data-level="warn"><span class="log-time">14:32:18.901</span><span class="log-level-tag warn">WARN</span><span class="log-msg">传感器数据帧字段不匹配</span></div>
+    <div class="log-line" data-level="info"><span class="log-time">14:32:20.234</span><span class="log-level-tag info">INFO</span><span class="log-msg">自动保存日志: 20260815_1432.log</span></div>
+    <div class="log-line" data-level="error"><span class="log-time">14:32:22.567</span><span class="log-level-tag error">ERROR</span><span class="log-msg">串口连接断开：COM4</span></div>
+    <div class="log-line" data-level="info"><span class="log-time">14:32:25.890</span><span class="log-level-tag info">INFO</span><span class="log-msg">串口重连成功</span></div>
+    <div class="log-line" data-level="debug"><span class="log-time">14:32:26.000</span><span class="log-level-tag debug">DEBUG</span><span class="log-msg">心跳包发送: 0x00 0x01 0x02 0x03</span></div>
+    <div class="log-line" data-level="info"><span class="log-time">14:32:30.123</span><span class="log-level-tag info">INFO</span><span class="log-msg">命令组状态轮询执行中，第 3 轮</span></div>
+    <div class="log-line" data-level="warn"><span class="log-time">14:32:33.456</span><span class="log-level-tag warn">WARN</span><span class="log-msg">温度读数超过阈值：32.5°C</span></div>
+    <div class="log-line" data-level="info"><span class="log-time">14:32:35.789</span><span class="log-level-tag info">INFO</span><span class="log-msg">用户操作：切换视图至协议解析</span></div>
+  </div>
+</div>
+</div>
+<div class="sf-actions">
+<button type="button" class="reset-btn" onclick="settingsResetAll()">重置为默认值</button>
+<div class="sf-actions-right">
+<button type="button" class="save-btn" id="settingsSaveBtn" onclick="settingsSave()">保存</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 新建协议模态框 -->
+<div class="modal-overlay" id="protoNewModal" onclick="if(event.target===this)protoCloseNewModal()">
+<div class="modal" style="width:460px">
+<div class="modal-header"><h3 id="protoNewModalTitle">新建协议</h3><button class="modal-close" type="button" onclick="protoCloseNewModal()">×</button></div>
+<div class="modal-body">
+  <div class="form-row"><label>协议名称</label><input type="text" id="protoNewName" placeholder="请输入协议名称"></div>
+  <div class="form-row"><label>协议类型</label>
+    <select id="protoNewType">
+      <option value="fixed">固定长度</option>
+      <option value="variable">可变长度</option>
+      <option value="textline">文本行协议</option>
+      <option value="csv">CSV 协议</option>
+    </select>
+  </div>
+  <div class="form-row" id="protoNewHeaderRow"><label>帧头 (可选)</label><input type="text" id="protoNewHeader" placeholder="如: 0x7E"></div>
+  <div class="form-row" id="protoNewTrailerRow"><label>帧尾 (可选)</label><input type="text" id="protoNewTrailer" placeholder="如: 0x7E"></div>
+  <div class="form-row" id="protoNewCrcRow"><label>CRC 校验</label>
+    <select id="protoNewCrc">
+      <option value="none">不启用</option>
+      <option value="crc8">CRC8</option>
+      <option value="crc16">CRC16</option>
+      <option value="crc32">CRC32</option>
+      <option value="custom">自定义多项式</option>
+    </select>
+  </div>
+  <div class="form-hint">提示：创建后可在「字段」标签页编辑字段定义</div>
+</div>
+<div class="modal-footer">
+  <button type="button" onclick="protoCloseNewModal()">取消</button>
+  <button type="button" class="conn-btn" onclick="protoConfirmNew()">创建</button>
+</div>
+</div>
+</div>
+
+<!-- 协议配置模态框 -->
+<div class="modal-overlay" id="protoConfigModal" onclick="if(event.target===this)protoCloseConfigModal()">
+<div class="modal modal-lg">
+<div class="modal-header"><h3>协议配置</h3><button class="modal-close" type="button" onclick="protoCloseConfigModal()">×</button></div>
+<div class="modal-body" id="protoConfigBody">
+  <!-- 配置内容由 JS 渲染 -->
+</div>
+<div class="modal-footer">
+  <button type="button" onclick="protoCloseConfigModal()">取消</button>
+  <button type="button" class="conn-btn" onclick="protoSaveConfig()">保存</button>
+</div>
+</div>
+</div>
+
+<!-- 重命名协议模态框 -->
+<div class="modal-overlay" id="protoRenameModal" onclick="if(event.target===this)protoCloseRenameModal()">
+<div class="modal" style="width:360px">
+<div class="modal-header"><h3>重命名协议</h3><button class="modal-close" type="button" onclick="protoCloseRenameModal()">×</button></div>
+<div class="modal-body">
+  <div class="form-row"><label>新名称</label><input type="text" id="protoRenameInput"></div>
+</div>
+<div class="modal-footer">
+  <button type="button" onclick="protoCloseRenameModal()">取消</button>
+  <button type="button" class="conn-btn" onclick="protoConfirmRename()">确定</button>
+</div>
+</div>
+</div>
+
+<!-- 确认删除模态框 -->
+<div class="modal-overlay" id="protoDeleteModal" onclick="if(event.target===this)protoCloseDeleteModal()">
+<div class="modal" style="width:360px">
+<div class="modal-header"><h3>删除协议</h3><button class="modal-close" type="button" onclick="protoCloseDeleteModal()">×</button></div>
+<div class="modal-body">
+  <p style="font-size:13px;color:var(--ink2)">确定要删除协议「<span id="protoDeleteName" style="color:var(--primary)">Modbus RTU (副本)</span>」吗？此操作不可撤销。</p>
+</div>
+<div class="modal-footer">
+  <button type="button" onclick="protoCloseDeleteModal()">取消</button>
+  <button type="button" style="background:var(--danger);border-color:var(--danger);color:#fff" onclick="protoConfirmDelete()">删除</button>
+</div>
+</div>
+</div>
+
+<!-- 字段编辑模态框 -->
+<div class="modal-overlay" id="protoFieldModal" onclick="if(event.target===this)protoCloseFieldModal()">
+<div class="modal" style="width:420px">
+<div class="modal-header"><h3 id="protoFieldModalTitle">添加字段</h3><button class="modal-close" type="button" onclick="protoCloseFieldModal()">×</button></div>
+<div class="modal-body">
+  <div class="form-row"><label>字段名</label><input type="text" id="protoFieldName" placeholder="如: device_addr"></div>
+  <div class="form-row"><label>字段类型</label>
+    <select id="protoFieldType" onchange="protoOnFieldTypeChange()">
+      <option value="uint8">uint8 (1字节)</option>
+      <option value="uint16">uint16 (2字节)</option>
+      <option value="uint32">uint32 (4字节)</option>
+      <option value="int8">int8 (1字节)</option>
+      <option value="int16">int16 (2字节)</option>
+      <option value="int32">int32 (4字节)</option>
+      <option value="float32">float32 (4字节)</option>
+      <option value="double">double (8字节)</option>
+      <option value="bytes">bytes (定长)</option>
+      <option value="ascii">ascii (定长)</option>
+      <option value="hex">hex (定长)</option>
+      <option value="bitfield">bitfield (位域)</option>
+    </select>
+  </div>
+  <div class="form-row" id="protoFieldLenRow"><label>长度(字节)</label><input type="number" id="protoFieldLen" value="1" min="1"></div>
+  <div class="form-row" id="protoFieldEndianRow"><label>字节序</label>
+    <select id="protoFieldEndian">
+      <option value="be">大端 (Big Endian)</option>
+      <option value="le">小端 (Little Endian)</option>
+    </select>
+  </div>
+  <div class="form-row"><label>说明</label><input type="text" id="protoFieldDesc" placeholder="字段说明（可选）"></div>
+</div>
+<div class="modal-footer">
+  <button type="button" onclick="protoCloseFieldModal()">取消</button>
+  <button type="button" class="conn-btn" onclick="protoConfirmField()">确定</button>
+</div>
+</div>
+</div>
+
+<!-- 批量组帧模态框 -->
+<div class="modal-overlay" id="protoBatchModal" onclick="if(event.target===this)protoCloseBatchModal()">
+<div class="modal" style="width:420px">
+<div class="modal-header"><h3>批量组帧</h3><button class="modal-close" type="button" onclick="protoCloseBatchModal()">×</button></div>
+<div class="modal-body">
+  <div class="form-row"><label>目标字段</label><select id="protoBatchField"></select></div>
+  <div class="form-row"><label>起始值</label><input type="text" id="protoBatchStart" value="0" oninput="protoUpdateBatchCount()"></div>
+  <div class="form-row"><label>结束值</label><input type="text" id="protoBatchEnd" value="10" oninput="protoUpdateBatchCount()"></div>
+  <div class="form-row"><label>步长</label><input type="text" id="protoBatchStep" value="1" oninput="protoUpdateBatchCount()"></div>
+  <div class="form-row"><label>格式</label>
+    <select id="protoBatchFormat">
+      <option value="hex">十六进制</option>
+      <option value="dec">十进制</option>
+    </select>
+  </div>
+  <div class="form-hint" id="protoBatchCount">预计生成 0 帧</div>
+</div>
+<div class="modal-footer">
+  <button type="button" onclick="protoCloseBatchModal()">取消</button>
+  <button type="button" class="conn-btn" onclick="protoConfirmBatch()">生成</button>
+</div>
+</div>
+</div>
+
+<!-- 右键菜单 -->
+<div class="proto-ctx-menu" id="protoCtxMenu" style="display: none; left: 283px; top: 495px;">
+  <div class="pcm-item" onclick="protoCtxAction('rename')">重命名</div>
+  <div class="pcm-item" onclick="protoCtxAction('copy')">复制协议</div>
+  <div class="pcm-item" onclick="protoCtxAction('export')">导出为 JSON</div>
+  <div class="pcm-sep"></div>
+  <div class="pcm-item danger" onclick="protoCtxAction('delete')">删除协议</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 状态栏 -->
+<div class="shell-statusbar">
+<span class="stat"><b>当前会话:</b> 设备 A · COM3</span>
+<span class="stat"><span class="val">TX</span>
+<b>1,284</b> TX 1,284</span>
+<span class="stat"><span class="val">RX</span>
+<b>3,591</b> RX 3,591</span>
+<span class="stat">速率 <b>2.4</b> KB/s</span>
+<span class="stat" style="margin-left:auto">缓冲占用 <b>6%</b></span>
+</div>
+
+<!-- ===== 会话右键菜单 ===== -->
+<div class="ctx-menu" id="sessionCtxMenu" style="display: none; left: 62px; top: 248px;" data-session="PLC 控制器 · COM5">
+<div class="ctx-item" onclick="sessionMenuAction('connect')" style=""><span class="ci-name">连接</span></div>
+<div class="ctx-item" onclick="sessionMenuAction('disconnect')" style="display: none;"><span class="ci-name">断开</span></div>
+<div class="ctx-sep"></div>
+<div class="ctx-item" onclick="sessionMenuAction('settings')"><span class="ci-name">会话设置</span></div>
+<div class="ctx-item" onclick="sessionMenuAction('rename')"><span class="ci-name">重命名</span></div>
+<div class="ctx-item" onclick="sessionMenuAction('duplicate')"><span class="ci-name">复制会话</span></div>
+<div class="ctx-item cm-submenu" id="moveToGroupItem">
+<span class="ci-name">移动到分组</span>
+<span class="cm-sub-arrow">▸</span>
+<div class="cm-sub-panel" id="moveToGroupPanel"></div>
+</div>
+<div class="ctx-sep"></div>
+<div class="ctx-item danger" onclick="sessionMenuAction('delete')"><span class="ci-name">删除会话</span></div>
+</div>
+<!-- ===== 分组右键菜单 ===== -->
+<div class="group-ctx-menu" id="groupCtxMenu" style="display: none;">
+<div class="gcm-item" onclick="groupMenuAction('rename')"><span>重命名分组</span></div>
+<div class="gcm-item" onclick="groupMenuAction('addSession')"><span>新建会话</span></div>
+<div class="gcm-sep"></div>
+<div class="gcm-item danger" id="deleteGroupItem" onclick="groupMenuAction('delete')"><span>删除分组</span></div>
+</div>
+<!-- ===== 搜索标签调色板 ===== -->
+<div class="palette" id="chipPalette" style="display: none; left: 701px; top: 175px;">
+<div class="pl-title">选择颜色（右键标签胶囊打开）</div>
+<div class="pl-grid" id="plGrid"><span class="pl-color" title="颜色 1" style="background: rgb(137, 43, 46);"></span><span class="pl-color" title="颜色 2" style="background: rgb(183, 58, 62);"></span><span class="pl-color" title="颜色 3" style="background: rgb(229, 72, 77);"></span><span class="pl-color" title="颜色 4" style="background: rgb(255, 86, 92);"></span><span class="pl-color" title="颜色 5" style="background: rgb(255, 101, 108);"></span><span class="pl-color" title="颜色 6" style="background: rgb(153, 89, 30);"></span><span class="pl-color" title="颜色 7" style="background: rgb(204, 118, 40);"></span><span class="pl-color" title="颜色 8" style="background: rgb(255, 148, 50);"></span><span class="pl-color" title="颜色 9" style="background: rgb(255, 178, 60);"></span><span class="pl-color" title="颜色 10" style="background: rgb(255, 207, 70);"></span><span class="pl-color" title="颜色 11" style="background: rgb(136, 99, 36);"></span><span class="pl-color" title="颜色 12" style="background: rgb(182, 132, 48);"></span><span class="pl-color" title="颜色 13" style="background: rgb(227, 165, 60);"></span><span class="pl-color" title="颜色 14" style="background: rgb(255, 198, 72);"></span><span class="pl-color" title="颜色 15" style="background: rgb(255, 231, 84);"></span><span class="pl-color" title="颜色 16" style="background: rgb(38, 111, 48);"></span><span class="pl-color" title="颜色 17" style="background: rgb(50, 148, 64);"></span><span class="pl-color" title="颜色 18" style="background: rgb(63, 185, 80);"></span><span class="pl-color" title="颜色 19" style="background: rgb(76, 222, 96);"></span><span class="pl-color" title="颜色 20" style="background: rgb(88, 255, 112);"></span><span class="pl-color" title="颜色 21" style="background: rgb(34, 115, 115);"></span><span class="pl-color" title="颜色 22" style="background: rgb(46, 154, 154);"></span><span class="pl-color" title="颜色 23" style="background: rgb(57, 192, 192);"></span><span class="pl-color" title="颜色 24" style="background: rgb(68, 230, 230);"></span><span class="pl-color" title="颜色 25" style="background: rgb(80, 255, 255);"></span><span class="pl-color" title="颜色 26" style="background: rgb(53, 100, 153);"></span><span class="pl-color" title="颜色 27" style="background: rgb(70, 133, 204);"></span><span class="pl-color" title="颜色 28" style="background: rgb(88, 166, 255);"></span><span class="pl-color" title="颜色 29" style="background: rgb(106, 199, 255);"></span><span class="pl-color" title="颜色 30" style="background: rgb(123, 232, 255);"></span><span class="pl-color" title="颜色 31" style="background: rgb(98, 68, 148);"></span><span class="pl-color" title="颜色 32" style="background: rgb(130, 90, 198);"></span><span class="pl-color" title="颜色 33" style="background: rgb(163, 113, 247);"></span><span class="pl-color" title="颜色 34" style="background: rgb(196, 136, 255);"></span><span class="pl-color" title="颜色 35" style="background: rgb(228, 158, 255);"></span></div>
+<div class="pl-grid pl-custom-grid" id="plCustomGrid"><span class="pl-color custom-slot" title="自定义槽 1（点击应用，可在下方选色后保存到该槽）" style="background: rgb(229, 72, 77); outline: rgba(255, 255, 255, 0.35) dashed 2px;"></span><span class="pl-color custom-slot" title="自定义槽 2（点击应用，可在下方选色后保存到该槽）" style="background: rgb(255, 148, 50); outline: rgba(255, 255, 255, 0.35) dashed 2px;"></span><span class="pl-color custom-slot" title="自定义槽 3（点击应用，可在下方选色后保存到该槽）" style="background: rgb(227, 165, 60); outline: rgba(255, 255, 255, 0.35) dashed 2px;"></span><span class="pl-color custom-slot" title="自定义槽 4（点击应用，可在下方选色后保存到该槽）" style="background: rgb(63, 185, 80); outline: rgba(255, 255, 255, 0.35) dashed 2px;"></span><span class="pl-color custom-slot" title="自定义槽 5（点击应用，可在下方选色后保存到该槽）" style="background: rgb(57, 192, 192); outline: rgba(255, 255, 255, 0.35) dashed 2px;"></span><span class="pl-color custom-slot" title="自定义槽 6（点击应用，可在下方选色后保存到该槽）" style="background: rgb(88, 166, 255); outline: rgba(255, 255, 255, 0.35) dashed 2px;"></span><span class="pl-color custom-slot" title="自定义槽 7（点击应用，可在下方选色后保存到该槽）" style="background: rgb(163, 113, 247); outline: rgba(255, 255, 255, 0.35) dashed 2px;"></span></div>
+<div class="pl-custom">
+<span class="pl-title" style="margin:0;flex:1">自定义:</span>
+<input type="color" id="plCustomColor" value="#0fc6b7" onmousedown="event.stopPropagation()" onclick="event.stopPropagation()" onchange="applyPaletteCustom(this.value)">
+<select id="plCustomSlot" style="width:58px;font-size:10px;padding:2px 4px">
+<option value="0">槽1</option><option value="1">槽2</option><option value="2">槽3</option>
+<option value="3">槽4</option><option value="4">槽5</option><option value="5">槽6</option>
+<option value="6">槽7</option>
+</select>
+<button class="tbtn" type="button" onclick="savePaletteCustom()">保存</button>
+</div>
+<div class="pl-nav">
+<button type="button" onclick="jumpSearch(-1)">◀ 上一个</button>
+<span id="plNavInfo" class="pl-nav-info">0 / 7 处</span>
+<button type="button" onclick="jumpSearch(1)">下一个 ▶</button>
+</div>
+<div class="pl-actions">
+<button type="button" onclick="cancelFilter()">取消筛选</button>
+<button type="button" onclick="hidePalette()">关闭</button>
+</div>
+</div>
+<!-- ===== 日志保存模态框 ===== -->
+<div class="modal-overlay" id="logSaveOverlay" onclick="if(event.target===this)closeLogSaveModal()">
+<div class="modal">
+<div class="modal-header">
+<h3 id="logSaveTitle">保存日志</h3>
+<button class="modal-close" type="button" onclick="closeLogSaveModal()">×</button>
+</div>
+<div class="modal-body log-save-form">
+<div class="form-row">
+<label>保存内容</label>
+<div class="log-save-radio-group">
+<label><input type="radio" name="logSaveContent" value="all" checked=""> 全部</label>
+<label><input type="radio" name="logSaveContent" value="tx"> 仅发送</label>
+<label><input type="radio" name="logSaveContent" value="rx"> 仅接收</label>
+</div>
+</div>
+<div class="form-row">
+<label>格式选择</label>
+<div class="log-save-format-grid" id="logSaveFormatGrid">
+<div class="log-format-item active" data-format="txt" onclick="logSaveSetFormat('txt',this)">TXT</div>
+<div class="log-format-item" data-format="csv" onclick="logSaveSetFormat('csv',this)">CSV</div>
+<div class="log-format-item" data-format="hex" onclick="logSaveSetFormat('hex',this)">HEX</div>
+<div class="log-format-item disabled" data-format="bin" title="暂未支持">二进制</div>
+</div>
+</div>
+<div class="form-row">
+<label>时间范围</label>
+<div class="log-time-range">
+<select id="logSaveTimeRange" onchange="logSaveToggleCustom()">
+<option value="all">全部</option>
+<option value="1h">最近 1 小时</option>
+<option value="custom">自定义</option>
+</select>
+</div>
+<div class="log-time-custom" id="logSaveTimeCustom" style="display:none">
+<input type="text" placeholder="开始时间 2026-08-01 00:00:00" id="logSaveStart">
+<input type="text" placeholder="结束时间 2026-08-15 23:59:59" id="logSaveEnd">
+</div>
+</div>
+<div class="form-row">
+<div class="log-save-radio-group">
+<label><input type="checkbox" id="logSaveTimestamp" checked=""> 包含时间戳</label>
+<label><input type="checkbox" id="logSaveDirection" checked=""> 包含方向标记</label>
+</div>
+</div>
+<div class="form-row">
+<label>编码</label>
+<select id="logSaveEncoding" style="width:100%">
+<option value="utf8">UTF-8</option>
+<option value="gbk">GBK</option>
+</select>
+</div>
+<div class="log-save-progress" id="logSaveProgress" style="display:none">
+<div class="log-save-progress-info">
+<span>正在导出...</span>
+<span id="logSaveProgressText">0%</span>
+</div>
+<div class="progress-bar"><div class="progress-bar-fill" id="logSaveProgressBar"></div></div>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" onclick="closeLogSaveModal()">取消</button>
+<button type="button" class="conn-btn" id="logSaveExportBtn" onclick="logSaveExport()">导出</button>
+</div>
+</div>
+</div>
+<!-- ===== 确认重置模态框 ===== -->
+<div class="modal-overlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirmModal()">
+<div class="modal confirm-modal">
+<div class="modal-header">
+<h3 id="confirmTitle">确认操作</h3>
+<button class="modal-close" type="button" onclick="closeConfirmModal()">×</button>
+</div>
+<div class="modal-body">
+<div class="confirm-text" id="confirmMessage">确定要执行此操作吗？</div>
+<div class="confirm-hint" id="confirmHint">此操作不可撤销。</div>
+</div>
+<div class="modal-footer">
+<button type="button" onclick="closeConfirmModal()">取消</button>
+<button type="button" class="reset-btn" id="confirmOkBtn" onclick="confirmAction()">确定</button>
+</div>
+</div>
+</div>
+<!-- ===== 危险命令确认模态框 ===== -->
+<div class="modal-overlay" id="termDangerOverlay" onclick="if(event.target===this)termCloseDangerModal()">
+<div class="modal confirm-modal danger-modal">
+<div class="modal-header">
+<h3>⚠ 危险命令警告</h3>
+<button class="modal-close" type="button" onclick="termCloseDangerModal()">×</button>
+</div>
+<div class="modal-body">
+<div class="danger-icon">⚠</div>
+<div class="danger-text">该命令可能对设备造成不可逆损害，请确认是否继续执行？</div>
+<div class="danger-cmd-display" id="termDangerCmdText">reboot</div>
+<div class="danger-whitelist-row">
+<input type="checkbox" id="termDangerWhitelist">
+<label for="termDangerWhitelist">加入白名单，下次不再提示</label>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" onclick="termCloseDangerModal()">取消</button>
+<button type="button" class="danger-ok-btn" id="termDangerOkBtn" onclick="termConfirmDangerCmd()">确认执行</button>
+</div>
+</div>
+</div>
+<!-- ===== 快捷命令管理模态框 ===== -->
+<div class="modal-overlay" id="termCmdMgrOverlay" onclick="if(event.target===this)termCloseCmdManager()">
+<div class="modal modal-lg">
+<div class="modal-header">
+<h3>快捷命令管理</h3>
+<button class="modal-close" type="button" onclick="termCloseCmdManager()">×</button>
+</div>
+<div class="modal-body">
+<div style="font-size:11px;color:var(--muted);margin-bottom:8px">
+  管理快捷命令面板中的命令。支持 <code style="font-size:10px">{param}</code> 占位符，发送时会弹出输入框。
+</div>
+<div class="cmd-mgr-list" id="termCmdMgrList"><div class="cmd-mgr-item"><span class="cmd-index">1</span><input type="text" class="cmd-name-input" value="ifconfig eth0" placeholder="显示名称" onchange="termUpdateMgrItem(0,'name',this.value)"><input type="text" class="cmd-content-input" value="ifconfig eth0" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(0,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(0,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(0,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(0)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">2</span><input type="text" class="cmd-name-input" value="cat /proc/cpuinfo" placeholder="显示名称" onchange="termUpdateMgrItem(1,'name',this.value)"><input type="text" class="cmd-content-input" value="cat /proc/cpuinfo" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(1,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(1,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(1,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(1)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">3</span><input type="text" class="cmd-name-input" value="free -m" placeholder="显示名称" onchange="termUpdateMgrItem(2,'name',this.value)"><input type="text" class="cmd-content-input" value="free -m" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(2,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(2,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(2,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(2)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">4</span><input type="text" class="cmd-name-input" value="top -n1" placeholder="显示名称" onchange="termUpdateMgrItem(3,'name',this.value)"><input type="text" class="cmd-content-input" value="top -b -n 1" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(3,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(3,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(3,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(3)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">5</span><input type="text" class="cmd-name-input" value="df -h" placeholder="显示名称" onchange="termUpdateMgrItem(4,'name',this.value)"><input type="text" class="cmd-content-input" value="df -h" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(4,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(4,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(4,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(4)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">6</span><input type="text" class="cmd-name-input" value="ps aux" placeholder="显示名称" onchange="termUpdateMgrItem(5,'name',this.value)"><input type="text" class="cmd-content-input" value="ps aux" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(5,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(5,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(5,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(5)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">7</span><input type="text" class="cmd-name-input" value="ping {ip}" placeholder="显示名称" onchange="termUpdateMgrItem(6,'name',this.value)"><input type="text" class="cmd-content-input" value="ping {ip} -c 4" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(6,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(6,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(6,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(6)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">8</span><input type="text" class="cmd-name-input" value="os-release" placeholder="显示名称" onchange="termUpdateMgrItem(7,'name',this.value)"><input type="text" class="cmd-content-input" value="cat /etc/os-release" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(7,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(7,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(7,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(7)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">9</span><input type="text" class="cmd-name-input" value="reboot" placeholder="显示名称" onchange="termUpdateMgrItem(8,'name',this.value)"><input type="text" class="cmd-content-input" value="reboot" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(8,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(8,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(8,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(8)" style="color:var(--danger)">×</button></div></div><div class="cmd-mgr-item"><span class="cmd-index">10</span><input type="text" class="cmd-name-input" value="新命令" placeholder="显示名称" onchange="termUpdateMgrItem(9,'name',this.value)"><input type="text" class="cmd-content-input" value="echo hello" placeholder="命令内容，支持 {param}" onchange="termUpdateMgrItem(9,'cmd',this.value)"><div class="cmd-actions"><button type="button" class="move-btn" title="上移" onclick="termMoveCmdItem(9,-1)">↑</button><button type="button" class="move-btn" title="下移" onclick="termMoveCmdItem(9,1)">↓</button><button type="button" title="删除" onclick="termRemoveCmdItem(9)" style="color:var(--danger)">×</button></div></div></div>
+<div class="cmd-mgr-footer">
+<div class="left-btns">
+<button type="button" class="add-cmd-btn" onclick="termAddCmdItem()">+ 添加命令</button>
+<button type="button" class="restore-default-btn" onclick="termRestoreDefaultCmds()">恢复默认</button>
+</div>
+<div class="right-btns">
+<button type="button" onclick="termCloseCmdManager()">取消</button>
+<button type="button" class="reset-btn" onclick="termSaveCmdManager()">保存</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ===== 参数输入模态框 ===== -->
+<div class="modal-overlay" id="termParamOverlay" onclick="if(event.target===this)termCloseParamModal()">
+<div class="modal">
+<div class="modal-header">
+<h3>命令参数</h3>
+<button class="modal-close" type="button" onclick="termCloseParamModal()">×</button>
+</div>
+<div class="modal-body">
+<div style="font-size:11px;color:var(--muted);margin-bottom:10px">请填写以下参数后发送命令：</div>
+<div id="termParamInputs"><div class="param-input-group"><label>参数 <span class="param-name-tag">{ip}</span></label><input type="text" id="termParamInput_ip" value="" oninput="termUpdateParamPreview()"></div></div>
+<div class="param-preview" id="termParamPreview">预览: ping <span class="preview-val">192.168.3.1</span> -c 4</div>
+</div>
+<div class="modal-footer">
+<button type="button" onclick="termCloseParamModal()">取消</button>
+<button type="button" class="reset-btn" onclick="termConfirmParamCmd()">发送命令</button>
+</div>
+</div>
+</div>
+<!-- ===== 新建会话模态框 ===== -->
+<div class="modal-overlay" id="newSessionOverlay" onclick="if(event.target===this)closeNewSession()">
+<div class="modal">
+<div class="modal-header"><h3>新建会话</h3><button class="modal-close" type="button" onclick="closeNewSession()">×</button></div>
+<div class="modal-body">
+<div class="form-row"><label>视图模式</label><select id="nsMode"><option value="bytes">字节流（字节流 + 协议）</option><option value="terminal">终端</option></select></div>
+<div class="form-row"><label>连接类型</label><select id="nsType"><option>串口</option></select></div>
+<div class="form-row"><label>端口 / 地址</label><select id="nsPort"><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option></select></div>
+<div class="form-row"><label>波特率</label><select id="nsBaud"><option>115200</option><option>9600</option><option>57600</option><option>19200</option></select></div>
+<div class="form-row"><label>会话名称</label><input type="text" id="nsName" value="新设备 · COM3"></div>
+<div class="adv-toggle" onclick="toggleAdv(this)"><span class="adv-arrow">▸</span> 高级选项</div>
+<div class="adv-body" id="advBody" style="display:none">
+<div class="form-row"><label>缓冲策略</label><select id="nsBufStrategy"><option>环形缓冲</option><option>追加缓冲</option><option>双缓冲</option></select></div>
+<div class="form-row"><label>缓冲大小</label><select id="nsBufSize"><option>16 MB</option><option>1 MB</option><option>4 MB</option><option>64 MB</option></select></div>
+<div class="form-row"><label>接收编码</label><select id="nsEncoding"><option>ASCII</option><option>UTF-8</option><option>HEX</option></select></div>
+<div class="form-row"><label>时间戳</label><div class="toggle" id="nsTs"><span class="knob"></span></div></div>
+</div>
+<div class="form-hint">创建后加入会话列表并选中，按所选模式初始化并直接连接。连接失败可在"设置 → 会话管理"中修改参数后重试。</div>
+</div>
+<div class="modal-footer">
+<button type="button" onclick="closeNewSession()">取消</button>
+<button type="button" class="conn-btn" onclick="createSession()">创建并连接</button>
+</div>
+</div>
+</div>
+<!-- ===== 会话详情模态框 ===== -->
+<div class="modal-overlay" id="detailOverlay" onclick="if(event.target===this)this.classList.remove('show')">
+<div class="modal">
+<div class="modal-header"><h3>会话详情 · 设备 A</h3><button class="modal-close" type="button" onclick="this.closest('.modal-overlay').classList.remove('show')">×</button></div>
+<div class="modal-body" style="font-size:13px">
+<div class="sd-row" style="padding:6px 0"><span>设备</span><b>设备 A</b></div>
+<div class="sd-row" style="padding:6px 0"><span>端口</span><b>COM3 · 115200 · 8N1</b></div>
+<div class="sd-row" style="padding:6px 0"><span>VID:PID</span><b>0403:6001</b></div>
+<div class="sd-row" style="padding:6px 0"><span>连接时长</span><b>00:42:18</b></div>
+<div class="sd-row" style="padding:6px 0"><span>RX / TX</span><b>3,591 / 1,284</b></div>
+<div class="sd-row" style="padding:6px 0"><span>缓冲占用</span><b>6%</b></div>
+</div>
+<div class="modal-footer"><button type="button" onclick="this.closest('.modal-overlay').classList.remove('show')">关闭</button></div>
+</div>
+</div>
+<!-- ===== 会话设置弹窗（右键菜单入口，复用会话管理字段 + 通讯测试） ===== -->
+<div class="modal-overlay" id="ssOverlay" onclick="if(event.target===this)closeSessionSettings()">
+<div class="modal modal-lg">
+<div class="modal-header">
+<h3 id="ssTitle">会话设置</h3>
+<span class="sdot on" id="ssStateDot" style="display:inline-block"></span>
+<span id="ssStateText" style="font-size:11px;color:var(--muted)">在线</span>
+<button class="modal-close" type="button" onclick="closeSessionSettings()">×</button>
+</div>
+<div class="modal-body">
+<div class="sf-session-panel">
+<div class="sf-sess-head"><span class="sd-title">当前会话：<b id="ssName">设备 A · COM3</b></span></div>
+<div class="sf-sess-conn">
+<button type="button" class="conn-btn" id="ssConnectBtn" onclick="ssToggleConnect()">断开</button>
+</div>
+</div>
+<div class="sf-item"><span class="sf-label">会话名称</span><div class="sf-control"><input type="text" id="ssNameInput"></div></div>
+<div class="sf-item"><span class="sf-label">视图模式</span><div class="sf-control"><select id="ssModeInput"><option value="bytes">字节流（字节流 + 协议）</option><option value="terminal">终端</option></select></div></div>
+<div class="sf-item"><span class="sf-label">端口 / 地址</span><div class="sf-control"><select id="ssPort"><option>COM3 · USB-SER (FTDI)</option><option>COM4 · USB Serial (CH340)</option></select></div></div>
+<div class="sf-item"><span class="sf-label">波特率</span><div class="sf-control"><select id="ssBaud"><option>115200</option><option>9600</option><option>57600</option><option>19200</option></select></div></div>
+<div class="sf-item"><span class="sf-label">数据位</span><div class="sf-control"><select id="ssDataBits"><option>8</option><option>7</option><option>6</option><option>5</option></select></div></div>
+<div class="sf-item"><span class="sf-label">停止位</span><div class="sf-control"><select id="ssStopBits"><option>1</option><option>1.5</option><option>2</option></select></div></div>
+<div class="sf-item"><span class="sf-label">校验位</span><div class="sf-control"><select id="ssParity"><option>None</option><option>Even</option><option>Odd</option></select></div></div>
+<div class="sf-item"><span class="sf-label">缓冲策略</span><div class="sf-control"><select id="ssBufStrategy"><option>环形缓冲</option><option>追加缓冲</option><option>双缓冲</option></select></div></div>
+<div class="sf-item"><span class="sf-label">缓冲大小</span><div class="sf-control"><select id="ssBufSize"><option>16 MB</option><option>1 MB</option><option>4 MB</option><option>64 MB</option></select></div></div>
+<div class="sf-item"><span class="sf-label">溢出策略</span><div class="sf-control"><select id="ssOverflow"><option>停止接收</option><option>丢弃最旧</option></select></div></div>
+<div class="sf-test">
+<span class="sf-label">通讯测试</span>
+<div class="sf-control" style="display:flex;gap:8px;align-items:center">
+<button type="button" class="reset-btn" onclick="communicationTest()">测试端口</button>
+<span id="ssTestResult" style="font-size:11px;color:var(--muted)"></span>
+</div>
+</div>
+<div class="sf-note">在线会话：连接参数（端口/波特率/数据位/停止位/校验）不可修改，需先断开。离线会话：全部参数可修改。通讯测试仅验证端口能否打开，不改变会话状态。</div>
+</div>
+<div class="modal-footer">
+<button type="button" onclick="closeSessionSettings()">关闭</button>
+<button type="button" class="conn-btn" onclick="saveSessionSettings()">保存并应用</button>
+</div>
+</div>
+</div>
+
+  <!-- Module Scripts -->
+  <script src="../js/app.js"></script>
+  <script src="../js/modules/session.js"></script>
+  <script src="../js/modules/bytestream.js"></script>
+  <script src="../js/modules/terminal.js"></script>
+  <script src="../js/modules/command.js"></script>
+  <script src="../js/modules/protocol.js"></script>
+  <script src="../js/modules/dashboard.js"></script>
+  <script src="../js/modules/visualization.js"></script>
+  <script src="../js/modules/settings.js"></script>
+
+
+
+</body></html>
