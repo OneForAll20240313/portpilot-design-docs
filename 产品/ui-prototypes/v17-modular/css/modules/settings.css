@@ -66,36 +66,3 @@
 .bdb-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-bottom:4px}
 .bdb-fill{height:100%;width:0%;background:var(--grad);border-radius:3px;transition:width .15s ease}
 .bdb-status{font-size:10px;color:var(--muted)}
-
-/* --- Theme Gradient: Settings Nav Active (设置侧边栏激活渐变指示) --- */
-.sn-item.active{
-  background:var(--primary-dim) !important;
-  border-left:3px solid;
-  border-image:var(--grad) 1;
-  color:var(--ink) !important;
-  font-weight:600;
-}
-
-/* --- Theme Gradient: Theme Presets (主题预设色板强化) --- */
-.th-swatch{
-  box-shadow:0 2px 8px rgba(0,0,0,.35) !important;
-  transition:transform .2s ease, box-shadow .2s ease;
-}
-.th-one:hover .th-swatch{
-  transform:scale(1.12);
-  box-shadow:0 4px 14px rgba(0,0,0,.45) !important;
-}
-.th-one.active{
-  border-color:var(--ink) !important;
-  box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--primary),0 4px 12px rgba(0,0,0,.3) !important;
-}
-.th-one.active .th-swatch{
-  transform:scale(1.05);
-}
-
-/* --- Theme Gradient: Log Level Filter Active (日志级别筛选激活渐变) --- */
-.llf-item.active{
-  background:var(--grad) !important;
-  color:#fff !important;
-  border-color:transparent !important;
-}

@@ -1083,18 +1083,20 @@ document.addEventListener('DOMContentLoaded', function(){
 
 // ============================================
 // Dynamic Slider Track Fill (滑块轨道动态渐变填充)
-// ============================================
-
 
 // ============================================
-// Dynamic Slider Track Fill (滑块轨道渐变填充)
+// Dynamic Slider Track Fill v2 (滑块轨道渐变填充)
 // ============================================
 function updateSliderFill(slider){
+  if(!slider || slider.type !== 'range') return;
   var min = parseFloat(slider.min) || 0;
   var max = parseFloat(slider.max) || 100;
   var val = parseFloat(slider.value) || 0;
   var pct = ((val - min) / (max - min)) * 100;
-  slider.style.background = 'linear-gradient(to right, var(--grad) 0%, var(--grad) ' + pct + '%, var(--bg4) ' + pct + '%, var(--bg4) 100%)';
+  if(pct < 0) pct = 0;
+  if(pct > 100) pct = 100;
+  slider.style.backgroundImage = 'linear-gradient(to right, var(--grad) 0%, var(--grad) ' + pct + '%, var(--bg4) ' + pct + '%, var(--bg4) 100%)';
+  slider.style.backgroundColor = 'transparent';
 }
 
 function initAllSliderFills(){
@@ -1103,14 +1105,17 @@ function initAllSliderFills(){
     updateSliderFill(s);
     if(!s._gradBound){
       s.addEventListener('input', function(){ updateSliderFill(this); });
+      s.addEventListener('change', function(){ updateSliderFill(this); });
       s._gradBound = true;
     }
   });
 }
-// 多次延迟初始化，确保动态生成的滑块也被处理
+
 document.addEventListener('DOMContentLoaded', function(){
-  setTimeout(initAllSliderFills, 50);
-  setTimeout(initAllSliderFills, 500);
-  setTimeout(initAllSliderFills, 1500);
+  setTimeout(function(){ initAllSliderFills(); }, 0);
+  setTimeout(function(){ initAllSliderFills(); }, 100);
+  setTimeout(function(){ initAllSliderFills(); }, 500);
+  setTimeout(function(){ initAllSliderFills(); }, 1500);
 });
 window.initAllSliderFills = initAllSliderFills;
+window.updateSliderFill = updateSliderFill;
