@@ -76,7 +76,7 @@
 
 /* 进度条 */
 .progress-bar{width:100%;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden}
-.progress-bar-fill{height:100%;background:var(--primary);border-radius:4px;transition:width .3s ease;width:0%}
+/* -- gradient handled by base.css -- */
 
 /* 设置滑块 */
 .sf-slider{display:flex;align-items:center;gap:10px}
@@ -148,7 +148,7 @@
 /* 设置底部操作栏增强 */
 .sf-actions .reset-btn{color:var(--danger);border-color:var(--danger)}
 .sf-actions .reset-btn:hover{background:rgba(248,81,73,.1)}
-.sf-actions .save-btn{background:var(--primary);border-color:var(--primary);color:#04211e;font-weight:600}
+/* -- gradient handled by base.css -- */
 .sf-actions .save-btn.saved{background:var(--accent2);border-color:var(--accent2)}
 
 /* 终端配色方案类 */
