@@ -404,6 +404,57 @@ flowchart TD
   </div>
 </section>
 
+<!-- ================= S7 协作与仓库治理 ================= -->
+<section id="s7">
+  <div class="container">
+    <h2><span class="secnum">07</span>协作与仓库治理</h2>
+    <p class="lead">多人/多智能体协同的仓库治理规范。目标：保证主分支干净稳定、协作过程可追溯、自动化产物不污染版本历史。本仓库为纯文档仓库，与代码仓库（qtSerial 等）遵循同一套分支与提交规范。</p>
+
+    <h3>7.1 分支管理规范</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>分支</th><th>用途</th><th>命名</th><th>合并方式</th></tr></thead>
+        <tr><td><strong>master / main</strong></td><td>稳定主干，始终可发布</td><td>—</td><td>仅通过 squash merge 合并 PR</td></tr>
+          <tr><td><strong>功能分支</strong></td><td>新功能 / 缺陷修复 / 文档更新</td><td><code>feat/&lt;模块&gt;</code>、<code>fix/&lt;模块&gt;</code>、<code>docs/*</code></td><td>PR → 评审 → squash merge</td></tr>
+          <tr><td><strong>发布分支</strong></td><td>版本发布（可选）</td><td><code>release/&lt;版本&gt;</code></td><td>验证后合并主分支并打 tag</td></tr>
+      </table>
+    </div>
+    <div class="callout warn">
+      <p><strong>防污染红线</strong>：任何自动化/平台产物分支（如 trae 自动创建的 <code>trae/&lt;session&gt;</code> 分支）与临时产物提交，<strong>一律不得合并或推送回 master/main</strong>。完成临时用途后应删除对应分支，避免污染主分支历史。</p>
+    </div>
+
+    <h3>7.2 提交规范（Commit Message）</h3>
+    <p>统一采用 Conventional Commits 风格，便于门禁解析与变更日志生成。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>类型</th><th>含义</th><th>示例</th></tr></thead>
+        <tr><td><code>feat</code></td><td>新功能</td><td><code>feat: 支持手动输入自定义设备路径</code></td></tr>
+          <tr><td><code>fix</code></td><td>缺陷修复</td><td><code>fix: 处理无权限设备的打开提示</code></td></tr>
+          <tr><td><code>docs</code></td><td>文档变更</td><td><code>docs: 补充工程流程协作治理章节</code></td></tr>
+          <tr><td><code>refactor</code></td><td>重构（无功能变化）</td><td><code>refactor: 抽取设备枚举逻辑</code></td></tr>
+          <tr><td><code>test</code></td><td>测试变更</td><td><code>test: 新增自定义路径打开用例</code></td></tr>
+          <tr><td><code>chore</code></td><td>构建/工具/依赖</td><td><code>chore: 更新 .gitignore</code></td></tr>
+      </table>
+    </div>
+    <p>格式：<code>&lt;type&gt;: &lt;简短描述&gt;</code>（可选附带 <code>BREAKING CHANGE</code> 或 scope）。提交前确保工作区干净、不包含未经确认的产物。</p>
+
+    <h3>7.3 协作智能体防污染规范</h3>
+    <p>本仓库由人与智能体（subagent / trae agent）共同协作。智能体必须遵守以下约束，防止污染仓库与版本历史。</p>
+    <div class="grid">
+      <div class="card"><h4>隔离产物</h4><p>临时/备份/沙箱文件（如 <code>.session_backup</code>、<code>.trae-html-share-packages</code>、构建产物）一律加入 <code>.gitignore</code>，禁止提交进仓库。</p></div>
+      <div class="card"><h4>禁止直推主干</h4><p>不得直接向 master/main 推送未经 PR 的改动；所有改动走功能分支 + PR + 评审。</p></div>
+      <div class="card"><h4>先拉后推</h4><p>推送前必须 <code>git pull</code> 拉取最新，解决冲突并本地编译验证通过后方可推送，严禁覆盖他人提交。</p></div>
+      <div class="card"><h4>最小改动</h4><p>只提交任务相关文件，禁止 <code>git add -A</code> 误纳入无关/敏感文件（.env、凭证、大型二进制）。</p></div>
+      <div class="card"><h4>产物可追溯</h4><p>任何落地文件先经安全版本库（<code>.session_backup</code>）提交留档，再复制到目标目录，确保可回溯。</p></div>
+      <div class="card"><h4>权限最小化</h4><p>智能体仅使用完成当前任务所需的最小 token 权限，不在非必要仓库创建/删除资源。</p></div>
+    </div>
+
+    <div class="callout danger">
+      <p><strong>违规判定</strong>：出现"未拉取即推送、未解决冲突即推送、携带编译错误推送、提交敏感文件、污染主分支"任一情形，视为违规，需回滚并重新按规范执行。</p>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="container">
     <div class="sources">

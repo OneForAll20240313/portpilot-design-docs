@@ -1,1 +1,6 @@
 .session_backup
+.trae-html-share-packages
+*.log
+build/
+dist/
+release/

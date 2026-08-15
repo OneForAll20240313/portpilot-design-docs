@@ -221,7 +221,7 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
     <div class="table-wrap">
       <table>
         <thead><tr><th>配置项</th><th>定义</th><th>默认</th></tr></thead>
-        <tr><td>串口设备</td><td>枚举可用串口，下拉选择</td><td>自动检测</td></tr>
+        <tr><td>串口设备</td><td>枚举可用串口（下拉选择）+ 手动输入自定义设备路径</td><td>自动检测</td></tr>
           <tr><td>波特率</td><td>标准波特率列表 + 自定义输入</td><td>115200</td></tr>
           <tr><td>数据位</td><td>5 / 6 / 7 / 8</td><td>8</td></tr>
           <tr><td>校验</td><td>None / Even / Odd / Mark / Space</td><td>None</td></tr>
@@ -229,6 +229,21 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
           <tr><td>流控</td><td>无 / 硬件 RTS/CTS / 软件 XON/XOFF</td><td>无</td></tr>
           <tr><td>高速缓冲策略</td><td>环形 / 追加 / 双缓冲，显示处理能力，运行期锁定</td><td>环形</td></tr>
       </table>
+    </div>
+
+    <h3>2.2.1 设备选择方式</h3>
+    <p>串口设备选择应同时支持「系统枚举」与「手动输入自定义路径」两种方式，覆盖标准串口与非标准设备（如伪终端、自定义软链）两类场景。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>能力项</th><th>定义</th><th>优先级</th></tr></thead>
+        <tr><td>枚举可用串口</td><td>通过系统 API 枚举标准串口（/dev/ttyS*、/dev/ttyUSB*、/dev/ttyACM* 等），下拉选择</td><td><span class="tag p0">P0</span></td></tr>
+          <tr><td>枚举非标准串口</td><td>可选扫描 /dev 下非标准设备（如 /dev/pts/* 伪终端、自定义设备软链），并甄别可配置串口属性的设备后列入候选</td><td><span class="tag p1">P1</span></td></tr>
+          <tr><td>手动输入自定义路径</td><td>支持手动输入任意设备路径（含多级路径，如 /dev/pts/1），直接尝试打开读取</td><td><span class="tag p0">P0</span></td></tr>
+          <tr><td>权限错误处理</td><td>打开无权限设备时给出明确提示（如提示加入 dialout 组），不得静默失败</td><td><span class="tag p0">P0</span></td></tr>
+      </table>
+    </div>
+    <div class="callout warn">
+      <p><strong>技术约束（Qt/QSerialPort）</strong>：QSerialPort 支持任意设备路径打开（含多级 /dev/pts/1），其 <code>availablePorts()</code> 默认仅枚举标准串口、不包含非标准设备；<code>QSerialPortInfo::portName()</code> 会去除 <code>/dev/</code> 前缀。因此「枚举非标准串口」需在应用层扫描 /dev 并配合 <code>tcgetattr</code> 甄别设备类型，「自定义路径」直接以完整路径调用 <code>setPortName</code> 打开即可。打开失败需区分 <code>PermissionError</code>（权限）与 <code>NoSuchDeviceError</code>（设备不存在）并分别提示。</p>
     </div>
 
     <h3>2.3 串口终端连接（Console）</h3>
@@ -527,6 +542,9 @@ sup a{color:var(--accent);text-decoration:none;font-size:.75em;font-weight:600;}
       <table>
         <thead><tr><th>功能</th><th>验收标准（Given-When-Then）</th></tr></thead>
         <tr><td>串口连接</td><td>给定一个可用串口设备，当用户选择串口与波特率并连接时，应建立连接并显示 online 状态；断开后回到 offline。</td></tr>
+        <tr><td>自定义路径打开</td><td>给定一个多级设备路径（如 /dev/pts/1），当用户手动输入该路径并连接时，应成功打开并收发字节流；设备不存在时返回 NoSuchDeviceError 提示。</td></tr>
+        <tr><td>非标准串口枚举</td><td>给定系统存在 /dev/pts/* 伪终端时，当用户启用「枚举非标准串口」时，候选列表应包含该伪终端且可成功打开。</td></tr>
+        <tr><td>权限错误提示</td><td>给定当前用户对某设备无读写权限时，当尝试打开该设备时，应给出明确权限提示（如加入 dialout 组），不得静默失败。</td></tr>
         <tr><td>串口收发</td><td>给定已连接串口，当对端发送字节流时，应实时显示接收数据且不丢字节（高速 115200+ 波特率下同样成立）。</td></tr>
         <tr><td>协议解析</td><td>给定一个已配置的二进制协议模板，当收到匹配帧时，应正确切分帧并提取字段到字段池，字段名与值符合模板定义。</td></tr>
         <tr><td>数据可视化</td><td>给定字段池中的数值字段，当新建可视化场景并绑定该字段时，应实时绘制波形/柱状图，刷新率符合场景配置。</td></tr>
