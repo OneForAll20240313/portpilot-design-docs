@@ -1084,6 +1084,11 @@ document.addEventListener('DOMContentLoaded', function(){
 // ============================================
 // Dynamic Slider Track Fill (滑块轨道动态渐变填充)
 // ============================================
+
+
+// ============================================
+// Dynamic Slider Track Fill (滑块轨道渐变填充)
+// ============================================
 function updateSliderFill(slider){
   var min = parseFloat(slider.min) || 0;
   var max = parseFloat(slider.max) || 100;
@@ -1091,3 +1096,21 @@ function updateSliderFill(slider){
   var pct = ((val - min) / (max - min)) * 100;
   slider.style.background = 'linear-gradient(to right, var(--grad) 0%, var(--grad) ' + pct + '%, var(--bg4) ' + pct + '%, var(--bg4) 100%)';
 }
+
+function initAllSliderFills(){
+  var sliders = document.querySelectorAll('input[type=range]');
+  sliders.forEach(function(s){
+    updateSliderFill(s);
+    if(!s._gradBound){
+      s.addEventListener('input', function(){ updateSliderFill(this); });
+      s._gradBound = true;
+    }
+  });
+}
+// 多次延迟初始化，确保动态生成的滑块也被处理
+document.addEventListener('DOMContentLoaded', function(){
+  setTimeout(initAllSliderFills, 50);
+  setTimeout(initAllSliderFills, 500);
+  setTimeout(initAllSliderFills, 1500);
+});
+window.initAllSliderFills = initAllSliderFills;

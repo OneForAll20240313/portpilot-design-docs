@@ -147,3 +147,149 @@ input[type=range]::-moz-range-thumb{
   background:var(--grad);
   box-shadow:0 0 6px rgba(15,198,183,.5);
 }
+
+/* ============================================
+   FULL THEME GRADIENT SYSTEM (全面主题渐变系统)
+   ============================================ */
+
+/* ===== 1. PRIMARY BUTTONS (所有主按钮渐变) ===== */
+.conn-btn,
+.send-btn,
+.apply-btn,
+.play-btn,
+.reset-btn,
+.save-btn,
+.sb-header .new-btn,
+.add-cmd-btn,
+.proto-save-btn,
+.confirm-btn,
+.danger-ok-btn,
+button.primary {
+  background: var(--grad);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  transition: all .2s ease;
+}
+.conn-btn:hover,
+.send-btn:hover,
+.apply-btn:hover,
+.play-btn:hover,
+.reset-btn:hover,
+.save-btn:hover,
+.sb-header .new-btn:hover,
+.add-cmd-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+  opacity: .92;
+  color: #fff;
+}
+.conn-btn:active,
+.send-btn:active,
+.apply-btn:active,
+.play-btn:active,
+.reset-btn:active,
+.save-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+}
+.conn-btn:disabled,
+.send-btn:disabled,
+.apply-btn:disabled,
+.play-btn:disabled,
+.save-btn:disabled {
+  background: var(--bg4);
+  color: var(--muted);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* ===== 2. DANGER BUTTON (危险按钮红色渐变) ===== */
+.danger-ok-btn {
+  background: linear-gradient(135deg, var(--danger), #ff7875);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(248,81,73,.35);
+}
+.danger-ok-btn:hover {
+  box-shadow: 0 4px 14px rgba(248,81,73,.5);
+  transform: translateY(-1px);
+}
+
+/* ===== 3. RANGE SLIDER (滑块 - 轨道填充+拖柄渐变) ===== */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg4);
+  outline: none;
+  border: none;
+  padding: 0;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--grad);
+  border: 2px solid var(--bg2);
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 12px rgba(0,0,0,.45);
+}
+input[type=range]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--grad);
+  border: 2px solid var(--bg2);
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  cursor: pointer;
+}
+
+/* ===== 4. TOGGLE SWITCH (开关渐变) ===== */
+.toggle.on {
+  background: var(--grad);
+  border-color: transparent;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2) inset, 0 1px 2px rgba(0,0,0,.15);
+}
+.toggle.on .knob {
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+
+/* ===== 5. SCROLLBAR THUMB (滚动条滑块渐变) ===== */
+*::-webkit-scrollbar-thumb {
+  background: var(--grad);
+  border: 2px solid var(--bg2);
+  border-radius: 5px;
+  transition: opacity .2s ease;
+}
+*::-webkit-scrollbar-thumb:hover {
+  opacity: .85;
+}
+
+/* ===== 6. PROGRESS BAR FILL (进度条渐变填充) ===== */
+.progress-bar-fill,
+.bdb-fill,
+.dc-bar-fill,
+.log-save-progress-bar-fill {
+  background: var(--grad);
+  box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  border-radius: inherit;
+}
+
+/* ===== 7. STATUS DOT (状态点渐变) ===== */
+.sdot.on,
+.session-dot.on {
+  background: var(--grad);
+  box-shadow: 0 0 6px rgba(15,198,183,.5);
+}
