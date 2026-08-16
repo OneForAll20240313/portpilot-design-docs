@@ -265,10 +265,15 @@ loop:
 
 **执行器任务（自驱 cron，不依赖 PM trigger）**：上表 Dev/Reviewer 执行器的自驱调度依赖可被调度的**执行器任务**存在。**已实测核验：定时器/巡检会话无 Schedule 权限**（无 schedule CLI、无 Schedule MCP server），无法执行 `Schedule create/trigger`，因此**执行器必须由「具备 Schedule 能力的环境」预先创建为自驱 cron 任务**，由执行器自身按 cron 周期扫描看板、自动推进，**不依赖 PM 巡检 trigger**。任何具备 Schedule 能力的环境（如开展协同的活跃会话）负责创建执行器，创建一次即长期复用。
 
+**先对齐代码（所有执行器强制第一步）**：任何执行器（Dev / Reviewer / PM 巡检）每次 cron 自触发后，在读取看板或做任何写入之前，**必须先让本地代码与远端完全对齐**：
+- **代码仓库 PortPilot**（组织 `OneForAll20240313/PortPilot`）：本地工作目录已存在 → 先 `git pull --rebase`（遇冲突必须全部解决到干净，严禁未 rebase 直接 push）；不存在 → `git clone https://x-access-token:${GH_TOKEN}@github.com/OneForAll20240313/PortPilot.git <目标目录>`。**必须使用组织地址，禁止任何个人/旧地址**（如 `ZefengWang`）。
+- **文档仓库 portpilot-design-docs**（`/workspace`）：始终 `git pull --rebase` 对齐协作进度、契约与留痕。
+- 两边代码对齐后再进入各自本职（扫描看板 / 评审 / 巡检），避免基于过期的本地状态干活。**每个执行器 message 第 1 步必须写入本条对齐逻辑**。
+
 | 执行器任务 | 角色 | cron（推荐周期） | 行为 |
 |-----------|------|-----------------|------|
-| Dev 执行器 | `AGENT_ROLE=dev` | 周期性（如 `0 */2 * * *`） | 扫描看板找「被 PM 分配给自己且未认领」的待研发/待修正任务 → 认领→实现→PR→等评审→待验收后停下；无任务则静默 |
-| Reviewer 执行器 | `AGENT_ROLE=reviewer` | 周期性（如 `0 */2 * * *`） | 扫描看板找「研发中+已关联PR+CI通过」待评审任务 → 独立评审签发 PASS/FAIL（PASS 后删源分支）；无则静默 |
+| Dev 执行器 | `AGENT_ROLE=dev` | 周期性（如 `0 */2 * * *`） | （第 1 步先对齐代码）扫描看板找「被 PM 分配给自己且未认领」的待研发/待修正任务 → 认领→实现→PR→等评审→待验收后停下；无任务则静默 |
+| Reviewer 执行器 | `AGENT_ROLE=reviewer` | 周期性（如 `0/2h`，与 Dev 错开，如奇数小时 `0 1,3,..23 * * *`） | （第 1 步先对齐代码）扫描看板找「研发中+已关联PR+CI通过」待评审任务 → 独立评审签发 PASS/FAIL（PASS 后删源分支）；无则静默 |
 
 执行器**每次 cron 自触发时先按防重入检查**（确认目标任务未被他人认领/无进行中实例），无对应任务则静默，不自行认领他人任务、不连轴转。PM 巡检定时器（`AGENT_ROLE=pm`）**不再承担调度/trigger 职责**，降级为：轮询看板 → 校验状态流转 → 阻塞监控 → 输出巡检结论留痕。调度闭环由「执行器自驱 cron 周期性扫描看板」驱动，PM 巡检负责校验与上报，两端解耦。
 
