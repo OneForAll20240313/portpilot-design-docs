@@ -221,6 +221,28 @@
     </div>
   </div>
   <div class="note"><b>宿主隔离</b>：多宿主仅交互层不同，核心共享（WebUI 范围外）。宿主切换（ui switch）重启进程，会话状态不保留（D-46）。各宿主实现不得侵入核心。</div>
+
+  <h3>4.1 程序入口与 GUI 解耦（架构级约定）</h3>
+  <div class="note"><b>入口层职责</b>：程序入口（组装根/宿主 main）负责「装配依赖 + 启动宿主」，<b>不直接依赖 Qt GUI</b>。入口与 GUI 解耦是架构级约定，保证：① 无 Qt 环境的 CI 也能产出可执行文件（CLI 模式/服务模式），便于 sanitizer 直接跑；② GUI/TUI/服务任一宿主可独立挂载，入口不因宿主切换而改动核心。</div>
+  <div class="ab-body">
+    <p><b>入口解耦实现</b>：</p>
+    <ul>
+      <li><code>main.cpp</code> 为纯入口，<b>不 include Qt</b>（无 <code>QApplication</code>），按启动模式分支：GUI 模式 → 调 GUI 宿主启动；无 GUI 环境 → CLI/服务模式（初始化核心层后进入对应循环）。</li>
+      <li>GUI 宿主启动逻辑独立为 <code>main_gui.cpp</code>（含 <code>QApplication</code> + 主窗口挂载），仅 <code>BUILD_GUI=ON</code> 时编译链接。</li>
+      <li>禁止入口直接 new 具体 UI 组件；入口只做装配根，UI/宿主通过 Service 用例对接核心。</li>
+    </ul>
+  </div>
+
+  <h3>4.2 进程启动 MCP 服务器（架构级约定）</h3>
+  <div class="note"><b>MCP 服务器</b>：PortPilot 进程启动时<b>同时启动内置 MCP 服务器</b>，对外暴露核心能力（设备枚举、连接、收发、协议解析等）供外部智能体/工具通过 MCP 协议驱动。MCP 服务器属<b>服务宿主</b>的一种，与 GUI/TUI 并行，共享同一核心。</div>
+  <div class="ab-body">
+    <ul>
+      <li>MCP 服务器作为独立宿主，由入口装配根启动（入口解耦后，无 GUI 环境亦可启动 MCP 服务）。</li>
+      <li>启动策略：进程启动即拉起 MCP 服务器（默认开启），或按配置开关（<code>--mcp</code>/配置文件）控制；具线协议与能力清单见契约文档。</li>
+      <li>MCP 服务器经 Service 层用例访问核心，不触碰 Core/Domain 内部，遵循单向依赖。</li>
+      <li>该能力为<b>新增需求</b>，属待规划项，优先级靠后，先入需求池登记，实现排后。</li>
+    </ul>
+  </div>
 </section>
 
 <section id="s5">
