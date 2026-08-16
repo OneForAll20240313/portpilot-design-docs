@@ -1,20 +1,24 @@
 query {
-  node(id: "PVT_kwDOCbwaq84Bgbu6") {
-    ... on ProjectV2 {
-      items(first: 60) {
+  organization(login: "OneForAll20240313") {
+    projectV2(number: 6) {
+      title
+      items(first: 100) {
         totalCount
         nodes {
           content {
             ... on Issue {
               number
               title
+              assignees(first: 5) {
+                totalCount
+                nodes { login }
+              }
+              milestone { title }
             }
           }
-          fieldValues(first: 8) {
-            nodes {
-              ... on ProjectV2ItemFieldSingleSelectValue {
-                name
-              }
+          status: fieldValueByName(name: "Status") {
+            ... on ProjectV2ItemFieldSingleSelectValue {
+              name
             }
           }
         }
