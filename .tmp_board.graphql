@@ -1,0 +1,24 @@
+query {
+  node(id: "PVT_kwDOCbwaq84Bgbu6") {
+    ... on ProjectV2 {
+      items(first: 60) {
+        totalCount
+        nodes {
+          content {
+            ... on Issue {
+              number
+              title
+            }
+          }
+          fieldValues(first: 8) {
+            nodes {
+              ... on ProjectV2ItemFieldSingleSelectValue {
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
