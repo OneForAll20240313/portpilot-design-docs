@@ -79,10 +79,12 @@
 
 /* Background image */
 .theme-bg{margin-bottom:12px}
-.theme-bg > label{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}
-.bg-actions{display:flex;gap:8px;margin-bottom:10px}
-.bg-actions input[type=text]{flex:1;min-width:0}
-.bg-actions button{flex-shrink:0;min-width:60px}
+.bg-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.bg-row label{font-size:12px;color:var(--muted);white-space:nowrap;width:80px;flex-shrink:0;padding-top:5px}
+.bg-control{flex:1;min-width:0}
+.bg-input-row{display:flex;gap:8px;margin-bottom:8px}
+.bg-input-row input[type=text]{flex:1;min-width:0}
+.bg-input-row button{flex-shrink:0;min-width:60px}
 .bg-download-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:8px;display:none}
 .bg-download-bar.show{display:block}
 .bdb-fill{height:100%;width:0%;transition:width .3s ease;background:var(--grad)}
@@ -138,10 +140,10 @@
 
 .about-section{margin-bottom:16px}
 .about-section-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px}
-.about-features{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-.about-features li{padding:6px 10px;background:var(--bg2);border-radius:6px;font-size:11px;color:var(--muted);border:1px solid var(--rule)}
-.about-links{display:flex;gap:8px;flex-wrap:wrap}
-.about-link-item{flex:1;min-width:100px;padding:8px 12px;background:var(--bg2);border:1px solid var(--rule);border-radius:6px;font-size:12px;color:var(--ink2);cursor:pointer;text-align:center;transition:all .15s ease}
+.about-features{list-style:none;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.about-features li{padding:8px 12px;background:var(--bg2);border-radius:6px;font-size:11px;color:var(--ink2);border:1px solid var(--rule);line-height:1.5}
+.about-links{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.about-link-item{padding:8px 12px;background:var(--bg2);border:1px solid var(--rule);border-radius:6px;font-size:11px;color:var(--ink2);cursor:pointer;text-align:center;transition:all .15s ease}
 .about-link-item:hover{border-color:var(--primary);color:var(--primary)}
 
 .ie-config-section{background:var(--bg2);border:1px solid var(--rule);border-radius:8px;padding:12px}
