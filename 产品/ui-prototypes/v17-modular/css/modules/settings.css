@@ -78,12 +78,11 @@
 .color-picker-wrapper input[type=color]::-webkit-color-swatch{border:none;border-radius:5px}
 
 /* Background image */
-.bg-image-row{margin-bottom:12px}
-.bg-image-row label{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}
-.bg-input-row{display:flex;gap:8px;margin-bottom:10px}
-.bg-input-row input{flex:1}
-.bg-actions{display:flex;gap:8px;margin-bottom:8px}
-.bg-actions button{flex:1}
+.theme-bg{margin-bottom:12px}
+.theme-bg > label{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}
+.bg-actions{display:flex;gap:8px;margin-bottom:10px}
+.bg-actions input[type=text]{flex:1;min-width:0}
+.bg-actions button{flex-shrink:0;min-width:60px}
 .bg-download-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:8px;display:none}
 .bg-download-bar.show{display:block}
 .bdb-fill{height:100%;width:0%;transition:width .3s ease;background:var(--grad)}

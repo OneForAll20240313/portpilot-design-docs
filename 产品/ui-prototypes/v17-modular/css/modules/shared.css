@@ -50,6 +50,20 @@
 .modal-close{cursor:pointer;color:var(--muted);font-size:16px;line-height:1;padding:2px 6px;border-radius:4px;transition:all .15s ease}
 .modal-close:hover{background:var(--bg4);color:var(--ink)}
 .modal-body{padding:16px 18px;overflow-y:auto;flex:1}
+
+/* ===== Form Row (模态框通用表单行) ===== */
+.form-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.form-row:last-child{margin-bottom:0}
+.form-row label{font-size:12px;color:var(--muted);min-width:70px;flex-shrink:0;text-align:right}
+.form-row input[type=text],
+.form-row input[type=number],
+.form-row input[type=password],
+.form-row select,
+.form-row textarea{flex:1;min-width:0}
+.form-row .form-hint{font-size:10px;color:var(--muted);margin-top:4px;margin-left:82px}
+.form-row-inline{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.form-row-inline label{font-size:12px;color:var(--muted);margin:0}
+.form-col{display:flex;flex-direction:column;gap:8px}
 .modal-footer{padding:12px 18px;border-top:1px solid var(--rule);display:flex;justify-content:flex-end;gap:8px}
 .modal-footer button{min-width:80px}
 /* 主按钮渐变 */
