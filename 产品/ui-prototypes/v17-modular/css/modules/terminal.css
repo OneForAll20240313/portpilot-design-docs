@@ -21,3 +21,24 @@
 .tcp-actions{display:flex;gap:5px;margin-top:6px;align-items:center}
 .tcp-actions select{font-size:10px;padding:1px 6px}
 .tcp-actions .tbtn{font-size:10px;padding:2px 8px;margin-left:auto}
+
+/* ===== 日志保存模态框 ===== */
+.log-save-form .form-row{align-items:flex-start;padding-top:2px}
+.log-save-radio-group{display:flex;gap:14px;flex-wrap:wrap}
+.log-save-radio-group label{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--ink2);cursor:pointer;margin:0;min-width:auto;text-align:left;white-space:nowrap}
+.log-save-radio-group input[type=radio],
+.log-save-radio-group input[type=checkbox]{margin:0;width:auto;flex-shrink:0}
+
+.log-save-format-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.log-format-item{padding:8px 10px;text-align:center;font-size:12px;background:var(--bg3);border:1px solid var(--rule);border-radius:6px;cursor:pointer;transition:all .15s ease;color:var(--ink2)}
+.log-format-item:hover{border-color:var(--primary-dim)}
+.log-format-item.active{border-color:var(--primary);background:var(--primary-dim);color:var(--primary);font-weight:500}
+.log-format-item.disabled{opacity:.4;cursor:not-allowed}
+
+.log-time-range{flex:1;min-width:0}
+.log-time-range select{width:100%}
+.log-time-custom{display:flex;gap:8px;margin-top:8px;padding-left:0}
+.log-time-custom input{flex:1;min-width:0;font-size:11px}
+
+.log-save-progress{margin-top:12px;padding-top:12px;border-top:1px solid var(--rule)}
+.log-save-progress-info{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px}
