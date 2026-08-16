@@ -213,8 +213,15 @@ interface DevicePort {
 // 系统级设备发现（连接前枚举可用串口），语义独立于单个连接实例 DevicePort
 interface DevicePortEnumerator {
   listAvailablePorts() -> PortInfo[]         // 枚举系统可用串口，含 pty 等非标准设备
+  probePort(path) -> PortEnumResult          // 校验/探测手动输入的自定义路径（需求 #33）
 }
 ```
+
+> 错误码（需求 #33 设备不存在 DoD）：`probePort`/`DevicePort.open` 返回设备层公共错误码 ——
+> `DEVICE_NO_SUCH`（NoSuchDeviceError，设备不存在）、`DEVICE_PERMISSION`（PermissionError，无权限）、
+> `DEVICE_BUSY`（被占用）、`DEVICE_NOT_OPEN`（未打开）、`DEVICE_IO_FAILED`（收发 I/O 失败）、
+> `DEVICE_CONFIG_FAILED`（串口参数配置失败）、`DEVICE_OPEN_FAILED`（打开失败，其它原因）。
+> 值为 Domain 公共 SSOT（`domain/types.h` 的 `k*` 常量），各层统一引用。
 
 实现：串口用 `SerialWorker`，网络用 `NetworkTransport`，枚举用 `PortEnumerator`（见 13.3 Core 层组件）。DevicePortEnumerator 的 `listAvailablePorts` 落地调用 `QSerialPortInfo::availablePorts` 等平台枚举并映射为 `PortInfo[]`。
 
