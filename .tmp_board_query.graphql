@@ -1,0 +1,33 @@
+query {
+  organization(login: "OneForAll20240313") {
+    projectV2(number: 6) {
+      title
+      number
+      items(first: 100) {
+        totalCount
+        nodes {
+          id
+          content {
+            ... on Issue {
+              number
+              title
+              url
+              assignees(first: 5) {
+                totalCount
+                nodes { login }
+              }
+              milestone { title }
+              createdAt
+              updatedAt
+            }
+          }
+          status: fieldValueByName(name: "Status") {
+            ... on ProjectV2ItemFieldSingleSelectValue {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+}
